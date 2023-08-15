@@ -8,8 +8,11 @@
       <excludeFolder url="file://$MODULE_DIR$/client/.svelte-kit" />
       <excludeFolder url="file://$MODULE_DIR$/server/dist" />
       <excludeFolder url="file://$MODULE_DIR$/server/temp" />
+      <excludeFolder url="file://$MODULE_DIR$/client/build" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="@types/luxon" level="application" />
+    <orderEntry type="library" name="luxon" level="application" />
   </component>
 </module>
