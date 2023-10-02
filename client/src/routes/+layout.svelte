@@ -3,15 +3,19 @@
 	import './styles.css';
 </script>
 
+<style global lang="scss">
+	@import '$scss/main';
+</style>
+
 <div class="app">
-	<Header />
+	<!--Header /-->
 
 	<main>
 		<slot />
 	</main>
 </div>
 
-<style>
+<!--style>
 	.app {
 		display: flex;
 		flex-direction: column;
@@ -39,4 +43,4 @@
 	footer a {
 		font-weight: bold;
 	}
-</style>
+</style-->

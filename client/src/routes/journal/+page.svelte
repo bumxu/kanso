@@ -1,81 +1,94 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import JournalRow from "$lib/JournalRow.svelte";
-	//import Row from './Row.svelte';
+    import { onMount } from 'svelte';
+    import JournalEntry from '$lib/JournalEntry.svelte';
+    //import Row from './Row.svelte';
 
-	let data: [] = [];
+    let entries: [] = [];
 
-	onMount(async () => {
-		const response = await fetch('http://localhost:3000/journal/search');
-		data = await response.json();
-	});
+    onMount(async () => {
+        const response = await fetch('http://localhost:3000/journal/entries');
+        entries = await response.json();
+
+        console.log(entries);
+    });
+
+    function add() {
+        entries = [...entries, {
+            createdAt: new Date().toISOString(),
+            createdAtShowsTime: true,
+            topic: '',
+            //'status': null,
+            updates: [],
+            entities: []
+        }];
+    }
+
+    function del(evt: CustomEvent) {
+        entries = entries.filter(e => e !== evt.detail.entry);
+    }
 </script>
 
 <svelte:head>
-	<title>Diario de trabajo</title>
-	<meta name="description" content="Diario de trabajo" />
+    <title>Diario de trabajo</title>
+    <meta name="description" content="Diario de trabajo" />
 </svelte:head>
 
-<div class="text-column">
-	<h1>Diario de trabajo</h1>
+<div class="x-container">
+    <h1>J3</h1>
 
-	<table class="x-journal-table">
-		<thead>
-		<tr>
-			<th>Apertura</th>
-			<th>Origen</th>
-			<th>Asunto</th>
-			<th>Actualizaciones</th>
-			<th>Ubicaciones</th>
-			<th>Estado</th>
-			<th>Cierre</th>
-		</tr>
-		</thead>
-		<tbody>
-		<JournalRow />
-		{#each data as item}
-			<JournalRow item={item}/>
-		{/each}
-		</tbody>
-	</table>
+    <table class="x-journal-table">
+        <thead>
+        <tr>
+            <th style="width: 1px"></th>
+            <th style="width: 7px"></th>
+            <th style="width: 115px">Apertura</th>
+            <th style="width: 90%">Asunto</th>
+            <th style="width: 100%">Actualizaciones</th>
+            <th style="width: 60%">Entidades</th>
+            <th style="width: 100px">Estado</th>
+            <th style="width: 115px">Cierre</th>
+            <th style="width: 20px"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {#each entries as entry}
+            <JournalEntry entry={entry} on:delete={del} />
+        {/each}
+        </tbody>
+    </table>
+
+    <button on:click={add}>+</button>
+
 
 </div>
 
-<style>
-	
-	:global(.x-journal-table) {
-		width: 100%;
-		margin: 0 auto;
-		border-collapse: collapse;
-		display: grid;
-    	grid-template-columns: min-content 80fr 200fr 250fr 80fr 80fr min-content;
-	}
+<style lang="scss">
 
-	:global(thead, tbody, tr) {
-		display: contents;
-	}
+  // td, th {
+  //     border: 1px solid #000;
+  // }
 
-	.x-journal-table, .x-journal-table th, .x-journal-table td {
-		border: 1px solid #aaa;
-	}
+  // :global(.x-journal-table) {
+  //     width: 100%;
+  //     margin: 0 auto;
+  //     border-collapse: collapse;
+  //     display: grid;
+  //     grid-template-columns: min-content min-content min-content 200fr 250fr 80fr 50fr min-content min-content;
+  // }
 
-	.x-journal-table, .x-journal-table input, .x-journal-table textarea {
-		font-family: 'Roboto', sans-serif;
-		font-weight: 400;
-		resize: none;
-	}
+  // :global(thead, tbody, tr) {
+  //     display: contents;
+  // }
 
-	.x-journal-table tr {
-		font-weight: 700;
-		font-size: 14px;
-		text-align: left;
-	}
+  // .x-journal-table, .x-journal-table th, .x-journal-table td {
+  //     border: 1px solid #aaa;
+  // }
 
-	.x-journal-table td {
-		vertical-align: top;
-	}
+  // .x-journal-table, .x-journal-table input, .x-journal-table textarea {
+  //     font-family: 'Roboto', sans-serif;
+  //     font-weight: 400;
+  //     resize: none;
+  // }
 
-	.x-journal-table th {
-		padding: 4px 5px;
-	}
+
 </style>
