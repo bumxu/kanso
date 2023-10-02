@@ -1,21 +1,23 @@
-import { MikroORM, serialize } from '@mikro-orm/core';
+import { MikroORM } from '@mikro-orm/core';
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
 import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
 import { SqliteDriver } from '@mikro-orm/sqlite';
 import fastify from 'fastify';
 import findRoot from 'find-root';
 import * as Path from 'path';
+import { JEntity } from './model/JEntity';
 import { JEntry } from './model/JEntry';
-import { JEntryLifecycle } from './model/JEntryLifecycle';
-import { JEntryLocation } from './model/JEntryLocation';
-import { JEntrySource } from './model/JEntrySource';
+import { JEntryEntity } from './model/JEntryEntity';
+import { JEntryUpdate } from './model/JEntryUpdate';
+import { JStatus } from './model/JStatus';
+import { JTag } from './model/JTag';
 
 (async () => {
 
     const orm = await MikroORM.init<SqliteDriver>({
         type: 'sqlite',
         dbName: Path.join(findRoot(__dirname), './data/database.sqlite'),
-        entities: [JEntry, JEntryLifecycle, JEntryLocation, JEntrySource],
+        entities: [JEntry, JEntryEntity, JEntity, JEntryUpdate, JStatus, JTag],
         highlighter: new SqlHighlighter(),
         metadataProvider: TsMorphMetadataProvider,
         debug: true,
@@ -27,7 +29,7 @@ import { JEntrySource } from './model/JEntrySource';
     });
 
     await orm.getMigrator().createMigration();
-    //await orm.getMigrator().up();
+    await orm.getMigrator().up();
 
     const server = fastify();
 
@@ -35,9 +37,20 @@ import { JEntrySource } from './model/JEntrySource';
     server.addHook('onRequest', async (request, reply) => {
         request.orm = orm;
         request.em = orm.em.fork();
+
+        reply.header('Access-Control-Allow-Origin', '*');
+        reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        reply.header('Access-Control-Allow-Headers', 'Content-Type');
     });
 
     //fastify.register(require('./support/sass-middleware'));
+
+    // fastify.register(require('@fastify/static'), {
+    //     root: path.join(__dirname, 'shared/static'),
+    //     //prefix: '/public/', // optional: default '/'
+    //     //constraints: { host: 'example.com' } // optional: default {}
+    // });
+
 
     // server.get('/search', async (request, reply) => {
     //     const entries = await orm.em.fork().getRepository(JEntry).find({}, {
@@ -49,20 +62,15 @@ import { JEntrySource } from './model/JEntrySource';
     //     }));
     // });
 
-    server.register(require('./api/journal'), {prefix: '/journal'});
+    server.register(require('./api/router'), {prefix: '/journal'});
 
-    // CORS any
-    server.register(require('@fastify/cors'), {
-        origin: '*'
+    server.setErrorHandler(function (error, request, reply) {
+        // Log error
+        this.log.error(error);
+        console.error(error);
+        // Send error response
+        reply.status(500).send({ok: false});
     });
 
-    // server.register(require('@fastify/static'), {
-    //     root: Path.join(__dirname, '../../client/build'),
-    //     //prefix: '/public/', // optional: default '/'
-    //     //constraints: { host: 'example.com' } // optional: default {}
-    // });
-
     await server.listen({port: 3000});
-
-    console.log('Ready');
 })();
