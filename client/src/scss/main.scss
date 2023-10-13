@@ -5,7 +5,8 @@ html {
 }
 
 body {
-    background: #f7f9fb;
+    background: #333;
+    font-family: 'Noto Sans', sans-serif;
 }
 
 .x-container {
@@ -21,7 +22,7 @@ input, textarea {
     display: block;
     box-sizing: border-box;
     padding: 1px 2px;
-    border: 0;//1px solid transparent;
+    border: 0; //1px solid transparent;
     //border-radius: 1px;
     outline: 0;
     background: transparent;
@@ -69,7 +70,99 @@ input, textarea {
     }
 }
 
+.btn {
+    background-color: rgb(47 56 66);
+    background-image: none;
+    background-repeat: no-repeat;
+    border-radius: 2px;
+    border: 1px solid rgba(0, 0, 0, 0.17);
+    box-sizing: border-box;
+    color: #dedede;
+    cursor: pointer;
+    display: inline-block;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9em;
+    font-weight: 500;
+    height: 28px;
+    letter-spacing: 0.4px;
+    line-height: 26px;
+    outline: 0;
+    overflow: hidden;
+    padding: 0 0.72rem;
+    position: relative;
+    text-decoration: none;
+    text-rendering: optimizeLegibility;
+    transition: all 0.35s linear 0s;
+    user-select: none;
+    white-space: nowrap;
+    /* TODO: Quitar el margin-top */
+
+    .btn-icon + .btn-label {
+        margin-left: 0.15rem;
+    }
+    &.btn-ic-only {
+        width: 28px;
+        padding: 0;
+        text-align: center;
+    }
+
+    &.btn-sm {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        height: 22px;
+        letter-spacing: 0.25px;
+        line-height: 20px;
+        margin-top: 0;
+        padding: 0 0.48rem;
+
+        .btn-icon + .btn-label {
+            margin-left: 0.18rem;
+        }
+        &.btn-ic i {
+            vertical-align: 0;
+        }
+        &.btn-ic-only {
+            width: 22px;
+            padding: 0;
+            text-align: center;
+        }
+    }
+
+    //.fa, .fa-brands, .fa-classic, .fa-duotone, .fa-light, .fa-regular, .fa-sharp, .fa-sharp-solid, .fa-solid, .fa-thin, .fab, .fad, .fal, .far, .fas, .fasl, .fasr, .fass, .fat {
+    //    vertical-align: middle;
+    //}
+}
+
 // JOURNAL TABLE
+
+.x-table.x-journal {
+    width: 99%;
+    margin: 0 auto;
+    font-size: 0.75rem;
+    background-color: #fff;
+    border-radius: 2px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: min-content min-content min-content 200fr 250fr 80fr 80fr 25px min-content min-content min-content;
+    grid-gap: 0;
+
+    & > .x-row {
+        display: contents;
+        & > * {
+            border-right: 1px solid #d9d9d9;
+            border-bottom: 1px solid #d9d9d9;
+        }
+    }
+    & > .x-row.x-header > * {
+        padding: 4px;
+        font-weight: 700;
+        vertical-align: top;
+        border-top: 0;
+        background-color: #ddd;
+        border-color: #999;
+    }
+}
 
 table.x-journal-table {
     background: #fff;
@@ -92,7 +185,7 @@ table.x-journal-table {
     }
     td {
         vertical-align: top;
-        padding: 0;//1px 1px;
+        padding: 0; //1px 1px;
         // hack to make the inner div fill the height:
         height: 0;
     }
@@ -102,13 +195,15 @@ table.x-journal-table {
     font-family: 'Noto Sans Mono', monospace;
     font-weight: 500;
     font-size: 0.625rem;
-    width: 118px;
+    width: 108px;
 
     &:not(.valid) {
         background: #fdd;
         color: #a00;
     }
 }
+
+
 
 // UPDATE
 

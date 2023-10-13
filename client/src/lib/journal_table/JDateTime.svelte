@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { Utils } from '$lib/Utils.js';
     import { DateTime } from 'luxon';
     import { createEventDispatcher } from 'svelte';
     import 'tippy.js/dist/tippy.css';
@@ -8,13 +9,19 @@
     export let placeholder: string | undefined = undefined;
     export let required = false;
 
+    export let focused = false;
+
     const dispatch = createEventDispatcher();
 
-    let domInput;
+    let domInput: HTMLInputElement;
+
+    export function focus() {
+        domInput.focus();
+    }
 
     // Valores volátiles mientras se edita el campo
     let valid = true;
-    let unsavedDatetime: DateTime | null = isodate == null ? null : DateTime.fromISO(isodate);
+    let unsavedDatetime: DateTime | null = Utils.parseDateServer(isodate);
     let valueStr = unsavedDatetime != null
         ? unsavedDatetime.toFormat(includeTime ? 'dd/MM/yyyy HH:mm' : 'dd/MM/yyyy')
         : '';
@@ -25,10 +32,6 @@
         isodate,
         includeTime
     });
-
-    function toISO(datetime: DateTime | null) {
-        return datetime == null ? null : datetime.toUTC().toISO();
-    }
 
     function parseDate(raw: string) {
         console.debug('parseDate', raw);
@@ -178,7 +181,7 @@
             throw new Error('Fecha no válida: ' + raw + ' (' + ret.datetime.invalidReason + ').');
         }
 
-        console.debug('parseTime -> ' + toISO(ret.datetime));
+        console.debug('parseTime -> ' + Utils.formatDateServer(ret.datetime));
         return ret;
     }
 
@@ -203,9 +206,19 @@
         }
     }
 
+    function handleFocus() {
+        focused = true;
+        domInput.select();
+    }
+
+    function handleBlur() {
+        focused = false;
+        handleApply();
+    }
+
     function handleApply() {
         if (valid) {
-            isodate = unsavedDatetime == null ? null : toISO(unsavedDatetime);
+            isodate = Utils.formatDateServer(unsavedDatetime);
             includeTime = unsavedIncludeTime;
             valueStr = unsavedDatetime != null
                 ? unsavedDatetime.toFormat(includeTime ? 'dd/MM/yyyy HH:mm' : 'dd/MM/yyyy')
@@ -219,7 +232,7 @@
     }
 
     function handleCancel() {
-        unsavedDatetime = isodate == null ? null : DateTime.fromISO(isodate);
+        unsavedDatetime = Utils.parseDateServer(isodate);
         unsavedIncludeTime = includeTime;
         valueStr = unsavedDatetime != null
             ? unsavedDatetime.toFormat(includeTime ? 'dd/MM/yyyy HH:mm' : 'dd/MM/yyyy')
@@ -232,16 +245,10 @@
        placeholder="{placeholder}"
        bind:value="{valueStr}"
        bind:this={domInput}
-       on:focus={(evt) => evt.target.select()}
+       on:focus={handleFocus}
        on:input={handleInput}
-       on:blur={handleApply}
+       on:blur={handleBlur}
        on:keydown={handleKeydown} />
-
-<!--
-on:input={(evt) => {
-    const datetime = parseUserDate(evt.target.value);
-    console.log(datetime);
-}}-->
 
 <style lang="scss">
 </style>

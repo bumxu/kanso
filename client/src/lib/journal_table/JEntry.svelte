@@ -1,13 +1,13 @@
 <script lang="ts">
-    import JEntryDateTime from '$lib/JEntryDateTime.svelte';
-    import JEntryEntities from '$lib/JEntryEntities.svelte';
+    import { SERVER_HOST } from '$lib/constants';
     import JEntryTopicCell from '$lib/JEntryTopicCell.svelte';
     import JEntryUpdates from '$lib/JEntryUpdates.svelte';
+    import JDateTimeCell from '$lib/journal_table/JDateTimeCell.svelte';
+    import JEntities from '$lib/journal_table/JEntities.svelte';
+    import JPriorityCell from '$lib/journal_table/JPriorityCell.svelte';
+    import JTagsCell from '$lib/journal_table/JTagsCell.svelte';
     import type { JEntry } from '$lib/types/JEntry';
-    import { DateTime } from 'luxon';
-    import autosize from 'autosize';
-    import { createEventDispatcher } from 'svelte';
-    import { onMount } from 'svelte';
+    import { createEventDispatcher, onMount } from 'svelte';
     import tippy from 'tippy.js';
 
     const dispatch = createEventDispatcher();
@@ -15,9 +15,12 @@
     // Propiedad entry y valor por defecto
     export let entry: JEntry = {
         createdAt: new Date().toISOString(),
+        createdAtShowsTime: false,
+        closedAtShowsTime: false,
         topic: '',
         updates: [],
-        entities: []
+        entities: [],
+        tags: []
     };
 
     // Estados
@@ -62,13 +65,13 @@
         try {
             let response;
             if (isNew) {
-                response = await fetch(`http://localhost:3000/journal/entries`, {
+                response = await fetch(`${SERVER_HOST}/api/journal/entries`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(entry)
                 });
             } else {
-                response = await fetch(`http://localhost:3000/journal/entries/${entry.id}`, {
+                response = await fetch(`${SERVER_HOST}/api/journal/entries/${entry.id}`, {
                     method: 'PUT',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(entry)
@@ -96,16 +99,20 @@
         }
         try {
             isSaving = true;
-            const response = await fetch(`http://localhost:3000/journal/entries/${entry.id}`, {
+            const response = await fetch(`${SERVER_HOST}/api/journal/entries/${entry.id}`, {
                 method: 'DELETE'
             });
             if (response.ok) {
+                console.debug(`Registro ${entry.id} eliminado con éxito`);
                 dispatch('delete', {
                     entry: entry
                 });
+            } else {
+                const body = await response.text();
+                throw new Error(`(${response.status}) ${body}`);
             }
         } catch (e) {
-            console.error(e);
+            console.error(`Error al eliminar el registro ${entry.id} -`, e);
         } finally {
             isSaving = false;
         }
@@ -113,66 +120,60 @@
 
 </script>
 
-<tr>
-    <td>
+<div class="x-row">
+    <div>
         <div class="status"
              class:new={isNew}
              class:saving={isSaving}
              class:unsaved={isUnsaved} />
-    </td>
-    <td>
+    </div>
+    <div>
         <span id="fld-id">
             <i class="fas fa-hashtag fa-fw fa-sm"
                bind:this={domIdIcon}
                data-tippy-placement="right"
                data-tippy-content={entry.id != null ? entry.id : '*'} />
         </span>
-    </td>
-    <td>
-        <JEntryDateTime
-                bind:isodate={entry.createdAt}
-                bind:includeTime={entry.createdAtShowsTime}
-                on:change={dirty} />
-    </td>
-    <td>
+    </div>
+    <div>
+        <JDateTimeCell bind:isodate={entry.createdAt}
+                       bind:includeTime={entry.createdAtShowsTime}
+                       on:change={dirty} />
+    </div>
+    <div>
         <JEntryTopicCell bind:value={entry.topic}
                          on:change={dirty} />
-    </td>
-    <td class="x-cell-updates">
+    </div>
+    <div class="x-cell-updates">
         <JEntryUpdates entry={entry.id} bind:updates={entry.updates} />
-    </td>
-    <td>
-        <JEntryEntities entry={entry.id} entities={entry.entities} />
-    </td>
-    <td>
+    </div>
+    <div>
+        <JEntities entryId={entry.id} entities={entry.entities} />
+    </div>
+    <div>
+        <JTagsCell entryId={entry.id} tags={entry.tags} />
+    </div>
+    <div>
+        <JPriorityCell bind:value={entry.priority} />
+    </div>
+    <div>
+        <JDateTimeCell bind:isodate={entry.closedAt}
+                       bind:includeTime={entry.closedAtShowsTime}
+                       on:change={dirty} />
+    </div>
+    <div>
         <select>
 
         </select>
-    </td>
-    <td>
-        <JEntryDateTime bind:isodate={entry.updatedAt}
-                        bind:includeTime={entry.updatedAtShowsTime}
-                        on:change={dirty} />
-    </td>
-    <td>
-        <button on:click={remove}>
+    </div>
+    <div>
+        <button class="btn btn-sm btn-ic" on:click={remove}>
             <i class="fas fa-xmark fa-fw fa-sm" />
         </button>
-    </td>
-</tr>
+    </div>
+</div>
 
 <style>
-
-
-    tr {
-        font-weight: 700;
-        text-align: left;
-    }
-
-    td {
-        padding: 1px;
-        border: 1px solid #bbb;
-    }
 
     #fld-id {
         font-size: 10px;

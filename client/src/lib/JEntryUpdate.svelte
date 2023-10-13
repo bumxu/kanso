@@ -1,5 +1,6 @@
 <script lang="ts">
-    import JEntryDateTime from '$lib/JEntryDateTime.svelte';
+    import { SERVER_HOST } from '$lib/constants';
+    import JEntryDateTime from '$lib/journal_table/JDateTime.svelte';
     import autosize from 'autosize';
     import { createEventDispatcher, onMount, afterUpdate } from 'svelte';
 
@@ -48,13 +49,13 @@
         try {
             let response;
             if (isNew) {
-                response = await fetch(`http://localhost:3000/journal/entries/${entry}/updates`, {
+                response = await fetch(`${SERVER_HOST}/api/journal/entries/${entry}/updates`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(value)
                 });
             } else {
-                response = await fetch(`http://localhost:3000/journal/entries/${entry}/updates/${value.id}`, {
+                response = await fetch(`${SERVER_HOST}/api/journal/entries/${entry}/updates/${value.id}`, {
                     method: 'PUT',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(value)
@@ -84,7 +85,7 @@
         }
         try {
             isSaving = true;
-            const response = await fetch(`http://localhost:3000/journal/entries/${entry}/updates/${value.id}`, {
+            const response = await fetch(`${SERVER_HOST}/api/journal/entries/${entry}/updates/${value.id}`, {
                 method: 'DELETE'
             });
             if (response.ok) {

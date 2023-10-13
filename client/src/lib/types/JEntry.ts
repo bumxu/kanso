@@ -1,11 +1,12 @@
 export interface JEntry {
-    id?: string;
+    id: number;
     createdAt: string;
-    createdAtShowsTime?: boolean;
+    createdAtShowsTime: boolean;
     topic: string;
-    updatedAt?: string;
-    updatedAtShowsTime?: boolean;
-    closedAt?: string;
+    priority?: number | null;
+    closedAt?: string | null;
+    closedAtShowsTime: boolean;
     updates: [];
     entities: [];
+    tags: [];
 }

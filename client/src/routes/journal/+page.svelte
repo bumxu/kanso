@@ -1,30 +1,46 @@
 <script lang="ts">
+    import { ztags } from '$lib/stores/tags_store';
+    import type { JEntry } from '$lib/types/JEntry';
+    import { Utils } from '$lib/Utils';
+    import { DateTime } from 'luxon';
     import { onMount } from 'svelte';
-    import JournalEntry from '$lib/JournalEntry.svelte';
+    import JournalEntry from '$lib/journal_table/JEntry.svelte';
+    import { SERVER_HOST } from '$lib/constants';
     //import Row from './Row.svelte';
+    import { entries } from '$lib/stores/journal_store';
 
-    let entries: [] = [];
+    //let entries: JEntry[] = [];
 
     onMount(async () => {
-        const response = await fetch('http://localhost:3000/journal/entries');
-        entries = await response.json();
+        console.log('Iniciando J3...');
+
+        const response = await fetch(SERVER_HOST + '/api/journal/entries');
+        $entries = [...await response.json()];
+        console.log('Obtenidos ' + $entries.length + ' registros');
+
+        const response2 = await fetch(SERVER_HOST + '/api/journal/tags');
+        const tags = [...await response2.json()];
+        $ztags = tags;
+        console.log('Obtenidas ' + tags.length + ' tags');
 
         console.log(entries);
     });
 
     function add() {
-        entries = [...entries, {
-            createdAt: new Date().toISOString(),
+        $entries = [...$entries, {
+            createdAt: Utils.formatDateServer(DateTime.now())!,
             createdAtShowsTime: true,
+            closedAtShowsTime: false,
+            priority: null,
             topic: '',
-            //'status': null,
             updates: [],
-            entities: []
+            entities: [],
+            tags: []
         }];
     }
 
     function del(evt: CustomEvent) {
-        entries = entries.filter(e => e !== evt.detail.entry);
+        $entries = $entries.filter(e => e !== evt.detail.entry);
     }
 </script>
 
@@ -36,26 +52,24 @@
 <div class="x-container">
     <h1>J3</h1>
 
-    <table class="x-journal-table">
-        <thead>
-        <tr>
-            <th style="width: 1px"></th>
-            <th style="width: 7px"></th>
-            <th style="width: 115px">Apertura</th>
-            <th style="width: 90%">Asunto</th>
-            <th style="width: 100%">Actualizaciones</th>
-            <th style="width: 60%">Entidades</th>
-            <th style="width: 100px">Estado</th>
-            <th style="width: 115px">Cierre</th>
-            <th style="width: 20px"></th>
-        </tr>
-        </thead>
-        <tbody>
-        {#each entries as entry}
+    <div class="x-table x-journal">
+        <div class="x-row x-header">
+            <div></div>
+            <div></div>
+            <div>Apertura</div>
+            <div>Asunto</div>
+            <div>Actualizaciones</div>
+            <div>Entidades</div>
+            <div>Tags</div>
+            <div>P</div>
+            <div>Cierre</div>
+            <div>Estado</div>
+            <div></div>
+        </div>
+        {#each $entries as entry}
             <JournalEntry entry={entry} on:delete={del} />
         {/each}
-        </tbody>
-    </table>
+    </div>
 
     <button on:click={add}>+</button>
 
@@ -63,32 +77,5 @@
 </div>
 
 <style lang="scss">
-
-  // td, th {
-  //     border: 1px solid #000;
-  // }
-
-  // :global(.x-journal-table) {
-  //     width: 100%;
-  //     margin: 0 auto;
-  //     border-collapse: collapse;
-  //     display: grid;
-  //     grid-template-columns: min-content min-content min-content 200fr 250fr 80fr 50fr min-content min-content;
-  // }
-
-  // :global(thead, tbody, tr) {
-  //     display: contents;
-  // }
-
-  // .x-journal-table, .x-journal-table th, .x-journal-table td {
-  //     border: 1px solid #aaa;
-  // }
-
-  // .x-journal-table, .x-journal-table input, .x-journal-table textarea {
-  //     font-family: 'Roboto', sans-serif;
-  //     font-weight: 400;
-  //     resize: none;
-  // }
-
 
 </style>

@@ -3,10 +3,13 @@
     import JEntryUpdate from '$lib/JEntryUpdate.svelte';
     import { onMount } from 'svelte';
 
-    export let entry: number | undefined;
+    export let entryId: number | undefined;
     export let entities: [] = [];
 
-    let searchResults: [] = [];
+    let domInput: HTMLSpanElement;
+    let focused = false;
+
+
 
     onMount(async () => {
 
@@ -16,31 +19,16 @@
         //updates = [...updates, {body: ''}];
     }
 
-    function search() {
-        searchResults = [
-            {extId: 'M135904'},
-            {extId: '9546453'}
-        ];
-    }
 </script>
 
 <div class="x-cell-wrapper">
     <div class="x-entities">
         {#each entities as entity}
-            <!--    <div>{entity.entity.extId}</div>-->
-            <JEntryEntity rawEntryEntity={entity} />
+        <!--    &lt;!&ndash;    <div>{entity.entity.extId}</div>&ndash;&gt;-->
+            <JEntryEntity entryId={entryId} entity={entity} />
         {/each}
 
-        <div class="x-entities-completions-wrapper" style="display: none">
-            <input type="text" on:input={search}>
-            <div class="x-entities-completions">
-                {#each searchResults as result}
-                    <div>
-                        {result.extId}
-                    </div>
-                {/each}
-            </div>
-        </div>
+
     </div>
     <button on:click={add}>
         <i class="fas fa-caret-down fa-sm" />
