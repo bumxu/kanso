@@ -1,5 +1,6 @@
 <script lang="ts">
     import { ztags } from '$lib/stores/tags_store';
+    import { zentities } from '$lib/stores/entities_store';
     import type { JEntry } from '$lib/types/JEntry';
     import { Utils } from '$lib/Utils';
     import { DateTime } from 'luxon';
@@ -22,6 +23,11 @@
         const tags = [...await response2.json()];
         $ztags = tags;
         console.log('Obtenidas ' + tags.length + ' tags');
+
+        const response3 = await fetch(SERVER_HOST + '/api/journal/entities');
+        const entities = [...await response3.json()];
+        $zentities = entities;
+        console.log('Obtenidas ' + entities.length + ' entidades');
 
         console.log(entries);
     });

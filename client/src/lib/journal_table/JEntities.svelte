@@ -10,13 +10,12 @@
     let focused = false;
 
 
-
     onMount(async () => {
 
     });
 
     function add() {
-        //updates = [...updates, {body: ''}];
+        entities = [...entities, {entity: null}];
     }
 
 </script>
@@ -24,8 +23,8 @@
 <div class="x-cell-wrapper">
     <div class="x-entities">
         {#each entities as entity}
-        <!--    &lt;!&ndash;    <div>{entity.entity.extId}</div>&ndash;&gt;-->
-            <JEntryEntity entryId={entryId} entity={entity} />
+            <!--    &lt;!&ndash;    <div>{entity.entity.extId}</div>&ndash;&gt;-->
+            <JEntryEntity entryId={entryId} linkedEntity={entity} />
         {/each}
 
 

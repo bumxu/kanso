@@ -1,21 +1,34 @@
 <script lang="ts">
 
     import { SERVER_HOST } from '$lib/constants';
+    import { EntitiesService } from '$lib/services/EntitiesService';
+    import { onMount } from 'svelte';
 
     export let entryId: number;
-    export let entity: any;
+    export let linkedEntity: any;
+
+    let isNew: boolean;
+    let dirty:boolean = false;
 
     let domInput: HTMLSpanElement;
     let focused = false;
 
     // Texto introducido por el usuario
-    let userInput = entity.entity.extId;
+    let userInput = '';
     // Entidades que coinciden con la entidad introducida por el usuario
     let matches: any[] = [];
     // Si se muestra el dropdown con las entidades sugeridas
     let matchesVisible = false;
     // Índice de la entidad seleccionada en el dropdown
     let matchesSelectedIndex = -1;
+
+    let userInputEntity = '';
+    entityFromInput(userInput);
+
+    onMount(() => {
+        dirty = linkedEntity.entity == null;
+        userInput = linkedEntity.entity != null ? entityToStr(linkedEntity) : '';
+    });
 
     function handleFocus() {
         focused = true;
@@ -30,47 +43,66 @@
     }
 
     async function handleInput(event: any) {
-        // const response = await fetch(`${SERVER_HOST}/api/journal/entities?q=${inputStr}`, {
-        //     method: 'GET'
-        // });
-        // if (response.ok) {
-        //     const data = await response.json();
-        //
-        //     console.log('response ok', data);
-        // }
+        if (userInput.length > 0 && userInputEntity != null) {
+            const inputEntity = entityFromInput(userInput);
+            matches = EntitiesService.getInstance().getSuggestions(userInputEntity);
+            if (matches.length > 0) {
+                matchesSelectedIndex = 0;
+            } else {
+                matchesSelectedIndex = -1;
+            }
+            matchesVisible = true;
+        } else {
+            matchesVisible = false;
+        }
     }
 
     async function handleKeyDown(e: KeyboardEvent) {
-        // if (e.key === 'Enter') {
-        //     e.preventDefault();
-        //     if (tagInput.length > 0) {
-        //         if (tagMatchesSelectedIndex === -1) {
-        //             const tag = await create(tagInput);
-        //             if (tag)
-        //                 await link(tag);
-        //         } else {
-        //             const tag = tagMatches[tagMatchesSelectedIndex];
-        //             await link(tag);
-        //         }
-        //         tagInput = '';
-        //         domInput.blur();
-        //     }
-        // } else if (e.key === 'ArrowDown') {
-        //     e.preventDefault();
-        //     tagMatchesSelectedIndex = Math.min(tagMatchesSelectedIndex + 1, tagMatches.length - 1);
-        // } else if (e.key === 'ArrowUp') {
-        //     e.preventDefault();
-        //     tagMatchesSelectedIndex = Math.max(tagMatchesSelectedIndex - 1, -1);
-        // } else if (e.key === 'Escape') {
-        //     domInput.blur();
-        // }
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            // if (tagInput.length > 0) {
+            //     if (matchesSelectedIndex === -1) {
+            //         const tag = await create(tagInput);
+            //         if (tag)
+            //             await link(tag);
+            //     } else {
+            //         const tag = tagMatches[matchesSelectedIndex];
+            //         await link(tag);
+            //     }
+            //     tagInput = '';
+            //     domInput.blur();
+            // }
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            matchesSelectedIndex = Math.min(matchesSelectedIndex + 1, matches.length - 1);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            matchesSelectedIndex = Math.max(matchesSelectedIndex - 1, -1);
+        } else if (e.key === 'Escape') {
+            domInput.blur();
+        }
     }
 
-    function entityToStr() {
+    function entityToStr(entityLnk: any) {
+        let str = '';
+        const lnkMetadata = JSON.parse(entityLnk.metadata);
 
+        if (lnkMetadata.prefix != null) {
+            str += lnkMetadata.prefix + ' ';
+        }
+
+        str += entityLnk.entity.extId;
+
+        if (lnkMetadata.suffix != null) {
+            str += ' ' + lnkMetadata.suffix;
+        }
+
+        return str;
     }
 
     function strToEntity(str: string) {
+        str = str.trim();
+
         if (/^[TMC]\d{3,8}/.test(str)) {
             // Egipto
 
@@ -81,20 +113,19 @@
 
         } else if (/^O \d+/.test(str)) {
 
-        } else if (/^REQ \d+/.test(str)) {
-
-        } else if (/^CRQ \d+/.test(str)) {
-
-        } else if (/^TAS \d+/.test(str)) {
-
+        } else {
+            return {entity: str};
         }
     }
 
     function entityFromInput(input: string) {
-        if (/\s/.test(input)) {
-
+        const splt = input.trim().split(/\s+/);
+        if (splt.length == 1) {
+            return splt[0];
+        } else if (splt.length >= 2) {
+            return splt[1];
         } else {
-            return input;
+            return null;
         }
     }
 
@@ -105,7 +136,6 @@
          role="textbox"
          contenteditable="true"
          tabindex="0"
-         class:hidden={!focused && userInput.length === 0}
          bind:this={domInput}
          bind:textContent={userInput}
          on:input={handleInput}
@@ -123,7 +153,7 @@
             {#each matches as tag, i}
                 <span class="x-tag-match"
                       class:selected={matchesSelectedIndex === i}
-                >{tag.name}</span>
+                >{tag.extId}</span>
             {/each}
         </div>
     {/if}
@@ -145,9 +175,26 @@
             outline: none;
             white-space: nowrap;
         }
+    }
 
-        &.hidden {
-            display: none;
+    .x-tag-matches {
+        position: absolute;
+        background: white;
+        border-radius: 2px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        z-index: 100;
+        min-width: calc(100% - 4px);
+
+        .x-tag-match {
+            display: block;
+            padding: 2px 4px;
+            cursor: pointer;
+            font-weight: 600;
+
+            &:hover, &.selected {
+                background: rgba(0, 0, 0, 0.04);
+                color: #000;
+            }
         }
     }
 </style>
