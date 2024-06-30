@@ -142,7 +142,7 @@ input, textarea {
     font-size: 0.75rem;
     background-color: #fff;
     border-radius: 2px;
-    overflow: hidden;
+    overflow: visible;
     display: grid;
     grid-template-columns: min-content min-content min-content 200fr 250fr 80fr 80fr 25px min-content min-content min-content;
     grid-gap: 0;

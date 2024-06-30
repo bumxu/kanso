@@ -6,14 +6,16 @@
     import JEntities from '$lib/journal_table/JEntities.svelte';
     import JPriorityCell from '$lib/journal_table/JPriorityCell.svelte';
     import JTagsCell from '$lib/journal_table/JTagsCell.svelte';
+    import type { EntrySchema } from '$lib/types/j4_types';
     import type { JEntry } from '$lib/types/JEntry';
     import { createEventDispatcher, onMount } from 'svelte';
     import tippy from 'tippy.js';
 
-    const dispatch = createEventDispatcher();
+    //const dispatch = createEventDispatcher();
 
     // Propiedad entry y valor por defecto
-    export let entry: JEntry = {
+    const { entry }
+        : { entry: EntrySchema } = $props();/*{
         createdAt: new Date().toISOString(),
         createdAtShowsTime: false,
         closedAtShowsTime: false,
@@ -21,31 +23,33 @@
         updates: [],
         entities: [],
         tags: []
-    };
+    };*/
 
     // Estados
     /** Indica que el registro es nuevo (valor automático si no tiene id asignado). */
-    $: isNew = entry.id === undefined;
+    let isNew = $derived(entry.id === undefined);
     /** Indica que el registro tiene cambios sin guardar. */
-    let isUnsaved = isNew;
+    let isUnsaved = $state(isNew);
     /** Indica que los cambios en el registro se están guardando. */
-    let isSaving = false;
+    let isSaving = $state(false);
 
-    // Mostraremos el id en hexadecimal
-    /** Id del registro en hexadecimal. */
-    $: hexId = entry.id != null ? Number(entry.id).toString(16) : null;
-
-    // DOM
-    let domTopicTextarea: HTMLTextAreaElement;
+    // // Mostraremos el id en hexadecimal
+    // /** Id del registro en hexadecimal. */
+    // $: hexId = entry.id != null ? Number(entry.id).toString(16) : null;
+    //
+    // // DOM
+    // let domTopicTextarea: HTMLTextAreaElement;
     let domIdIcon: HTMLElement;
 
     // Hooks
     onMount(() => {
-        // Cuando se cree el componente, si se trata de un nuevo registro,
-        // lo enviamos a basede datos de forma inmediata
-        if (isNew) {
-            save();
-        }
+        //     // Cuando se cree el componente, si se trata de un nuevo registro,
+        //     // lo enviamos a basede datos de forma inmediata
+        //     if (isNew) {
+        //         save();
+        //     }
+
+        console.debug('JEntry mounted for entry', entry.id);
 
         // Tippy
         tippy(domIdIcon);
@@ -59,64 +63,64 @@
         }
     }
 
-    /** Guarda el registro en la base de datos (solo la entidad principal). */
-    async function save() {
-        isSaving = true;
-        try {
-            let response;
-            if (isNew) {
-                response = await fetch(`${SERVER_HOST}/api/journal/entries`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(entry)
-                });
-            } else {
-                response = await fetch(`${SERVER_HOST}/api/journal/entries/${entry.id}`, {
-                    method: 'PUT',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(entry)
-                });
-            }
-            if (response.ok) {
-                const json = await response.json();
-                // Si el registro es nuevo, le asignamos el id que nos devuelve el servidor
-                if (isNew)
-                    entry.id = json.id;
-                isUnsaved = false;
-            }
-        } catch (e) {
-            console.error(e);
-        } finally {
-            isSaving = false;
-        }
-    }
-
-    /** Elimina el registro de la base de datos. */
-    async function remove() {
-        if (isNew) {
-            dispatch('delete', entry);
-            return;
-        }
-        try {
-            isSaving = true;
-            const response = await fetch(`${SERVER_HOST}/api/journal/entries/${entry.id}`, {
-                method: 'DELETE'
-            });
-            if (response.ok) {
-                console.debug(`Registro ${entry.id} eliminado con éxito`);
-                dispatch('delete', {
-                    entry: entry
-                });
-            } else {
-                const body = await response.text();
-                throw new Error(`(${response.status}) ${body}`);
-            }
-        } catch (e) {
-            console.error(`Error al eliminar el registro ${entry.id} -`, e);
-        } finally {
-            isSaving = false;
-        }
-    }
+    // /** Guarda el registro en la base de datos (solo la entidad principal). */
+    // async function save() {
+    //     isSaving = true;
+    //     try {
+    //         let response;
+    //         if (isNew) {
+    //             response = await fetch(`${SERVER_HOST}/api/journal/entries`, {
+    //                 method: 'POST',
+    //                 headers: { 'Content-Type': 'application/json' },
+    //                 body: JSON.stringify(entry)
+    //             });
+    //         } else {
+    //             response = await fetch(`${SERVER_HOST}/api/journal/entries/${entry.id}`, {
+    //                 method: 'PUT',
+    //                 headers: { 'Content-Type': 'application/json' },
+    //                 body: JSON.stringify(entry)
+    //             });
+    //         }
+    //         if (response.ok) {
+    //             const json = await response.json();
+    //             // Si el registro es nuevo, le asignamos el id que nos devuelve el servidor
+    //             if (isNew)
+    //                 entry.id = json.id;
+    //             isUnsaved = false;
+    //         }
+    //     } catch (e) {
+    //         console.error(e);
+    //     } finally {
+    //         isSaving = false;
+    //     }
+    // }
+    //
+    // /** Elimina el registro de la base de datos. */
+    // async function remove() {
+    //     if (isNew) {
+    //         dispatch('delete', entry);
+    //         return;
+    //     }
+    //     try {
+    //         isSaving = true;
+    //         const response = await fetch(`${SERVER_HOST}/api/journal/entries/${entry.id}`, {
+    //             method: 'DELETE'
+    //         });
+    //         if (response.ok) {
+    //             console.debug(`Registro ${entry.id} eliminado con éxito`);
+    //             dispatch('delete', {
+    //                 entry: entry
+    //             });
+    //         } else {
+    //             const body = await response.text();
+    //             throw new Error(`(${response.status}) ${body}`);
+    //         }
+    //     } catch (e) {
+    //         console.error(`Error al eliminar el registro ${entry.id} -`, e);
+    //     } finally {
+    //         isSaving = false;
+    //     }
+    // }
 
 </script>
 
@@ -135,31 +139,30 @@
                data-tippy-content={entry.id != null ? entry.id : '*'} />
         </span>
     </div>
-    <div>
-        <JDateTimeCell bind:isodate={entry.createdAt}
-                       bind:includeTime={entry.createdAtShowsTime}
+
+    <div>{entry.id}
+        <JDateTimeCell bind:isodate={entry.dateSince}
                        on:change={dirty} />
     </div>
     <div>
-        <JEntryTopicCell bind:value={entry.topic}
-                         on:change={dirty} />
+        <JEntryTopicCell bind:value={entry.subject} />
     </div>
     <div class="x-cell-updates">
-        <JEntryUpdates entry={entry.id} bind:updates={entry.updates} />
+<!--        <JEntryUpdates entry={entry.id} bind:updates={entry.updates} />-->
     </div>
     <div>
         <JEntities entryId={entry.id} entities={entry.entities} />
     </div>
     <div>
-        <JTagsCell entryId={entry.id} tags={entry.tags} />
+<!--        <JTagsCell entryId={entry.id} tags={entry.tags} />-->
     </div>
     <div>
-        <JPriorityCell bind:value={entry.priority} />
+<!--        <JPriorityCell bind:value={entry.priority} />-->
     </div>
     <div>
-        <JDateTimeCell bind:isodate={entry.closedAt}
-                       bind:includeTime={entry.closedAtShowsTime}
-                       on:change={dirty} />
+<!--        <JDateTimeCell bind:isodate={entry.closedAt}-->
+<!--                       bind:includeTime={entry.closedAtShowsTime}-->
+<!--                       on:change={dirty} />-->
     </div>
     <div>
         <select>
@@ -167,9 +170,9 @@
         </select>
     </div>
     <div>
-        <button class="btn btn-sm btn-ic" on:click={remove}>
-            <i class="fas fa-xmark fa-fw fa-sm" />
-        </button>
+<!--        <button class="btn btn-sm btn-ic" on:click={remove}>-->
+<!--            <i class="fas fa-xmark fa-fw fa-sm" />-->
+<!--        </button>-->
     </div>
 </div>
 

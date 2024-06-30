@@ -3,19 +3,30 @@
     import { createEventDispatcher, onMount } from 'svelte';
     import tippy from 'tippy.js';
 
-    const dispatch = createEventDispatcher();
+    let { value = $bindable() }:
+        { value: string } = $props();
 
-    export let value: string;
-    let hasFocus: boolean = false;
+    let inputValue: string = $state(value);
+    let hasFocus: boolean = $state(false);
 
     // DOM
     let domTopicTextarea: HTMLTextAreaElement;
 
     // Hooks
-    onMount(() => {
-        // Ajustamos el tamaño de los textarea
-        autosize(domTopicTextarea);
+    $effect(() => {
+        if (value !== inputValue) {
+            inputValue = value;
+            autosize(domTopicTextarea);
+        }
     });
+
+    function handleBlur() {
+        hasFocus = false;
+    }
+
+    function handleChange() {
+        value = inputValue;
+    }
 
 </script>
 
@@ -25,13 +36,13 @@
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div class="textarea-wrapper"
          class:hasFocus={hasFocus}
-         on:click={()=>{domTopicTextarea.focus()}}
+         onclick={()=>{domTopicTextarea.focus()}}
     >
         <textarea bind:this={domTopicTextarea}
-                  bind:value={value}
-                  on:input={() => dispatch('change')}
-                  on:focus={() => hasFocus = true}
-                  on:blur={() => hasFocus = false} />
+                  bind:value={inputValue}
+                  onfocus={() => hasFocus = true}
+                  onblur={handleBlur}
+                  onchange={handleChange} />
     </div>
 </div>
 

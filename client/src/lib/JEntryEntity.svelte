@@ -2,32 +2,35 @@
 
     import { SERVER_HOST } from '$lib/constants';
     import { EntitiesService } from '$lib/services/EntitiesService';
+    import { entitiesStore } from '$lib/stores/entities.store.j4.svelte';
+    import type { EntryEntitySchema } from '$lib/types/j4_types';
     import { onMount } from 'svelte';
 
-    export let entryId: number;
-    export let linkedEntity: any;
+    //export let entryId: number;
+    //export let linkedEntity: any;
+    const entitySnapshot: EntryEntitySchema | undefined = $state();
 
-    let isNew: boolean;
-    let dirty:boolean = false;
+    //let isNew: boolean;
+    //let dirty: boolean = false;
 
     let domInput: HTMLSpanElement;
-    let focused = false;
+    let focused = $state(false);
 
     // Texto introducido por el usuario
-    let userInput = '';
+    let userInput = $state('');
     // Entidades que coinciden con la entidad introducida por el usuario
-    let matches: any[] = [];
+    let matches: any[] = $state([]);
     // Si se muestra el dropdown con las entidades sugeridas
-    let matchesVisible = false;
+    let matchesVisible = $state(false);
     // Índice de la entidad seleccionada en el dropdown
-    let matchesSelectedIndex = -1;
+    let matchesSelectedIndex = $state(-1);
 
     let userInputEntity = '';
-    entityFromInput(userInput);
+    //entityFromInput(userInput);
 
     onMount(() => {
-        dirty = linkedEntity.entity == null;
-        userInput = linkedEntity.entity != null ? entityToStr(linkedEntity) : '';
+        // dirty = linkedEntity.entity == null;
+        // userInput = linkedEntity.entity != null ? entityToStr(linkedEntity) : '';
     });
 
     function handleFocus() {
@@ -44,8 +47,9 @@
 
     async function handleInput(event: any) {
         if (userInput.length > 0 && userInputEntity != null) {
+            console.debug('handleInput -> "' + userInput + '"');
             const inputEntity = entityFromInput(userInput);
-            matches = EntitiesService.getInstance().getSuggestions(userInputEntity);
+            matches = entitiesStore.getSuggestions(userInput);
             if (matches.length > 0) {
                 matchesSelectedIndex = 0;
             } else {
@@ -114,7 +118,7 @@
         } else if (/^O \d+/.test(str)) {
 
         } else {
-            return {entity: str};
+            return { entity: str };
         }
     }
 
@@ -132,17 +136,24 @@
 </script>
 
 <div>
-    <div class="x-input"
-         role="textbox"
-         contenteditable="true"
-         tabindex="0"
-         bind:this={domInput}
-         bind:textContent={userInput}
-         on:input={handleInput}
-         on:focus={handleFocus}
-         on:blur={handleBlur}
-         on:keydown={handleKeyDown}
-    />
+    <!--    <div class="x-input"-->
+    <!--         role="textbox"-->
+    <!--         contenteditable="true"-->
+    <!--         tabindex="0"-->
+    <!--         bind:this={domInput}-->
+    <!--         bind:textContent={userInput}-->
+    <!--         oninput={handleInput}-->
+    <!--         onfocus={handleFocus}-->
+    <!--         onblur={handleBlur}-->
+    <!--         onkeydown={handleKeyDown}-->
+    <!--    />-->
+
+    <input type="text"
+           bind:value={userInput}
+           oninput={handleInput}
+           onkeydown={handleKeyDown}
+           onblur={handleBlur}
+           onfocus={handleFocus} />
 
     {#if matchesVisible}
         <div class="x-tag-matches">
@@ -153,7 +164,7 @@
             {#each matches as tag, i}
                 <span class="x-tag-match"
                       class:selected={matchesSelectedIndex === i}
-                >{tag.extId}</span>
+                >{tag.key}</span>
             {/each}
         </div>
     {/if}
@@ -182,7 +193,7 @@
         background: white;
         border-radius: 2px;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-        z-index: 100;
+        z-index: 1000;
         min-width: calc(100% - 4px);
 
         .x-tag-match {

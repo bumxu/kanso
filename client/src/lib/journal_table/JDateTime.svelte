@@ -4,15 +4,16 @@
     import { createEventDispatcher } from 'svelte';
     import 'tippy.js/dist/tippy.css';
 
-    export let isodate: string | null = null;
-    export let includeTime = false;
-    export let placeholder: string | undefined = undefined;
-    export let required = false;
+    let {
+        /** El valor es una cadena de texto con formato yyyyMMdd o yyyyMMddHHmm. */
+        value ,
+        placeholder,
+        required,
+        onchange
+    }: { value: string | undefined, placeholder?: string | undefined, required?: boolean, onchange: any } = $props();
 
-    export let focused = false;
-
-    const dispatch = createEventDispatcher();
-
+    let inputValue: string = $state(/*value ||*/ '');
+    let focused = $state(false);
     let domInput: HTMLInputElement;
 
     export function focus() {
@@ -20,18 +21,28 @@
     }
 
     // Valores volátiles mientras se edita el campo
-    let valid = true;
-    let unsavedDatetime: DateTime | null = Utils.parseDateServer(isodate);
-    let valueStr = unsavedDatetime != null
-        ? unsavedDatetime.toFormat(includeTime ? 'dd/MM/yyyy HH:mm' : 'dd/MM/yyyy')
-        : '';
-    let unsavedIncludeTime = includeTime;
+    let valid = $state(true);
+    let unsavedValue = $state(value);
+    // let unsavedDatetime: DateTime | null = Utils.parseDateServer(value);
+    // let valueStr = unsavedDatetime != null
+    //     ? unsavedDatetime.toFormat(includeTime ? 'dd/MM/yyyy HH:mm' : 'dd/MM/yyyy')
+    //     : '';
+    //let unsavedIncludeTime = includeTime;
+
+    // $effect(() => {
+    //     if (isodate != null) {
+    //         unsavedDatetime = Utils.parseDateServer(isodate);
+    //         valueStr = unsavedDatetime != null
+    //             ? unsavedDatetime.toFormat(includeTime ? 'dd/MM/yyyy HH:mm' : 'dd/MM/yyyy')
+    //             : '';
+    //     }
+    // });
 
     // Disparar evento change cuando cambien los valores del componente
-    $: dispatch('change', {
-        isodate,
-        includeTime
-    });
+    // $: dispatch('change', {
+    //     isodate,
+    //     includeTime
+    // });
 
     function parseDate(raw: string) {
         console.debug('parseDate', raw);
@@ -72,7 +83,7 @@
                 throw new Error('Mes no válido: ' + month + '.');
             if (day > 31 || day < 1)
                 throw new Error('Día no válido: ' + day + '.');
-            return {year, month, day};
+            return { year, month, day };
         } else {
             throw new Error('Formato de fecha no válido: ' + raw + '.');
         }
@@ -108,21 +119,21 @@
                 throw new Error('Hora no válida: ' + hour + '.');
             if (minute > 59)
                 throw new Error('Minuto no válido: ' + minute + '.');
-            return {hour, minute};
+            return { hour, minute };
         } else {
             throw new Error('Formato de hora no válido: ' + raw + '.');
         }
     }
 
-    function parseUserDate(raw: string): { datetime: DateTime | null, includeTime: boolean } {
+    function parseUserDate(raw: string): string | null {
         raw = raw != null ? raw.trim() : '';
         console.debug('parseTime', raw);
 
         const now = DateTime.local();
         if (raw === '') {
             return required
-                ? {datetime: now, includeTime: includeTime}
-                : {datetime: null, includeTime: includeTime};
+                ? Utils.formatDateServer(now, true)
+                : null;
         }
 
         let date, time;
@@ -131,8 +142,8 @@
         if (rawSplt.length === 1) {
             if (/^\.{1,2}$/.test(raw)) {
                 // ., ..
-                date = {year: now.year, month: now.month, day: now.day};
-                time = raw.length === 1 ? null : {hour: now.hour, minute: now.minute};
+                date = { year: now.year, month: now.month, day: now.day };
+                time = raw.length === 1 ? null : { hour: now.hour, minute: now.minute };
             } else if (/^\d{12}$/.test(raw)) {
                 // yyyyMMddHHmm
                 date = parseDate(raw.substring(0, 8));
@@ -143,7 +154,7 @@
                 time = parseTime(raw.substring(6));
             } else if (/^\d{3,4}|\d{1,2}[.:](\d{1,2})|[.:](\d{1,2})?$/.test(raw)) {
                 // HHmm, Hmm, (H)H.(m)m, (H)H:(m)m, (H)H., (H)H:, .(m)m, :(m)m
-                date = {year: now.year, month: now.month, day: now.day};
+                date = { year: now.year, month: now.month, day: now.day };
                 time = parseTime(raw);
             } else /*if (/^\d{8}|\d{6}$/.test(raw))*/ {
                 // other (date only
@@ -157,7 +168,7 @@
             throw new Error('Formato de fecha no válido: ' + raw + '.');
         }
 
-        let ret: { datetime: DateTime | null, includeTime: boolean } = {datetime: null, includeTime: false};
+        let ret: { datetime: DateTime | null, includeTime: boolean } = { datetime: null, includeTime: false };
         ret.datetime = DateTime.fromObject({
             year: date!.year,
             month: date!.month,
@@ -182,19 +193,21 @@
         }
 
         console.debug('parseTime -> ' + Utils.formatDateServer(ret.datetime));
-        return ret;
+        return Utils.formatDateServer(ret.datetime, ret.includeTime);
     }
 
     function handleInput(evt: any) {
         try {
-            const parsed = parseUserDate(evt.target!.value);
-            unsavedDatetime = parsed.datetime;
-            unsavedIncludeTime = parsed.includeTime;
+            const parsed: string = parseUserDate(evt.target!.value);
+            //unsavedDatetime = parsed.datetime;
+            //unsavedIncludeTime = parsed.includeTime;
+            unsavedValue = parsed;
             valid = true;
-            console.debug('input -> valid: unsavedDatetime: ' + unsavedDatetime + ', unsavedIncludeTime: ' + unsavedIncludeTime);
+            //console.debug('input -> valid: unsavedDatetime: ' + unsavedDatetime + ', unsavedIncludeTime: ' + unsavedIncludeTime);
+            console.debug('input -> valid date: ' + parsed);
         } catch (e) {
             valid = false;
-            console.debug('input -> invalid date');
+            console.debug('input -> invalid date', e);
         }
     }
 
@@ -218,37 +231,43 @@
 
     function handleApply() {
         if (valid) {
-            isodate = Utils.formatDateServer(unsavedDatetime);
-            includeTime = unsavedIncludeTime;
-            valueStr = unsavedDatetime != null
-                ? unsavedDatetime.toFormat(includeTime ? 'dd/MM/yyyy HH:mm' : 'dd/MM/yyyy')
-                : '';
-            // if (valueStr != '') {
-            //     if (unsavedDatetime?.day === DateTime.now().minus({days: 1}).day) {
-            //         valueStr = 'ayer' + unsavedDatetime.toFormat(includeTime ? ' HH:mm' : '');
-            //     }
-            // }
+            value = unsavedValue;
+            inputValue = formatValue(value);
         }
     }
 
     function handleCancel() {
-        unsavedDatetime = Utils.parseDateServer(isodate);
-        unsavedIncludeTime = includeTime;
-        valueStr = unsavedDatetime != null
+        //unsavedDatetime = Utils.parseDateServer(value);
+        //unsavedIncludeTime = includeTime;
+        /*valueStr = unsavedDatetime != null
             ? unsavedDatetime.toFormat(includeTime ? 'dd/MM/yyyy HH:mm' : 'dd/MM/yyyy')
-            : '';
+            : '';*/
+        inputValue = formatValue(value);
+        unsavedValue = value;
         valid = true;
+    }
+
+    function formatValue(value: string) {
+        if (value == null || value === '') {
+            return '';
+        }
+        const dt = value.length === 8
+            ? DateTime.fromFormat(value, 'yyyyMMdd')
+            : DateTime.fromFormat(value, 'yyyyMMddHHmm');
+        return value.length === 8
+            ? dt.toFormat('dd/MM/yyyy')
+            : dt.toFormat('dd/MM/yyyy HH:mm');
     }
 </script>
 
 <input class="x-datetime-input date" class:valid={valid}
-       placeholder="{placeholder}"
-       bind:value="{valueStr}"
+       placeholder={placeholder}
+       bind:value={inputValue}
        bind:this={domInput}
-       on:focus={handleFocus}
-       on:input={handleInput}
-       on:blur={handleBlur}
-       on:keydown={handleKeydown} />
+       onfocus={handleFocus}
+       oninput={handleInput}
+       onblur={handleBlur}
+       onkeydown={handleKeydown} />
 
 <style lang="scss">
 </style>

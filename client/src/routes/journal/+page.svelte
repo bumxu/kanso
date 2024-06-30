@@ -1,6 +1,6 @@
 <script lang="ts">
     import { ztags } from '$lib/stores/tags_store';
-    import { zentities } from '$lib/stores/entities_store';
+    import { zentities } from '$lib/stores/j3_entities_store';
     import type { JEntry } from '$lib/types/JEntry';
     import { Utils } from '$lib/Utils';
     import { DateTime } from 'luxon';
@@ -78,7 +78,6 @@
     </div>
 
     <button on:click={add}>+</button>
-
 
 </div>
 

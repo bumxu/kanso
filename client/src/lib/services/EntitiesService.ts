@@ -1,4 +1,4 @@
-import { zentities as entityStore } from '$lib/stores/entities_store';
+import { zentities as entityStore } from '$lib/stores/j3_entities_store';
 import type { EntityType } from '$lib/types/EntityType';
 import { get } from 'svelte/store';
 

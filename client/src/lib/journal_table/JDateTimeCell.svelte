@@ -1,8 +1,8 @@
 <script lang="ts">
     import JDateTime from '$lib/journal_table/JDateTime.svelte';
 
-    export let isodate: string | null = null;
-    export let includeTime = false;
+    let { isodate = $bindable() }
+        : { isodate: string | undefined } = $props();
 
     let svtDateTime: JDateTime;
     let focused = false;
@@ -15,10 +15,8 @@
      on:click={()=>{svtDateTime.focus()}}
 >
     <JDateTime bind:this={svtDateTime}
-               bind:isodate="{isodate}"
-               bind:includeTime="{includeTime}"
-               bind:focused="{focused}"
-               on:change />
+               value="{isodate}"
+               onchange />
 </div>
 
 <style lang="scss">
