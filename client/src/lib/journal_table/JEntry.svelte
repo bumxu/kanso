@@ -1,29 +1,20 @@
 <script lang="ts">
-    import { SERVER_HOST } from '$lib/constants';
     import JEntryTopicCell from '$lib/JEntryTopicCell.svelte';
     import JEntryUpdates from '$lib/JEntryUpdates.svelte';
     import JDateTimeCell from '$lib/journal_table/JDateTimeCell.svelte';
     import JEntities from '$lib/journal_table/JEntities.svelte';
-    import JPriorityCell from '$lib/journal_table/JPriorityCell.svelte';
     import JTagsCell from '$lib/journal_table/JTagsCell.svelte';
     import type { EntrySchema } from '$lib/types/j4_types';
-    import type { JEntry } from '$lib/types/JEntry';
-    import { createEventDispatcher, onMount } from 'svelte';
+    import { onMount } from 'svelte';
     import tippy from 'tippy.js';
 
-    //const dispatch = createEventDispatcher();
+    type Props = {
+        entry: EntrySchema,
+        partitionId: string,
+        onpartitionchange: (entry: EntrySchema, currPartId: string) => void
+    };
 
-    // Propiedad entry y valor por defecto
-    const { entry }
-        : { entry: EntrySchema } = $props();/*{
-        createdAt: new Date().toISOString(),
-        createdAtShowsTime: false,
-        closedAtShowsTime: false,
-        topic: '',
-        updates: [],
-        entities: [],
-        tags: []
-    };*/
+    const { entry = $bindable(), partitionId, onpartitionchange }: Props = $props();
 
     // Estados
     /** Indica que el registro es nuevo (valor automático si no tiene id asignado). */
@@ -140,29 +131,34 @@
         </span>
     </div>
 
-    <div>{entry.id}
-        <JDateTimeCell bind:isodate={entry.dateSince}
-                       on:change={dirty} />
+    <div>
+        <JDateTimeCell bind:value={entry.dateSince}
+                       onchange={()=>{
+                           if (entry.dateSince.substring(0, 6) !== partitionId) {
+                               onpartitionchange(entry, partitionId);
+                           }
+                           }} />
     </div>
     <div>
         <JEntryTopicCell bind:value={entry.subject} />
     </div>
     <div class="x-cell-updates">
-<!--        <JEntryUpdates entry={entry.id} bind:updates={entry.updates} />-->
+        <JEntryUpdates entryId={entry.id} updates={entry.updates} />
     </div>
     <div>
         <JEntities entryId={entry.id} entities={entry.entities} />
     </div>
     <div>
-<!--        <JTagsCell entryId={entry.id} tags={entry.tags} />-->
+        <JTagsCell entryId={entry.id} tags={entry.tags} />
     </div>
     <div>
-<!--        <JPriorityCell bind:value={entry.priority} />-->
+        <!--        <JPriorityCell bind:value={entry.priority} />-->
     </div>
     <div>
-<!--        <JDateTimeCell bind:isodate={entry.closedAt}-->
-<!--                       bind:includeTime={entry.closedAtShowsTime}-->
-<!--                       on:change={dirty} />-->
+        <JDateTimeCell bind:value={entry.dateDue} />
+    </div>
+    <div>
+        <JDateTimeCell bind:value={entry.dateClosed} />
     </div>
     <div>
         <select>
@@ -170,9 +166,9 @@
         </select>
     </div>
     <div>
-<!--        <button class="btn btn-sm btn-ic" on:click={remove}>-->
-<!--            <i class="fas fa-xmark fa-fw fa-sm" />-->
-<!--        </button>-->
+        <!--        <button class="btn btn-sm btn-ic" on:click={remove}>-->
+        <!--            <i class="fas fa-xmark fa-fw fa-sm" />-->
+        <!--        </button>-->
     </div>
 </div>
 

@@ -1,22 +1,29 @@
 <script lang="ts">
     import JDateTime from '$lib/journal_table/JDateTime.svelte';
 
-    let { isodate = $bindable() }
-        : { isodate: string | undefined } = $props();
+    type Props = {
+        value: string,
+        onchange?: () => void
+    };
+
+    let { value = $bindable(), onchange }: Props = $props();
 
     let svtDateTime: JDateTime;
-    let focused = false;
+    let focused = $state(false);
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div class="x-cell-wrapper x-input-wrapper"
      class:focused={focused}
-     on:click={()=>{svtDateTime.focus()}}
+     onclick={()=>{svtDateTime.focus()}}
 >
     <JDateTime bind:this={svtDateTime}
-               value="{isodate}"
-               onchange />
+               bind:value={value}
+               onchange={() => { if (onchange) onchange(); }}
+               onfocus={() => focused = true}
+               onblur={() => focused = false}
+    />
 </div>
 
 <style lang="scss">

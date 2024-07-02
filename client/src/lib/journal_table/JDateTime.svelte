@@ -1,18 +1,27 @@
 <script lang="ts">
+    import type { Nil } from '$lib/types/j4_types.js';
     import { Utils } from '$lib/Utils.js';
     import { DateTime } from 'luxon';
-    import { createEventDispatcher } from 'svelte';
     import 'tippy.js/dist/tippy.css';
+
+    type Props = {
+        value: string | undefined,
+        placeholder?: string | undefined,
+        required?: boolean,
+        onchange: () => void,
+        onfocus: () => any,
+        onblur: () => any
+    };
 
     let {
         /** El valor es una cadena de texto con formato yyyyMMdd o yyyyMMddHHmm. */
-        value ,
+        value = $bindable(),
         placeholder,
         required,
-        onchange
-    }: { value: string | undefined, placeholder?: string | undefined, required?: boolean, onchange: any } = $props();
+        onchange, onfocus, onblur
+    }: Props = $props();
 
-    let inputValue: string = $state(/*value ||*/ '');
+    let inputValue: string = $state(formatValue(value) || '');
     let focused = $state(false);
     let domInput: HTMLInputElement;
 
@@ -213,7 +222,7 @@
 
     function handleKeydown(evt: KeyboardEvent) {
         if (evt.key === 'Enter') {
-            handleApply();
+            handleApply(true);
         } else if (evt.key === 'Escape') {
             handleCancel();
         }
@@ -221,18 +230,21 @@
 
     function handleFocus() {
         focused = true;
+        onfocus();
         domInput.select();
     }
 
     function handleBlur() {
         focused = false;
+        onblur();
         handleApply();
     }
 
-    function handleApply() {
-        if (valid) {
+    function handleApply(force: boolean = false) {
+        if (valid && (value !== unsavedValue || force)) {
             value = unsavedValue;
             inputValue = formatValue(value);
+            onchange();
         }
     }
 
@@ -247,7 +259,7 @@
         valid = true;
     }
 
-    function formatValue(value: string) {
+    function formatValue(value: Nil<string>) {
         if (value == null || value === '') {
             return '';
         }

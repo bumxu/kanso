@@ -1,6 +1,6 @@
 <script lang="ts">
     import autosize from 'autosize';
-    import { createEventDispatcher, onMount } from 'svelte';
+    import { onMount } from 'svelte';
     import tippy from 'tippy.js';
 
     let { value = $bindable() }:
@@ -12,13 +12,17 @@
     // DOM
     let domTopicTextarea: HTMLTextAreaElement;
 
-    // Hooks
-    $effect(() => {
-        if (value !== inputValue) {
-            inputValue = value;
-            autosize(domTopicTextarea);
-        }
+    onMount(() => {
+        console.log('v', value);
     });
+
+    // Hooks
+    // $effect(() => {
+    //     if (value !== inputValue) {
+    //         inputValu    e = value;
+    //         autosize(domTopicTextarea);
+    //     }
+    // });
 
     function handleBlur() {
         hasFocus = false;
@@ -32,8 +36,8 @@
 
 <div class="x-cell-wrapper">
 
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <!-- svelte-ignore a11y-no-static-element-interactions -->
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div class="textarea-wrapper"
          class:hasFocus={hasFocus}
          onclick={()=>{domTopicTextarea.focus()}}
@@ -42,7 +46,7 @@
                   bind:value={inputValue}
                   onfocus={() => hasFocus = true}
                   onblur={handleBlur}
-                  onchange={handleChange} />
+                  onchange={handleChange}></textarea>
     </div>
 </div>
 

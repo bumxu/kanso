@@ -9,14 +9,22 @@ export type WindowSchema = {
 
 export type EntrySchema = {
     id?: string;
-    dateCreated: string;
     dateSince: string;
     subject: string;
+    updates: EntreUpdateSchema[];
     entities?: EntryEntitySchema[];
-    tags: TagsSchema;
+    tags: EntryTagsSchema;
     dateClosed?: string;
     dateDue?: string;
     status: string;
+}
+
+export type EntryTagsSchema = string[];
+
+export type EntreUpdateSchema = {
+    id?: string;
+    date?: string;
+    body: string;
 }
 
 export type EntryEntitySchema = {
@@ -25,11 +33,24 @@ export type EntryEntitySchema = {
     metadata: any;
 }
 
+export type EntityTypeSchema = {
+    id: string;
+    name: string;
+    color?: string;
+    bgColor?: string;
+    lookupFn: string;
+    displayFn: string
+    /**
+     * A function that returns true if the given string syntax matches the entity type.
+     * (str: string) => any | null
+     */
+    parseFn: string;
+}
+
 export type EntitySchema = {
     id: string;
-    key: string;
     type: string;
-    detail?: string;
+    raw?: any;
     metadata?: any;
 }
 
@@ -37,6 +58,8 @@ export type EntitiesSchema = {
     [entityId: string]: EntitySchema
 }
 
-export type TagsSchema = string[];
+export type TagSchema = {
+    name: string;
+}
 
 export type Nil<T> = T | null | undefined;

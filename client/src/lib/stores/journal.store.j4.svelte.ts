@@ -1,6 +1,7 @@
 import { zentities as entityStore } from '$lib/stores/j3_entities_store';
 import type { EntityType } from '$lib/types/EntityType';
 import type { EntitiesSchema, EntitySchema, EntrySchema, WindowsSchema } from '$lib/types/j4_types';
+import { DateTime } from 'luxon';
 import { nanoid } from 'nanoid';
 import { get } from 'svelte/store';
 
@@ -10,19 +11,10 @@ class JournalStore {
     public constructor() {
         this.journal = {};
 
-        this.add({ dateCreated: '20240601', dateSince: '20240601', subject: 'Entry A', tags: [], dateClosed: '20240601', dateDue: '20240601', status: 'active' });
-        this.add({ dateCreated: '20240601', dateSince: '20240605', subject: 'Entry B', tags: [], dateClosed: '20240601', dateDue: '20240601', status: 'active' });
-        this.add({ dateCreated: '20240601', dateSince: '20240602', subject: 'Entry C', tags: [], dateClosed: '20240601', dateDue: '20240601', status: 'active' });
-        this.add({ dateCreated: '20240601', dateSince: '20240603', subject: 'Entry D', tags: [], dateClosed: '20240601', dateDue: '20240601', status: 'active' });
-        // this.add({ id: nanoid(10), key: 'M025123', type: 'egipto:module' });
-        // this.add({ id: nanoid(10), key: '.Victor', type: 'person' });
-        // this.add({ id: nanoid(10), key: 'CRQ25012', type: 'itsm:crq' });
-        // this.add({ id: nanoid(10), key: 'R251220', type: 'remedy:incident' });
-        // this.add({ id: nanoid(10), key: 'PR 251220', type: 'remedy:request' });
-        // this.add({ id: nanoid(10), key: 'P 251220', type: 'itsm:request' });
-        // this.add({ id: nanoid(10), key: 'M025124', type: 'egipto:module' });
-        // this.add({ id: nanoid(10), key: 'M025125', type: 'egipto:module' });
-        // this.add({ id: nanoid(10), key: 'M025126', type: 'egipto:module' });
+        // this.add({ dateSince: '20240601', subject: 'Entry A', updates: [{ id: '45fdrt432', date: '20240630', body: 'Revisado. Sin novedades.' }], tags: [], dateClosed: '20240601', dateDue: '20240601', status: 'active' });
+        // this.add({ dateSince: '20240605', subject: 'Entry B', updates: [], tags: [], dateClosed: '20240601', dateDue: '20240601', status: 'active' });
+        // this.add({ dateSince: '20240602', subject: 'Entry C', updates: [], tags: [], dateClosed: '20240601', dateDue: '20240601', status: 'active' });
+        // this.add({ dateSince: '20240603', subject: 'Entry D', updates: [], tags: [], dateClosed: '20240601', dateDue: '20240601', status: 'active' });
     }
 
     // public findById(entityId: string): EntitySchema | null {
@@ -43,7 +35,6 @@ class JournalStore {
         entry.id = id;
         this.journal[windowId].entries.push(entry);
         this.journal[windowId].entries.sort((a, b) => a.dateSince.localeCompare(b.dateSince));
-        this.journal[windowId].entries = this.journal[windowId].entries;
         return $state.snapshot(entry);
     }
 

@@ -1,3 +1,4 @@
+import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
 import { zentities as entityStore } from '$lib/stores/j3_entities_store';
 import type { EntityType } from '$lib/types/EntityType';
 import type { EntitiesSchema, EntitySchema } from '$lib/types/j4_types';
@@ -8,15 +9,6 @@ class EntitiesStore {
     public entities: EntitiesSchema = $state({});
 
     public constructor() {
-        this.add({ id: nanoid(10), key: 'M025123', type: 'egipto:module' });
-        this.add({ id: nanoid(10), key: '.Victor', type: 'person' });
-        this.add({ id: nanoid(10), key: 'CRQ25012', type: 'itsm:crq' });
-        this.add({ id: nanoid(10), key: 'R251220', type: 'remedy:incident' });
-        this.add({ id: nanoid(10), key: 'PR 251220', type: 'remedy:request' });
-        this.add({ id: nanoid(10), key: 'P 251220', type: 'itsm:request' });
-        this.add({ id: nanoid(10), key: 'M025124', type: 'egipto:module' });
-        this.add({ id: nanoid(10), key: 'M025125', type: 'egipto:module' });
-        this.add({ id: nanoid(10), key: 'M025126', type: 'egipto:module' });
     }
 
     public findById(entityId: string): EntitySchema | null {
@@ -26,8 +18,20 @@ class EntitiesStore {
     public getSuggestions(input: string): EntitySchema[] {
         const matches: EntitySchema[] = [];
         for (let entity of Object.values(this.entities)) {
-            if (entity.key.toLowerCase().indexOf(input.toLowerCase()) > -1) {
-                matches.push($state.snapshot(entity));
+            // if (entity.key.toLowerCase().indexOf(input.toLowerCase()) > -1) {
+            //     matches.push($state.snapshot(entity));
+            // }
+            const type = entityTypesStore.entityTypes[entity.type];
+            if (type != null) {
+                const parseFn = new Function('return ' + type.lookupFn)();
+                //console.log('running ', parseFn, ' over ', input);
+                const parsed = parseFn(input, entity.raw);
+                if (parsed != null) {
+                    matches.push($state.snapshot(entity));
+                    console.log('found -> ', parsed);
+                } else {
+                   // console.log('not parsed');
+                }
             }
         }
         return matches;
@@ -45,6 +49,15 @@ class EntitiesStore {
 
     public load(data: EntitiesSchema): void {
         this.entities = data;
+        // this.add({ id: '8uO4Q2aE-J', type: 'eg:module', raw: { moduleId: '025123' } });
+        // this.add({ id: nanoid(10), type: 'person', raw: { username: 'vaa', fullname: 'Victor' } });
+        // this.add({ id: nanoid(10), type: 'itsm:crq', raw: { crqId: '25012' } });
+        // this.add({ id: nanoid(10), type: 'remedy:incident', raw: { incidentId: '251220' } });
+        // this.add({ id: nanoid(10), type: 'remedy:request', raw: { requestId: '251220' } });
+        // this.add({ id: nanoid(10), type: 'itsm:request', raw: { requestId: '251220' } });
+        // this.add({ id: nanoid(10), type: 'eg:task', raw: { taskId: '025124' } });
+        // this.add({ id: nanoid(10), type: 'eg:task', raw: { taskId: '025125' } });
+        // this.add({ id: nanoid(10), type: 'eg:module', raw: { moduleId: '025126' } });
     }
 
     public clear(): void {

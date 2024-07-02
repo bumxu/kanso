@@ -5,7 +5,7 @@
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:C:\Users\admin\Desktop\workspace\app-bcc-lapse\server\data\database.sqlite</jdbc-url>
+      <jdbc-url>jdbc:sqlite:C:\Users\admin\Desktop\workspace\j3-server\src\main\resources\data\journal.sqlite</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
     <data-source source="LOCAL" name="database [2]" uuid="4e08fa39-248e-4942-aed6-a6fc84337ba0">

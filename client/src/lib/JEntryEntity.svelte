@@ -3,8 +3,11 @@
     import { SERVER_HOST } from '$lib/constants';
     import { EntitiesService } from '$lib/services/EntitiesService';
     import { entitiesStore } from '$lib/stores/entities.store.j4.svelte';
-    import type { EntryEntitySchema } from '$lib/types/j4_types';
+    import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
+    import type { EntitySchema, EntryEntitySchema, EntrySchema } from '$lib/types/j4_types';
     import { onMount } from 'svelte';
+
+    let { linkedEntity }: { linkedEntity: EntryEntitySchema } = $props();
 
     //export let entryId: number;
     //export let linkedEntity: any;
@@ -12,6 +15,33 @@
 
     //let isNew: boolean;
     //let dirty: boolean = false;
+
+    let entity: EntitySchema | null = $derived.by(() => {
+        if (linkedEntity == null) {
+            console.debug('entity -> linkedEntity is null');
+            return null;
+        }
+        console.debug('linkedEntity', linkedEntity);
+        console.debug('entity ->', entitiesStore.entities[linkedEntity.entityId]);
+        return entitiesStore.entities[linkedEntity.entityId];
+    });
+    let entityType = $derived.by(() => {
+        if (entity == null) {
+            console.debug('entityType -> entity is null');
+            return null;
+        }
+        console.debug('entityType ->', entityTypesStore.entityTypes[entity.type]);
+        return entityTypesStore.entityTypes[entity.type];
+    });
+    let entityDisplay = $derived.by(() => {
+        if (entity == null || entityType == null) {
+            console.debug('entityDisplay -> entity or entityType is null');
+            return '';
+        }
+        console.debug('entityDisplay ->', entityType.displayFn);
+        const displayFn = new Function('return ' + entityType.displayFn)();
+        return displayFn(entity.raw);
+    });
 
     let domInput: HTMLSpanElement;
     let focused = $state(false);
@@ -32,6 +62,10 @@
         // dirty = linkedEntity.entity == null;
         // userInput = linkedEntity.entity != null ? entityToStr(linkedEntity) : '';
     });
+
+    export function focus() {
+        domInput.focus();
+    }
 
     function handleFocus() {
         focused = true;
@@ -133,6 +167,25 @@
         }
     }
 
+    function aver(entity: EntitySchema): any {
+        if (entity != null) {
+            const type = entityTypesStore.entityTypes[entity.type];
+            const displayFn = new Function('return ' + type.displayFn)();
+            return displayFn(entity.raw);
+        } else {
+            return '#' + entity.id + '(?)';
+        }
+    }
+
+    function bgcolor(entity: EntitySchema): any {
+        if (entity != null) {
+            const type = entityTypesStore.entityTypes[entity.type];
+            return type.bgColor;
+        } else {
+            return 'inherit';
+        }
+    }
+
 </script>
 
 <div>
@@ -154,6 +207,7 @@
            onkeydown={handleKeyDown}
            onblur={handleBlur}
            onfocus={handleFocus} />
+    :{entityDisplay ? entityDisplay : '?'}
 
     {#if matchesVisible}
         <div class="x-tag-matches">
@@ -161,10 +215,10 @@
                   class:selected={matchesSelectedIndex === -1}>
                 {userInput} (nueva)
             </span>
-            {#each matches as tag, i}
-                <span class="x-tag-match"
+            {#each matches as entity, i}
+                <span class="x-tag-match" style:background={bgcolor(entity)}
                       class:selected={matchesSelectedIndex === i}
-                >{tag.key}</span>
+                >{aver(entity)}</span>
             {/each}
         </div>
     {/if}

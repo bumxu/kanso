@@ -1,26 +1,33 @@
 <script lang="ts">
     import JEntryUpdate from '$lib/JEntryUpdate.svelte';
+    import type { EntreUpdateSchema, EntrySchema } from '$lib/types/j4_types';
+    import { nanoid } from 'nanoid';
     import { onMount } from 'svelte';
 
-    export let entry: number | undefined;
-    export let updates: [] = [];
+    let {
+        entryId,
+        updates
+    }: {
+        entryId: string,
+        updates: EntreUpdateSchema[]
+    } = $props();
 
     onMount(async () => {
 
     });
 
     function add() {
-        updates = [...updates, {body: ''}];
+        updates = [...updates, { id: nanoid(10), body: '' }];
     }
 
-    function del(evt: CustomEvent) {
-        updates = updates.filter(e => e !== evt.detail.item);
+    function del(id: string) {
+        updates = updates.filter(e => e.id !== id);
     }
 </script>
 
-{#each updates as update}
-    <JEntryUpdate bind:entry={entry} bind:value="{update}" on:delete={del} />
+{#each updates as update (update.id)}
+    <JEntryUpdate value={update} ondelete={del} />
 {/each}
-<button class="x-add" on:click={add}>
-    <i class="fas fa-caret-down fa-sm" />
+<button class="x-add" onclick={add}>
+    <i class="fas fa-caret-down fa-sm"></i>
 </button>

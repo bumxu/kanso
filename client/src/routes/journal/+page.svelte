@@ -58,6 +58,7 @@
 <div class="x-container">
     <h1>J3</h1>
 
+
     <div class="x-table x-journal">
         <div class="x-row x-header">
             <div></div>
@@ -79,8 +80,3 @@
 
     <button on:click={add}>+</button>
 
-</div>
-
-<style lang="scss">
-
-</style>

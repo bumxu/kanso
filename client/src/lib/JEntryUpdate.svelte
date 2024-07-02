@@ -1,20 +1,23 @@
 <script lang="ts">
     import { SERVER_HOST } from '$lib/constants';
     import JEntryDateTime from '$lib/journal_table/JDateTime.svelte';
+    import type { EntreUpdateSchema } from '$lib/types/j4_types';
     import autosize from 'autosize';
-    import { createEventDispatcher, onMount, afterUpdate } from 'svelte';
+    import { onMount } from 'svelte';
 
-    const dispatch = createEventDispatcher();
+    //const dispatch = createEventDispatcher();
 
-    export let entry: number | null = null;
-    export let value: { id?: number, date: string | null, body: string } = {
-        date: null,
-        body: ''
-    };
+    //export let entry: number | null = null;
+    // export let value: { id?: number, date: string | null, body: string } = {
+    //     date: null,
+    //     body: ''
+    // };
+    let { value, ondelete }:
+        { value: EntreUpdateSchema, ondelete: (id: string) => any } = $props();
 
     // Estados
     /** Indica que el registro es nuevo (valor automático si no tiene id asignado). */
-    let isNew = value.id === undefined;
+    let isNew = false;//value.id === undefined;
     /** Indica que el registro tiene cambios sin guardar. */
     let isUnsaved = isNew;
     /** Indica que los cambios en el registro se están guardando. */
@@ -25,92 +28,22 @@
 
     // Hooks
     onMount(async () => {
-        // Cuando se cree el componente, si se trata de un nuevo registro,
-        // lo enviamos a basede datos de forma inmediata
-        if (isNew) {
-            save();
-        }
-
         autosize(domBodyTextarea);
     });
 
-    /** Marca el registro como modificado y lanza el proceso de guardado diferido. */
-    async function dirty() {
-        console.log('dirty');
-        if (!isUnsaved) {
-            isUnsaved = true;
-            setTimeout(() => save(), 800);
-        }
-    }
-
-    /** Guarda el registro en la base de datos (solo la entidad principal). */
-    async function save() {
-        isSaving = true;
-        try {
-            let response;
-            if (isNew) {
-                response = await fetch(`${SERVER_HOST}/api/journal/entries/${entry}/updates`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(value)
-                });
-            } else {
-                response = await fetch(`${SERVER_HOST}/api/journal/entries/${entry}/updates/${value.id}`, {
-                    method: 'PUT',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(value)
-                });
-            }
-            if (response.ok) {
-                const json = await response.json();
-                // Si el registro es nuevo, le asignamos el id que nos devuelve el servidor
-                if (isNew) {
-                    value.id = json.id;
-                    isNew = false;
-                }
-                isUnsaved = false;
-            }
-        } catch (e) {
-            console.error(e);
-        } finally {
-            isSaving = false;
-        }
-    }
-
     /** Elimina el registro de la base de datos. */
     async function remove() {
-        if (isNew) {
-            dispatch('delete', entry);
-            return;
-        }
-        try {
-            isSaving = true;
-            const response = await fetch(`${SERVER_HOST}/api/journal/entries/${entry}/updates/${value.id}`, {
-                method: 'DELETE'
-            });
-            if (response.ok) {
-                dispatch('delete', {
-                    item: value
-                });
-            }
-        } catch (e) {
-            console.error(e);
-        } finally {
-            isSaving = false;
-        }
+        ondelete(value.id);
     }
 </script>
 
 <div class="x-entry-update">
-    <JEntryDateTime bind:isodate={value.date}
-                    includeTime={true}
-                    on:change={dirty}
+    <JEntryDateTime bind:value={value.date}
                     placeholder="Fecha" />
     <textarea rows="1"
               bind:this={domBodyTextarea}
-              bind:value={value.body}
-              on:input={dirty} />
-    <button on:click={remove} title="Eliminar"></button>
+              bind:value={value.body}></textarea>
+    <button onclick={remove} title="Eliminar"><i class="fas fa-circle-minus"></i></button>
 </div>
 
 <style lang="scss" global>

@@ -4,7 +4,7 @@
     import { tick } from 'svelte';
     import { ztags } from '$lib/stores/tags_store';
 
-    export let entryId: number;
+    export let entryId: string;
     export let tags: JTagType[] = [];
 
     let domInput: HTMLSpanElement;
