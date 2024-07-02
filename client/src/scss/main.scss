@@ -15,7 +15,7 @@ body {
     max-width: 2500px;
 }
 
-input, textarea {
+.x-table.x-journal input, .x-table.x-journal textarea {
     font-family: 'Noto Sans', sans-serif;
     font-size: 0.625rem;
     resize: none;
@@ -144,7 +144,7 @@ input, textarea {
     border-radius: 2px;
     overflow: visible;
     display: grid;
-    grid-template-columns: min-content min-content min-content 200fr 250fr 80fr 80fr 25px min-content min-content min-content min-content;
+    grid-template-columns: min-content min-content min-content 200fr 250fr 80fr 80fr 25px min-content min-content;
     grid-gap: 0;
 
     & > .x-row {

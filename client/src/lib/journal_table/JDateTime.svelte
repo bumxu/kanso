@@ -8,9 +8,9 @@
         value: string | undefined,
         placeholder?: string | undefined,
         required?: boolean,
-        onchange: () => void,
-        onfocus: () => any,
-        onblur: () => any
+        onchange?: () => void,
+        onfocus?: () => any,
+        onblur?: () => any
     };
 
     let {
@@ -230,13 +230,13 @@
 
     function handleFocus() {
         focused = true;
-        onfocus();
+        if (onfocus) onfocus();
         domInput.select();
     }
 
     function handleBlur() {
         focused = false;
-        onblur();
+        if (onblur) onblur();
         handleApply();
     }
 
@@ -244,7 +244,7 @@
         if (valid && (value !== unsavedValue || force)) {
             value = unsavedValue;
             inputValue = formatValue(value);
-            onchange();
+            if (onchange) onchange();
         }
     }
 

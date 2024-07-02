@@ -12,7 +12,7 @@
     //     date: null,
     //     body: ''
     // };
-    let { value, ondelete }:
+    let { value=$bindable(), ondelete }:
         { value: EntreUpdateSchema, ondelete: (id: string) => any } = $props();
 
     // Estados
@@ -42,7 +42,8 @@
                     placeholder="Fecha" />
     <textarea rows="1"
               bind:this={domBodyTextarea}
-              bind:value={value.body}></textarea>
+              bind:value={value.body}
+              spellcheck="false"></textarea>
     <button onclick={remove} title="Eliminar"><i class="fas fa-circle-minus"></i></button>
 </div>
 

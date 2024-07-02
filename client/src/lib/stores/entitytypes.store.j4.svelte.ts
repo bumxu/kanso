@@ -1,8 +1,8 @@
-import type { EntitySchema, EntityTypeSchema } from '$lib/types/j4_types';
+import type { EntitySchema, EntityTypeSchema, EntityTypesSchema } from '$lib/types/j4_types';
 import { nanoid } from 'nanoid';
 
 class EntityTypesStoreJ4Svelte {
-    public entityTypes: { [id: string]: EntityTypeSchema } = $state({});
+    public entityTypes: EntityTypesSchema = $state({});
 
     public constructor() {
         this.add({

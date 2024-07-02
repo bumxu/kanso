@@ -12,6 +12,7 @@
     import { onMount, tick } from 'svelte';
     import JournalEntry from '$lib/journal_table/JEntry.svelte';
     import { SERVER_HOST } from '$lib/constants';
+    import SideBar from './component/SideBar.svelte';
     //import Row from './Row.svelte';
 
     //let entries: JEntry[] = [];
@@ -90,10 +91,10 @@
 <div class="x-container">
 
     <div class="x-main">
-        <h1>J4</h1>
+        <h1>Chaos Manager <!--&#128169--></h1>
 
         <button onclick={add}>Add sample</button>
-        <button onclick={()=>journalStore.serialize()}>Serialize</button>
+        <button onclick={() => journalStore.serialize()}>Serialize</button>
         <button onclick={() => storeManager.loadToLS()}>Load (LS)</button>
         <button onclick={() => storeManager.saveToLS()}>Save (LS)</button>
         <br><br>
@@ -102,14 +103,12 @@
             <div class="x-row x-header">
                 <div></div>
                 <div></div>
-                <div>Desde</div>
+                <div>Fechas</div>
                 <div>Asunto</div>
                 <div>Actualizaciones</div>
                 <div>Entidades</div>
                 <div>Tags</div>
                 <div>P</div>
-                <div>F. Objetivo</div>
-                <div>F. Cierre</div>
                 <div>Estado</div>
                 <div></div>
             </div>
@@ -122,7 +121,9 @@
     </div>
 
     <div class="x-sidebar">
-        a
+        
+        <SideBar />
+
     </div>
 
 </div>
@@ -139,7 +140,7 @@
     }
 
     .x-sidebar {
-        flex: 0 0 200px;
+        flex: 0 0 300px;
         height: 100vh;
         background-color: #f0f0f0;
     }

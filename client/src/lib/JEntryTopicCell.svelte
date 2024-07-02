@@ -46,7 +46,8 @@
                   bind:value={inputValue}
                   onfocus={() => hasFocus = true}
                   onblur={handleBlur}
-                  onchange={handleChange}></textarea>
+                  onchange={handleChange}
+                  spellcheck="false"></textarea>
     </div>
 </div>
 

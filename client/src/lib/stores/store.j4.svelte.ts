@@ -37,7 +37,9 @@ class J4Store {
         localStorage.setItem('j4journal', journal);
     }
 
-
+    public saveToDownload() {
+        
+    }
 }
 
 export const storeManager = new J4Store();

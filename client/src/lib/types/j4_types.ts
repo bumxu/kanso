@@ -47,6 +47,10 @@ export type EntityTypeSchema = {
     parseFn: string;
 }
 
+export type EntityTypesSchema = {
+    [id: string]: EntityTypeSchema;
+}
+
 export type EntitySchema = {
     id: string;
     type: string;
@@ -61,5 +65,12 @@ export type EntitiesSchema = {
 export type TagSchema = {
     name: string;
 }
+
+export type StatusSchema = {
+    id: string,
+    name: string
+}
+
+export type StatusesSchema = StatusSchema[];
 
 export type Nil<T> = T | null | undefined;

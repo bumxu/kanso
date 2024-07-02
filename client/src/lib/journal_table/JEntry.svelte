@@ -4,9 +4,11 @@
     import JDateTimeCell from '$lib/journal_table/JDateTimeCell.svelte';
     import JEntities from '$lib/journal_table/JEntities.svelte';
     import JTagsCell from '$lib/journal_table/JTagsCell.svelte';
+  import { statusesStore } from '$lib/stores/statuses.store.j4.svelte';
     import type { EntrySchema } from '$lib/types/j4_types';
     import { onMount } from 'svelte';
     import tippy from 'tippy.js';
+  import JDateTime from './JDateTime.svelte';
 
     type Props = {
         entry: EntrySchema,
@@ -132,18 +134,21 @@
     </div>
 
     <div>
-        <JDateTimeCell bind:value={entry.dateSince}
+        <JDateTime bind:value={entry.dateSince}
                        onchange={()=>{
                            if (entry.dateSince.substring(0, 6) !== partitionId) {
                                onpartitionchange(entry, partitionId);
                            }
                            }} />
+        <JDateTime bind:value={entry.dateDue} />
+        <JDateTime bind:value={entry.dateClosed} />
+
     </div>
     <div>
         <JEntryTopicCell bind:value={entry.subject} />
     </div>
     <div class="x-cell-updates">
-        <JEntryUpdates entryId={entry.id} updates={entry.updates} />
+        <JEntryUpdates entryId={entry.id} bind:updates={entry.updates} />
     </div>
     <div>
         <JEntities entryId={entry.id} entities={entry.entities} />
@@ -155,14 +160,10 @@
         <!--        <JPriorityCell bind:value={entry.priority} />-->
     </div>
     <div>
-        <JDateTimeCell bind:value={entry.dateDue} />
-    </div>
-    <div>
-        <JDateTimeCell bind:value={entry.dateClosed} />
-    </div>
-    <div>
-        <select>
-
+        <select bind:value={entry.status}>
+            {#each statusesStore.statuses as status, i (status.id) }
+                <option value={status.id}>{status.name}</option>
+            {/each}
         </select>
     </div>
     <div>

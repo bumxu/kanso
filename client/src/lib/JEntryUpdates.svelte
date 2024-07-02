@@ -6,7 +6,7 @@
 
     let {
         entryId,
-        updates
+        updates = $bindable()
     }: {
         entryId: string,
         updates: EntreUpdateSchema[]
@@ -17,7 +17,7 @@
     });
 
     function add() {
-        updates = [...updates, { id: nanoid(10), body: '' }];
+        updates .push( { id: nanoid(10), body: '' });
     }
 
     function del(id: string) {
@@ -25,8 +25,8 @@
     }
 </script>
 
-{#each updates as update (update.id)}
-    <JEntryUpdate value={update} ondelete={del} />
+{#each updates as update, i (update.id)}
+    <JEntryUpdate bind:value={updates[i]} ondelete={del} />
 {/each}
 <button class="x-add" onclick={add}>
     <i class="fas fa-caret-down fa-sm"></i>
