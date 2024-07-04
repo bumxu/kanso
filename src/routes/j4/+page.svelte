@@ -5,6 +5,7 @@
     import type { EntrySchema } from '$lib/types/j4_types';
     import { onMount } from 'svelte';
     import SideBar from './component/SideBar.svelte';
+  import { DateTime } from 'luxon';
     //import Row from './Row.svelte';
 
     //let entries: JEntry[] = [];
@@ -45,8 +46,8 @@
         //         tags: []
         //     }];
         journalStore.add({
-            dateSince: '20240602',
-            subject: 'Nuevo asunto ' + Math.random(),
+            dateSince: DateTime.local().toFormat('yyyyMMdd'),
+            subject: 'Nuevo ' + Math.random(),
             updates: [],
             tags: [],
             status: 'active'
@@ -85,12 +86,14 @@
     <div class="x-main">
         <h1>Chaos Manager <!--&#128169--></h1>
 
-        <button onclick={add}>Add sample</button>
-        <button onclick={() => journalStore.serialize()}>Serialize</button>
-        <button onclick={() => storeManager.loadToLS()}>Load (LS)</button>
-        <button onclick={() => storeManager.saveToLS()}>Save (LS)</button>
-        <button onclick={() => storeManager.saveToDownload()}>Save (Download)</button>
-        <button onclick={() => storeManager.loadFromFile('')}>Pick local file ({storeManager.isFileHandled ? '✔️' : ''})</button>
+        <div style="position: fixed; background: grey; z-index: 100; padding: 10px">
+            <button onclick={add}>Add sample</button>
+            <button onclick={() => journalStore.serialize()}>Serialize</button>
+            <button onclick={() => storeManager.loadToLS()}>Load (LS)</button>
+            <button onclick={() => storeManager.saveToLS()}>Save (LS)</button>
+            <button onclick={() => storeManager.saveToDownload()}>Save (Download)</button>
+            <button onclick={() => storeManager.loadFromFile('')}>Pick local file ({storeManager.isFileHandled ? '✔️' : ''})</button>
+        </div>
         <br><br>
 
         <div class="x-table x-journal">
@@ -111,6 +114,8 @@
                 />
             {/each}
         </div>
+
+        <br><br>
     </div>
 
     <div class="x-sidebar">
@@ -130,6 +135,8 @@
 
     .x-main {
         flex: 1 0;
+        height: 100vh;
+        overflow: auto;
     }
 
     .x-sidebar {

@@ -128,13 +128,14 @@
     </div>
 
     <div>
-        <i class="fad fa-sm fa-fw fa-play"></i>
-        <JDateTime bind:value={entry.dateSince}
+        <div style="text-wrap: nowrap;"><i class="fad fa-sm fa-fw fa-play"></i>
+            <JDateTime bind:value={entry.dateSince}
                    onchange={()=>{
                            if (entry.dateSince.substring(0, 6) !== partitionId) {
                                onpartitionchange(entry, partitionId);
                            }
                            }} />
+        </div>
         <i class="fad fa-sm fa-fw fa-flag-checkered"></i>
         <JDateTime bind:value={entry.dateDue} />
         <i class="fad fa-sm fa-fw fa-check"></i>
@@ -148,7 +149,7 @@
         <JEntryUpdates entryId={entry.id} bind:updates={entry.updates} />
     </div>
     <div>
-        <JEntities entryId={entry.id} entities={entry.entities} />
+        <JEntities entryId={entry.id} bind:entities={entry.entities} />
     </div>
     <div>
         <JTagsCell entryId={entry.id} bind:tagsIds={entry.tags} />

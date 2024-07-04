@@ -1,36 +1,58 @@
 <script lang="ts">
     import JEntryEntity from '$lib/JEntryEntity.svelte';
     import JEntryUpdate from '$lib/JEntryUpdate.svelte';
+  import type { EntitiesSchema, EntryEntitySchema } from '$lib/types/j4_types';
     import { onMount } from 'svelte';
 
-    export let entryId: number | undefined;
-    export let entities: [] = [];
+    let { entryId, entities = $bindable() }: {entryId:number,entities:EntryEntitySchema[]} = $props();
 
     let domInput: HTMLSpanElement;
-    let focused = false;
+    let focused = $state(false);
 
-
-    onMount(async () => {
-
-    });
+    let entitiesRaw = $state(JSON.stringify(entities));
 
     function add() {
-        entities = [...entities, {entity: null}];
+        //entities.push({entity: null});
+    }
+
+    function applyRaw() {
+        try {
+            console.log("parseando -> ", entitiesRaw);
+            entities = JSON.parse(entitiesRaw);
+        } catch(e) {
+            alert('Nope');
+            console.error(e);
+        }
     }
 
 </script>
 
 <div class="x-cell-wrapper">
+    <div>
+        <textarea bind:value={entitiesRaw} style="border:1px solid red" onchange={applyRaw}></textarea>
+    </div>
     <div class="x-entities">
         {#each entities as entity}
             <!--    &lt;!&ndash;    <div>{entity.entity.extId}</div>&ndash;&gt;-->
             <JEntryEntity entryId={entryId} linkedEntity={entity} />
         {/each}
-
-
     </div>
-    <button on:click={add}>
-        <i class="fas fa-caret-down fa-sm" />
+    <span class="x-entity x-new"
+        role="textbox"
+        contenteditable="true"
+        tabindex="0"
+        bind:this={domInput}
+    ></span>
+    <!--
+        class:hidden={!focused && tagInput.length === 0}
+    bind:textContent={tagInput}
+    oninput={handleInput}
+    onfocus={handleFocus}
+    onblur={handleBlur}
+    onkeydown={handleKeyDown}
+-->
+    <button onclick={add}>
+        <i class="fas fa-caret-down fa-sm"></i>
     </button>
 </div>
 

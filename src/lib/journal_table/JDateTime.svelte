@@ -282,4 +282,19 @@
        onkeydown={handleKeydown} />
 
 <style lang="scss">
+
+.x-datetime-input {
+    font-family: 'Noto Sans Mono', monospace;
+    font-weight: 500;
+    font-size: 0.625rem;
+    width: 108px;
+    //temp
+    display: inline-block !important;
+
+    &:not(.valid) {
+        background: #fdd;
+        color: #a00;
+    }
+}
+
 </style>
