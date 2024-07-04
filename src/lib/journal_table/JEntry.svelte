@@ -151,7 +151,7 @@
         <JEntities entryId={entry.id} entities={entry.entities} />
     </div>
     <div>
-        <JTagsCell entryId={entry.id} tags={entry.tags} />
+        <JTagsCell entryId={entry.id} bind:tagsIds={entry.tags} />
     </div>
     <div>
         <!--        <JPriorityCell bind:value={entry.priority} />-->

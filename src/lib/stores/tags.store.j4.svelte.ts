@@ -1,55 +1,61 @@
-import { zentities as entityStore } from '$lib/stores/j3_entities_store';
-import type { EntityType } from '$lib/types/EntityType';
-import type { EntitiesSchema, EntitySchema, TagsSchema } from '$lib/types/j4_types';
+import type { SuggestionsSchema, TagSchema, TagsSchema } from '$lib/types/j4_types';
 import { nanoid } from 'nanoid';
-import { get } from 'svelte/store';
 
 class TagsStore {
     public tags: TagsSchema = $state({});
 
     public constructor() {
-        this.add({ id: nanoid(10), key: 'M025123', type: 'egipto:module' });
-        this.add({ id: nanoid(10), key: '.Victor', type: 'person' });
-        this.add({ id: nanoid(10), key: 'CRQ25012', type: 'itsm:crq' });
-        this.add({ id: nanoid(10), key: 'R251220', type: 'remedy:incident' });
-        this.add({ id: nanoid(10), key: 'PR 251220', type: 'remedy:request' });
-        this.add({ id: nanoid(10), key: 'P 251220', type: 'itsm:request' });
-        this.add({ id: nanoid(10), key: 'M025124', type: 'egipto:module' });
-        this.add({ id: nanoid(10), key: 'M025125', type: 'egipto:module' });
-        this.add({ id: nanoid(10), key: 'M025126', type: 'egipto:module' });
+        // this.add({ id: '00001', name: 'prueba1' });
+        // this.add({ id: '00002', name: 'prueba2' });
+        // this.add({ id: '00003', name: 'prueba3' });
+        // this.add({ id: '00004', name: 'prueba4' });
+        // this.add({ id: '00005', name: 'prueba5' });
     }
 
-    public findById(entityId: string): EntitySchema | null {
-        return this.entities[entityId] || null;
+    public getById(id: string): TagSchema | null {
+        return this.tags[id] || null;
     }
 
-    public getSuggestions(input: string): EntitySchema[] {
-        const matches: EntitySchema[] = [];
-        for (let entity of Object.values(this.entities)) {
-            if (entity.key.toLowerCase().indexOf(input.toLowerCase()) > -1) {
-                matches.push($state.snapshot(entity));
+    public getByName(name: string): TagSchema | null {
+        const fnd = Object.values(this.tags).filter((tag) => tag.name === name);
+        return fnd.length > 0 ? fnd[0] : null;
+    }
+
+    public getSuggestions(input: string): SuggestionsSchema<TagSchema> {
+        const matches: SuggestionsSchema<TagSchema> = [];
+        for (let tag of Object.values(this.tags)) {
+            const iof = tag.name.toLowerCase().indexOf(input.toLowerCase());
+            if (iof === 0) {
+                matches.push({ item: tag, weight: 10 });
+            } else if (iof > -1) {
+                matches.push({ item: tag, weight: 1 });
             }
         }
+        matches.sort((a, b) => b.weight - a.weight);
         return matches;
     }
 
-    public add(entity: EntitySchema): EntitySchema {
-        const id = nanoid(10);
-        if (this.entities[id]) {
-            throw new Error('Duplicate entity id');
+    public add(tag: TagSchema): TagSchema {
+        if (tag.id == null) {
+            tag.id = nanoid(10);
         }
-        entity.id = id;
-        this.entities[id] = entity;
-        return $state.snapshot(entity);
+        if (this.tags[tag.id] != null) {
+            throw new Error(`Tag with id ${tag.id} already exists`);
+        }
+        if (this.getByName(tag.name) != null) {
+            throw new Error(`Tag with name ${tag.name} already exists`);
+        }
+        this.tags[tag.id] = tag;
+        return tag;
     }
 
-    public load(data: EntitiesSchema): void {
-        this.entities = data;
+    public load(data: TagsSchema): void {
+        this.tags = data;
     }
 
     public clear(): void {
-        this.entities = {};
+        this.tags = {};
     }
 }
 
-export const entitiesStore = new EntitiesStore();
+export const tagsStore = new TagsStore();

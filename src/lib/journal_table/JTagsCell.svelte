@@ -1,19 +1,29 @@
 <script lang="ts">
     import { SERVER_HOST } from '$lib/constants';
+    import { tagsStore } from '$lib/stores/tags.store.j4.svelte';
+    import { ztags } from '$lib/stores/tags_store';
+    import type { SuggestionsSchema, TagSchema } from '$lib/types/j4_types';
     import type { JTagType } from '$lib/types/JTagType';
     import { tick } from 'svelte';
-    import { ztags } from '$lib/stores/tags_store';
 
-    export let entryId: string;
-    export let tags: JTagType[] = [];
+    type Props = { entryId: string, tagsIds: string[] };
+
+    let {
+        entryId,
+        tagsIds = $bindable()
+    }: Props = $props();
 
     let domInput: HTMLSpanElement;
-    let focused = false;
+    let focused = $state(false);
 
-    let tagInput = '';
-    let tagMatches: JTagType[] = [];
-    let tagMatchesVisible = false;
-    let tagMatchesSelectedIndex = -1;
+    let tagInput = $state('');
+    let tagMatches: SuggestionsSchema<TagSchema> = $state([]);
+    let tagMatchesVisible = $state(false);
+    let tagMatchesSelectedIndex = $state(-1);
+
+    let tags = $derived.by(() => {
+        return tagsIds.map((tagId: string) => tagsStore.getById(tagId));
+    });
 
     function handleFocus() {
         focused = true;
@@ -30,90 +40,39 @@
     async function handleInput(e: any) {
         const term = e.target.innerText;
         if (term.length > 0) {
-            try {
-                const response = await fetch(`${SERVER_HOST}/api/journal/tags?q=${term}`, {
-                    method: 'GET'
-                });
-                if (response.ok) {
-                    //console.debug(`Registro ${entry.id} eliminado con éxito`);
-                    tagMatches = await response.json();
-                    if (tagMatches.length > 0) {
-                        tagMatchesSelectedIndex = 0;
-                    } else {
-                        tagMatchesSelectedIndex = -1;
-                    }
-                } /*else {
-                const body = await response.text();
-                throw new Error(`(${response.status}) ${body}`);
-            }*/
-            } catch (e) {
-                console.error(`Error buscando tags para "${term}" -`, e);
-            } finally {
-                tagMatchesVisible = true;
+            tagMatches = tagsStore.getSuggestions(term);
+            console.debug(tagMatches);
+
+            if (tagMatches.length > 0) {
+                tagMatchesSelectedIndex = 0;
+            } else {
+                tagMatchesSelectedIndex = -1;
             }
+
+            tagMatchesVisible = true;
         } else {
             tagMatches = [];
             tagMatchesVisible = false;
         }
     }
 
-    async function create(name: string): Promise<JTagType | null> {
-        try {
-            const response = await fetch(`${SERVER_HOST}/api/journal/tags`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({name})
-            });
-            if (response.ok) {
-                const tag = await response.json();
-                console.debug(`Tag ${tag.id} "${tag.name}" creada con éxito`);
-                $ztags = {...$ztags, [tag.id]: tag};
-                return tag;
-            } /*else {
-                const body = await response.text();
-                throw new Error(`(${response.status}) ${body}`);
-            }*/
-        } catch (e) {
-            console.error(`Error creando el tag "${name}" -`, e);
-            return null;
-        } finally {
-            tagMatchesVisible = true;
-        }
+    function link(tag: TagSchema) {
+        console.debug(`Tag ${tag.id} "${tag.name}" añadida al registro`);
+        tagsIds.push(tag.id);
+        tagMatchesVisible = true;
     }
 
-    async function link(tag: JTagType) {
-        try {
-            const response = await fetch(`${SERVER_HOST}/api/journal/entries/${entryId}/tags/${tag.id}`, {
-                method: 'POST'
-            });
-            if (response.ok) {
-                console.debug(`Tag ${tag.id} "${tag.name}" añadida al registro`);
-                tags = [...tags, tag];
-            } /*else {
-                const body = await response.text();
-                throw new Error(`(${response.status}) ${body}`);
-            }*/
-        } catch (e) {
-            console.error(`Error añadiendo el tag ${tag.id} "${tag.name}" al registro -`, e);
-        } finally {
-            tagMatchesVisible = true;
-        }
-    }
-
-    async function handleKeyDown(e: KeyboardEvent) {
+    function handleKeyDown(e: KeyboardEvent) {
         if (e.key === 'Enter') {
             e.preventDefault();
             if (tagInput.length > 0) {
+                let tag;
                 if (tagMatchesSelectedIndex === -1) {
-                    const tag = await create(tagInput);
-                    if (tag)
-                        await link(tag);
+                    tag = tagsStore.add({ name: tagInput });
                 } else {
-                    const tag = tagMatches[tagMatchesSelectedIndex];
-                    await link(tag);
+                    tag = tagMatches[tagMatchesSelectedIndex].item;
                 }
+                link(tag);
                 tagInput = '';
                 domInput.blur();
             }
@@ -139,11 +98,11 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="x-cell-wrapper x-input-wrapper"
-     on:click={handleClickCell}
+     onclick={handleClickCell}
 >
 
-    {#each tags.map(t => t.name) as tag}
-        <span class="x-tag">{tag}</span>
+    {#each tags as tag}
+        <span class="x-tag">{tag ? tag.name : '???'}</span>
     {/each}
 
     <span class="x-tag x-new"
@@ -153,11 +112,11 @@
           class:hidden={!focused && tagInput.length === 0}
           bind:this={domInput}
           bind:textContent={tagInput}
-          on:input={handleInput}
-          on:focus={handleFocus}
-          on:blur={handleBlur}
-          on:keydown={handleKeyDown}
-    />
+          oninput={handleInput}
+          onfocus={handleFocus}
+          onblur={handleBlur}
+          onkeydown={handleKeyDown}
+    ></span>
     <div style="clear: both" />
 
     {#if tagMatchesVisible}
@@ -166,10 +125,10 @@
                   class:selected={tagMatchesSelectedIndex === -1}>
                 {tagInput} (nueva)
             </span>
-            {#each tagMatches as tag, i}
+            {#each tagMatches as tagMatch, i}
                 <span class="x-tag-match"
                       class:selected={tagMatchesSelectedIndex === i}
-                >{tag.name}</span>
+                >{tagMatch.item.name}</span>
             {/each}
         </div>
     {/if}

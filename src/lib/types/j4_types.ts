@@ -63,7 +63,12 @@ export type EntitiesSchema = {
 }
 
 export type TagSchema = {
+    id: string;
     name: string;
+}
+
+export type TagsSchema = {
+    [id: string]: TagSchema
 }
 
 export type StatusSchema = {
@@ -74,3 +79,8 @@ export type StatusSchema = {
 export type StatusesSchema = StatusSchema[];
 
 export type Nil<T> = T | null | undefined;
+
+export type SuggestionsSchema<T> = {
+    item: T;
+    weight: number;
+}[];

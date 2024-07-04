@@ -1,17 +1,9 @@
 <script lang="ts">
     import JEntriesWindow from '$lib/journal_table/JEntriesWindow.svelte';
-    import { entitiesStore } from '$lib/stores/entities.store.j4.svelte';
     import { journalStore } from '$lib/stores/journal.store.j4.svelte';
     import { storeManager } from '$lib/stores/store.j4.svelte';
-    import { ztags } from '$lib/stores/tags_store';
-    import { zentities } from '$lib/stores/j3_entities_store';
     import type { EntrySchema } from '$lib/types/j4_types';
-    import type { JEntry } from '$lib/types/JEntry';
-    import { Utils } from '$lib/Utils';
-    import { DateTime } from 'luxon';
-    import { onMount, tick } from 'svelte';
-    import JournalEntry from '$lib/journal_table/JEntry.svelte';
-    import { SERVER_HOST } from '$lib/constants';
+    import { onMount } from 'svelte';
     import SideBar from './component/SideBar.svelte';
     //import Row from './Row.svelte';
 
@@ -97,6 +89,8 @@
         <button onclick={() => journalStore.serialize()}>Serialize</button>
         <button onclick={() => storeManager.loadToLS()}>Load (LS)</button>
         <button onclick={() => storeManager.saveToLS()}>Save (LS)</button>
+        <button onclick={() => storeManager.saveToDownload()}>Save (Download)</button>
+        <button onclick={() => storeManager.loadFromFile('')}>Pick local file ({storeManager.isFileHandled ? '✔️' : ''})</button>
         <br><br>
 
         <div class="x-table x-journal">
@@ -135,12 +129,13 @@
     }
 
     .x-main {
-        flex: 1 0 auto;
+        flex: 1 0;
     }
 
     .x-sidebar {
         flex: 0 0 300px;
         height: 100vh;
+        min-width: 300px;
         background-color: #f0f0f0;
     }
 </style>
