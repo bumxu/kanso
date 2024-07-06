@@ -10,7 +10,7 @@
     let hasFocus: boolean = $state(false);
 
     // DOM
-    let domTopicTextarea: HTMLTextAreaElement;
+    let domTopicCe: HTMLDivElement;
 
     // onMount(() => {
     //     console.log('v', value);
@@ -38,17 +38,25 @@
 
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div class="textarea-wrapper"
+    <!--div class="textarea-wrapper"
+         bind:this={domTopicCe}
          class:hasFocus={hasFocus}
-         onclick={()=>{domTopicTextarea.focus()}}
-    >
-        <textarea bind:this={domTopicTextarea}
-                  bind:value={inputValue}
+         onclick={()=>{domTopicCe.focus()}}
+   -->
+
+        <div class="x-body-ce" contenteditable="true" bind:textContent={inputValue}
+             spellcheck="false"
+             bind:this={domTopicCe}
+             onchange={handleChange}
+             onfocus={() => hasFocus = true}
+             onblur={handleBlur}></div>
+
+        <!--textarea bind:value={inputValue}
                   onfocus={() => hasFocus = true}
                   onblur={handleBlur}
                   onchange={handleChange}
-                  spellcheck="false"></textarea>
-    </div>
+                  spellcheck="false"></textarea-->
+    <!--</div>-->
 </div>
 
 <style lang="scss">
