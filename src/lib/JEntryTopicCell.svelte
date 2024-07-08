@@ -26,15 +26,29 @@
 
     function handleBlur() {
         hasFocus = false;
+        handleChange();
     }
 
     function handleChange() {
         value = inputValue;
     }
 
+    function handleKeydown(event: KeyboardEvent) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            event.stopPropagation();
+            domTopicCe.blur();
+        } else if (event.key === 'Escape') {
+            inputValue = value;
+            domTopicCe.blur();
+        }
+    }
+
 </script>
 
-<div class="x-cell-wrapper">
+<div class="x-cell x-cell-wrapper" data-simplebar>
+    <link rel="stylesheet" href="https://unpkg.com/simplebar@latest/dist/simplebar.css" />
+    <script src="https://unpkg.com/simplebar@latest/dist/simplebar.min.js"></script>
 
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -44,18 +58,18 @@
          onclick={()=>{domTopicCe.focus()}}
    -->
 
-        <div class="x-body-ce" contenteditable="true" bind:textContent={inputValue}
-             spellcheck="false"
-             bind:this={domTopicCe}
-             onchange={handleChange}
-             onfocus={() => hasFocus = true}
-             onblur={handleBlur}></div>
+    <div class="x-body-ce" contenteditable="true" bind:textContent={inputValue}
+         spellcheck="false"
+         bind:this={domTopicCe}
+         onkeydown={handleKeydown}
+         onfocus={() => hasFocus = true}
+         onblur={handleBlur}></div>
 
-        <!--textarea bind:value={inputValue}
-                  onfocus={() => hasFocus = true}
-                  onblur={handleBlur}
-                  onchange={handleChange}
-                  spellcheck="false"></textarea-->
+    <!--textarea bind:value={inputValue}
+              onfocus={() => hasFocus = true}
+              onblur={handleBlur}
+              onchange={handleChange}
+              spellcheck="false"></textarea-->
     <!--</div>-->
 </div>
 
@@ -63,7 +77,52 @@
     .x-cell-wrapper {
         width: 100%;
         height: 100%;
+        padding: 0 2px;
         position: relative;
+        overflow: auto;
+        padding-bottom: 12px;
+
+        &::after {
+            content: '';
+            display: block;
+            background: red;
+            pointer-events: none;
+            height: 18px;
+            left: 0;
+            right: 0;
+            position: absolute;
+            bottom: 0;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.9) 100%);
+        }
+    }
+
+    .x-body-ce {
+        display: inline-block;
+        font-family: "Noto Sans", sans-serif;
+        font-size: 0.625rem;
+        text-rendering: optimizeLegibility;
+        resize: none;
+        box-sizing: border-box;
+        padding: 0;
+        border: 0;
+        min-width: 100%;
+        outline: 0;
+
+        &:hover, &:focus {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        &:not(:empty) {
+            display: inline;
+        }
+
+        &:not(:focus):empty:before {
+            content: '· · ·';
+            color: rgba(0, 0, 0, 0.3);
+            font-weight: 600;
+            position: absolute;
+            pointer-events: none;
+        }
     }
 
     textarea {

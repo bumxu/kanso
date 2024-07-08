@@ -1,7 +1,7 @@
 <script lang="ts">
     import { tagsStore } from '$lib/stores/tags.store.j4.svelte';
     import type { EntitiesSchema, EntitySchema, EntrySchema, TagSchema, TagsSchema } from '$lib/types/j4_types';
-  import { nanoid } from 'nanoid';
+    import { nanoid } from 'nanoid';
     import { onMount } from 'svelte';
 
     type Props = {
@@ -20,40 +20,62 @@
     }
 
     function add() {
-        const entity:EntitySchema = {
+        const entity: EntitySchema = {
             id: nanoid(10),
-            type: "?"
+            type: '?'
         };
         entities[entity.id] = entity;
         selected = entities[entity.id];
     }
 </script>
 
-<h6>Entidades</h6>
-<button onclick={add}>+</button>
-<div>
-    {#each Object.values(entities) as entity, i (entity.id)}
-        <button class="x-item" onclick={() => handleSelectItem(entity)}>#{entity.id}</button>
-    {/each}
-</div>
+<div class="x-sb-section">
+    <div class="x-sb-header">
+        <i class="fas fa-fw fa-cubes-stacked"></i>
+        Entidades
+        <i class="fas fa-fw fa-caret-right"></i>
+    </div>
 
-<br>
+    <button onclick={add}>+</button>
+    <ul class="x-item-list">
+        {#each Object.values(entities) as entity, i (entity.id)}
+            <button class="x-item" onclick={() => handleSelectItem(entity)}>#{entity.id}</button>
+        {/each}
+    </ul>
 
-<div>
-    {#if selected != null}
-        <label for="tag_id">#</label>
-        <input type="text" id="tag_id" bind:value={selected.id} readonly>
+    <div class="x-form">
+        {#if selected != null}
+            <label for="tag_id">#</label>
+            <input type="text" id="tag_id" bind:value={selected.id} readonly disabled>
 
-        <label for="type_name">Nombre</label>
-        <input type="text" id="type_name" bind:value={selected.type}>
+            <label for="type_name">Tipo</label>
+            <input type="text" id="type_name" bind:value={selected.type}>
 
-        <textarea bind:value={selectedRawJSON}></textarea>
-    {:else}
-        -- selecciones un elemento para editar --
-    {/if}
+            <label for="tag_data">Raw data</label>
+            <textarea id="tag_data" bind:value={selectedRawJSON}></textarea>
+        {:else}
+            <div class="x-no-selection">
+                <i class="fas fa-fw fa-hand-back-point-up"></i> Seleccione un elemento para editar
+            </div>
+        {/if}
+    </div>
 </div>
 
 <style lang="scss">
+
+    .x-item-list {
+        background: #fff;
+        height: 120px;
+        overflow: auto;
+        padding: 0;
+        margin: 0;
+
+        li {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+    }
 
     .x-item {
         cursor: pointer;

@@ -40,26 +40,81 @@
 </script>
 
 <div class="x-entry-update" xfocused={focused}>
-    <JEntryDateTime bind:value={value.date}
-                    placeholder="Fecha" />
+    <!--    <JEntryDateTime bind:value={value.date}-->
+    <!--                    placeholder="Fecha" />-->
 
-    <div class="x-date-ce" contenteditable="true"
-         spellcheck="false"
-         onfocus={() => focused=true}
-         onblur={() => focused=false}></div>
+    <div style="display: flex">
+        <div style="flex: 1">
 
-    <div class="x-body-ce" contenteditable="true" bind:textContent={value.body}
-         spellcheck="false"
-         onfocus={() => focused=true}
-         onblur={() => focused=false}></div>
+            <div class="x-date-ce" contenteditable="true"
+                 spellcheck="false"
+                 onfocus={() => focused=true}
+                 onblur={() => focused=false}></div>
 
-    <button onclick={remove} title="Eliminar"><i class="fad fa-sm fa-fw fa-trash"></i></button>
+            <div class="x-body-ce" contenteditable="true" bind:textContent={value.body}
+                 spellcheck="false"
+                 onfocus={() => focused=true}
+                 onblur={() => focused=false}></div>
+        </div>
+
+        <div style="flex: 0 auto; padding-right: 5px">
+            <button onclick={remove} title="Eliminar"><i class="fas fa-sm fa-fw fa-xmark"></i></button>
+            <button title="Más opciones"><i class="fas fa-sm fa-fw fa-ellipsis-vertical"></i></button>
+        </div>
+    </div>
 </div>
 
-<style lang="scss" global>
+<style lang="scss">
 
     .x-entry-update {
-        padding: 1px;
+        //background: rgba(0, 0, 0, 0.03);
+        //padding: 1px;
+        position: relative;
+
+
+        .x-datetime-input {
+            font-size: 9px;
+            width: 94px;
+            padding: 1px 2px;
+            display: none;
+        }
+
+        textarea {
+            width: calc(100% - 30px);
+            font-family: 'Noto Sans', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 400;
+            padding: 2px 4px 3px;
+            text-rendering: optimizeLegibility;
+
+            &:hover {
+                background: rgba(0, 0, 0, 0.03);
+            }
+            &:focus {
+                background-color: #ffffD6;
+            }
+        }
+
+        //button {
+        //    position: absolute;
+        //    right: 3px;
+        //    top: 3px;
+        //    width: 15px;
+        //    height: 15px;
+        //    background-size: contain;
+        //    background-repeat: no-repeat;
+        //    background-position: center;
+        //    background-color: transparent;
+        //    border: 0;
+        //    cursor: pointer;
+        //
+        //
+        //}
+    }
+
+    .x-entry-update {
+        padding: 2px 4px;
+        box-sizing: border-box;
     }
     .x-entry-update.focused {
         background-color: #ffffD6;
@@ -70,11 +125,13 @@
         font-family: "Noto Sans", sans-serif;
         font-size: 0.625rem;
         text-rendering: optimizeLegibility;
-        resize: none;
         box-sizing: border-box;
-        padding: 0 8px;
+        padding: 0;
+        margin-right: 4px;
+        font-weight: 600;
         border: 0;
-        background: #d59898;
+        min-width: 5px;
+        //background: #d59898;
         position: relative;
         outline: 0;
 
@@ -88,21 +145,21 @@
 
         &:not(:focus):empty:before {
             content: '·';
+            color: rgba(0, 0, 0, 0.3);
             position: absolute;
-        //    //color: rgba(0, 0, 0, 0.3);
-        //    font-weight: 600;
-        //    pointer-events: none;
+            //    //color: rgba(0, 0, 0, 0.3);
+            font-weight: 600;
+            pointer-events: none;
         }
     }
 
     .x-body-ce {
-        display: inline;
+        display: inline-block;
         font-family: "Noto Sans", sans-serif;
         font-size: 0.625rem;
         text-rendering: optimizeLegibility;
-        resize: none;
         box-sizing: border-box;
-        padding: 0 3px;
+        padding: 0;
         border: 0;
         outline: 0;
 
@@ -110,11 +167,30 @@
             background: rgba(0, 0, 0, 0.05);
         }
 
+        &:not(:empty) {
+            display: inline;
+        }
+
         &:not(:focus):empty:before {
             content: '· · ·';
             color: rgba(0, 0, 0, 0.3);
             font-weight: 600;
+            position: absolute;
             pointer-events: none;
+        }
+    }
+
+    button {
+        border: 0;
+        background: none;
+        cursor: pointer;
+        padding: 0;
+        margin: 0;
+        display: block;
+        float: left;
+
+        i {
+            vertical-align: middle;
         }
     }
 

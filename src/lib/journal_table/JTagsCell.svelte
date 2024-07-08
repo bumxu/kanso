@@ -74,7 +74,7 @@
                 }
                 link(tag);
                 tagInput = '';
-                domInput.blur();
+                //domInput.blur();
             }
         } else if (e.key === 'ArrowDown') {
             e.preventDefault();
@@ -97,9 +97,12 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="x-cell-wrapper x-input-wrapper"
+
+<div class="x-cell x-cell-wrapper x-input-wrapper"
      onclick={handleClickCell}
->
+     data-simplebar>
+    <link rel="stylesheet" href="https://unpkg.com/simplebar@latest/dist/simplebar.css" />
+    <script src="https://unpkg.com/simplebar@latest/dist/simplebar.min.js"></script>
 
     {#each tags as tag}
         <span class="x-tag">{tag ? tag.name : '???'}</span>
@@ -138,10 +141,24 @@
 <style lang="scss">
     .x-cell-wrapper {
         width: 100%;
-        height: 100%;
+        overflow: auto;
         position: relative;
         padding: 2px 2px 0;
         box-sizing: border-box;
+        padding-bottom: 8px;
+
+        &::after {
+            content: '';
+            display: block;
+            background: red;
+            pointer-events: none;
+            height: 15px;
+            left: 0;
+            right: 0;
+            position: absolute;
+            bottom: 0;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.9) 100%);
+        }
     }
 
     .x-input-wrapper {

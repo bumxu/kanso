@@ -1,7 +1,7 @@
 import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
 import { zentities as entityStore } from '$lib/stores/j3_entities_store';
 import type { EntityType } from '$lib/types/EntityType';
-import type { EntitiesSchema, EntitySchema } from '$lib/types/j4_types';
+import type { EntitiesSchema, EntitySchema, SuggestionsSchema, TagSchema } from '$lib/types/j4_types';
 import { nanoid } from 'nanoid';
 import { get } from 'svelte/store';
 
@@ -16,7 +16,7 @@ class EntitiesStore {
     }
 
     public getSuggestions(input: string): EntitySchema[] {
-        const matches: EntitySchema[] = [];
+        const matches: SuggestionsSchema<EntitySchema> = [];
         for (let entity of Object.values(this.entities)) {
             // if (entity.key.toLowerCase().indexOf(input.toLowerCase()) > -1) {
             //     matches.push($state.snapshot(entity));
@@ -27,7 +27,7 @@ class EntitiesStore {
                 //console.log('running ', parseFn, ' over ', input);
                 const parsed = parseFn(input, entity.raw);
                 if (parsed != null) {
-                    matches.push($state.snapshot(entity));
+                    matches.push({ item: $state.snapshot(entity), weight: 1 });
                     console.log('found -> ', parsed);
                 } else {
                    // console.log('not parsed');

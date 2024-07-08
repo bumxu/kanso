@@ -9,6 +9,10 @@
 
     let { tags = $bindable() }: Props = $props();
 
+    let orderedTags: TagSchema[] = $derived.by(() => {
+        return Object.values(tags).sort((a, b) => a.name.localeCompare(b.name));
+    });
+
     let selected: TagSchema | undefined = $state();
 
     function handleSelectItem(tag: TagSchema) {
@@ -16,41 +20,61 @@
         console.debug('Selected tag -> ' + tag.id);
     }
 
-    function test() {
-        console.debug($state.snapshot(tags));
-        console.debug($state.snapshot(tagsStore.tags));
-    }
 </script>
 
-<h6>Tags</h6>
-<button onclick={test}>Test</button>
-<div>
-    {#each Object.values(tags) as tag, i (tag.id)}
-        <button class="x-item" onclick={() => handleSelectItem(tag)}>{tag.name}</button>
-    {/each}
-</div>
+<div class="x-sb-section">
+    <div class="x-sb-header">
+        <i class="fas fa-fw fa-tag"></i>
+        Tags
+        <i class="fas fa-fw fa-caret-right"></i>
+    </div>
 
-<br>
+    <ul class="x-item-list">
+        {#each orderedTags as tag, i (tag.id)}
+            <li>
+                <button class="x-item" onclick={() => handleSelectItem(tag)}>{tag.name}</button>
+                <i class="fas fa-sm fa-fw fa-trash" onclick={() => tagsStore.delete(tag.id)}></i>
+            </li>
+        {/each}
+    </ul>
 
-<div>
-    {#if selected != null}
-        <label for="tag_id">#</label>
-        <input type="text" id="tag_id" bind:value={selected.id} readonly>
+    <div class="x-form">
+        {#if selected != null}
+            <label for="tag_id">#</label>
+            <input type="text" id="tag_id" bind:value={selected.id} readonly disabled>
 
-        <label for="tag_name">Nombre</label>
-        <input type="text" id="tag_name" bind:value={selected.name}>
-    {:else}
-        -- selecciones un elemento para editar --
-    {/if}
+            <label for="tag_name">Nombre</label>
+            <input type="text" id="tag_name" bind:value={selected.name}>
+        {:else}
+            <div class="x-no-selection">
+                <i class="fas fa-fw fa-hand-back-point-up"></i> Seleccione un elemento para editar
+            </div>
+        {/if}
+    </div>
 </div>
 
 <style lang="scss">
 
+    .x-item-list {
+        background: #fff;
+        height: 120px;
+        overflow: auto;
+        padding: 0;
+        margin: 0;
+
+        li {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+    }
+
     .x-item {
         cursor: pointer;
-        display: block;
         border: none;
         background-color: transparent;
     }
+
+
 
 </style>

@@ -8,6 +8,7 @@ html {
 body {
     background: #333;
     font-family: 'Noto Sans', sans-serif;
+    margin: 0;
 }
 
 .x-container {
@@ -211,51 +212,7 @@ table.x-journal-table {
     }
 }
 
-.x-entry-update {
-    //background: rgba(0, 0, 0, 0.03);
-    //padding: 1px;
-    position: relative;
-    border-bottom: 1px dashed #d9d9d9;
 
-    .x-datetime-input {
-        font-size: 9px;
-        width: 94px;
-        padding: 1px 2px;
-        display: none;
-    }
-
-    textarea {
-        width: calc(100% - 30px);
-        font-family: 'Noto Sans', sans-serif;
-        font-size: 0.68rem;
-        font-weight: 400;
-        padding: 2px 4px 3px;
-        text-rendering: optimizeLegibility;
-
-        &:hover {
-            background: rgba(0, 0, 0, 0.03);
-        }
-        &:focus {
-            background-color: #ffffD6;
-        }
-    }
-
-    button {
-        position: absolute;
-        right: 3px;
-        top: 3px;
-        width: 15px;
-        height: 15px;
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
-        background-color: transparent;
-        border: 0;
-        cursor: pointer;
-
-
-    }
-}
 
 // ENTITIES
 .x-entities-completions-wrapper {
@@ -283,4 +240,9 @@ table.x-journal-table {
             background: #f5f5f5;
         }
     }
+}
+
+.x-cell {
+    max-height: 80px;
+    box-sizing: border-box;
 }

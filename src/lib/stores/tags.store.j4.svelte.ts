@@ -1,3 +1,4 @@
+import { journalStore } from '$lib/stores/journal.store.j4.svelte';
 import type { SuggestionsSchema, TagSchema, TagsSchema } from '$lib/types/j4_types';
 import { nanoid } from 'nanoid';
 
@@ -47,6 +48,31 @@ class TagsStore {
         }
         this.tags[tag.id] = tag;
         return tag;
+    }
+
+    public delete(id: string): void {
+        // Count
+        let count = 0;
+        Object.values(journalStore.journal).forEach((window) => {
+            window.entries.forEach((entry) => {
+                if (entry.tags.includes(id)) {
+                    count++;
+                }
+            });
+        });
+
+        if (count > 0) {
+            if (confirm('La etiqueta se usa en ' + count + ' entradas. ¿Desea continuar?')) {
+                Object.values(journalStore.journal).forEach((window) => {
+                    window.entries.forEach((entry) => {
+                        entry.tags = entry.tags.filter((tagId) => tagId !== id);
+                    });
+                });
+                delete this.tags[id];
+            }
+        } else {
+            delete this.tags[id];
+        }
     }
 
     public load(data: TagsSchema): void {

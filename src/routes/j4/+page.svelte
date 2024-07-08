@@ -118,12 +118,7 @@
         <br><br>
     </div>
 
-    <div class="x-sidebar">
-        
-        <SideBar />
-
-    </div>
-
+    <SideBar />
 </div>
 
 <style lang="scss">
@@ -139,10 +134,5 @@
         overflow: auto;
     }
 
-    .x-sidebar {
-        flex: 0 0 300px;
-        height: 100vh;
-        min-width: 300px;
-        background-color: #f0f0f0;
-    }
+
 </style>

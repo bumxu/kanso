@@ -130,7 +130,7 @@
     <div>
         <div style="text-wrap: nowrap;"><i class="fad fa-sm fa-fw fa-play"></i>
             <JDateTime bind:value={entry.dateSince}
-                   onchange={()=>{
+                       onchange={()=>{
                            if (entry.dateSince.substring(0, 6) !== partitionId) {
                                onpartitionchange(entry, partitionId);
                            }
@@ -145,7 +145,7 @@
     <div>
         <JEntryTopicCell bind:value={entry.subject} />
     </div>
-    <div class="x-cell-updates">
+    <div>
         <JEntryUpdates entryId={entry.id} bind:updates={entry.updates} />
     </div>
     <div>
@@ -171,7 +171,7 @@
     </div>
 </div>
 
-<style>
+<style lang="scss">
 
     #fld-id {
         font-size: 10px;
