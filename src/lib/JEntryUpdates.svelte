@@ -16,8 +16,8 @@
 
     });
 
-    function add() {
-        updates.push({ id: nanoid(10), body: '' });
+    function add(position: number) {
+        updates.splice(position + 1, 0, { id: nanoid(10), body: '' });
     }
 
     function del(id: string) {
@@ -33,7 +33,7 @@
     <div class="x-updates" data-simplebarx>
         {#each updates as update, i (update.id)}
             <JEntryUpdate bind:value={updates[i]} ondelete={del} />
-            <div class="x-separa"></div>
+            <div class="x-separa" onclick={() => add(i)}></div>
         {/each}
     </div>
     <!--    <button class="x-add" onclick={add}>-->
