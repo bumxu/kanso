@@ -145,6 +145,7 @@
 
         &:not(:focus):empty:before {
             content: '·';
+            cursor: text;
             color: rgba(0, 0, 0, 0.3);
             position: absolute;
             //    //color: rgba(0, 0, 0, 0.3);
@@ -173,6 +174,7 @@
 
         &:not(:focus):empty:before {
             content: '· · ·';
+            cursor: text;
             color: rgba(0, 0, 0, 0.3);
             font-weight: 600;
             position: absolute;

@@ -17,7 +17,7 @@
     });
 
     function add(position: number) {
-        updates.splice(position + 1, 0, { id: nanoid(10), body: '' });
+        updates.splice(position, 0, { id: nanoid(10), body: '' });
     }
 
     function del(id: string) {
@@ -29,11 +29,11 @@
     <!--link rel="stylesheet" href="https://unpkg.com/simplebar@latest/dist/simplebar.css" />
     <script src="https://unpkg.com/simplebar@latest/dist/simplebar.min.js"></script-->
 
-    <div class="x-separa"></div>
+    <div class="x-separa" onclick={() => add(0)}></div>
     <div class="x-updates" data-simplebarx>
         {#each updates as update, i (update.id)}
             <JEntryUpdate bind:value={updates[i]} ondelete={del} />
-            <div class="x-separa" onclick={() => add(i)}></div>
+            <div class="x-separa" onclick={() => add(i+1)}></div>
         {/each}
     </div>
     <!--    <button class="x-add" onclick={add}>-->
@@ -45,6 +45,7 @@
     .x-cell-updates {
         position: relative;
         height: 100%;
+        overflow-y: scroll;
     }
 
     .x-updates {
@@ -62,7 +63,7 @@
         position: relative;
         z-index: 20;
 
-        &:first-of-type, &:last-of-type {
+        &:first-of-type {
             border-color: transparent;
         }
 

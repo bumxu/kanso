@@ -57,9 +57,11 @@
     }
 
     function link(tag: TagSchema) {
-        console.debug(`Tag ${tag.id} "${tag.name}" añadida al registro`);
-        tagsIds.push(tag.id);
-        tagMatchesVisible = true;
+        if (!tagsIds.includes(tag.id)) {
+            console.debug(`Tag ${tag.id} "${tag.name}" añadida al registro`);
+            tagsIds.push(tag.id);
+            tagMatchesVisible = true;
+        }
     }
 
     function handleKeyDown(e: KeyboardEvent) {
@@ -98,29 +100,30 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 
-<div class="x-cell x-cell-wrapper x-input-wrapper"
-     onclick={handleClickCell}
-     data-simplebar>
+<div class="x-cell-wrapper x-input-wrapper"
+     onclick={handleClickCell}>
     <link rel="stylesheet" href="https://unpkg.com/simplebar@latest/dist/simplebar.css" />
     <script src="https://unpkg.com/simplebar@latest/dist/simplebar.min.js"></script>
 
-    {#each tags as tag}
-        <span class="x-tag">{tag ? tag.name : '???'}</span>
-    {/each}
+    <div class="x-cell" style="overflow: auto">
+        {#each tags as tag}
+            <span class="x-tag">{tag ? tag.name : '???'}</span>
+        {/each}
 
-    <span class="x-tag x-new"
-          role="textbox"
-          contenteditable="true"
-          tabindex="0"
-          class:hidden={!focused && tagInput.length === 0}
-          bind:this={domInput}
-          bind:textContent={tagInput}
-          oninput={handleInput}
-          onfocus={handleFocus}
-          onblur={handleBlur}
-          onkeydown={handleKeyDown}
-    ></span>
-    <div style="clear: both" />
+        <span class="x-tag x-new"
+              role="textbox"
+              contenteditable="true"
+              tabindex="0"
+              class:hidden={!focused && tagInput.length === 0}
+              bind:this={domInput}
+              bind:textContent={tagInput}
+              oninput={handleInput}
+              onfocus={handleFocus}
+              onblur={handleBlur}
+              onkeydown={handleKeyDown}
+        ></span>
+        <div style="clear: both" />
+    </div>
 
     {#if tagMatchesVisible}
         <div class="x-tag-matches">
@@ -141,7 +144,7 @@
 <style lang="scss">
     .x-cell-wrapper {
         width: 100%;
-        overflow: auto;
+        overflow: visible;
         position: relative;
         padding: 2px 2px 0;
         box-sizing: border-box;
