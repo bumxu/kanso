@@ -50,6 +50,33 @@ class J4Store {
         localStorage.setItem('j4journal', journal);
     }
 
+    public async saveWithSSR() {
+        console.log('Saving data with SSR...');
+
+        const file = {
+            entities: entitiesStore.entities,
+            tags: tagsStore.tags,
+            journal: journalStore.journal
+        };
+
+        await fetch('/api/save', {
+            method: 'POST',
+            body: JSON.stringify({
+                path: 'C:/Users/admin/OneDrive/j4data.json',
+                data: file
+            })
+        });
+    }
+
+    public async loadWithSSR() {
+        console.log('Loading data with SSR...');
+
+        const file = await fetch('/api/load', {
+            method: 'POST'
+            //body: JSON.stringify({
+        });
+    }
+
     public saveToDownload() {
         console.log('Saving data to download...');
         const entities = JSON.stringify(entitiesStore.entities);

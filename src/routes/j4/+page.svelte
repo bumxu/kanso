@@ -91,6 +91,8 @@
             <button onclick={() => journalStore.serialize()}>Serialize</button>
             <button onclick={() => storeManager.loadToLS()}>Load (LS)</button>
             <button onclick={() => storeManager.saveToLS()}>Save (LS)</button>
+            <button onclick={() => storeManager.saveWithSSR()}>Save (SSR)</button>
+            <button onclick={() => storeManager.loadWithSSR()}>Load (SSR)</button>
             <button onclick={() => storeManager.saveToDownload()}>Save (Download)</button>
             <button onclick={() => storeManager.loadFromFile('')}>Pick local file ({storeManager.isFileHandled ? '✔️' : ''})</button>
         </div>

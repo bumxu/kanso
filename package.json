@@ -23,6 +23,7 @@
 		"@types/autosize": "^4.0.1",
 		"@types/cookie": "^0.5.1",
 		"@types/luxon": "^3.3.1",
+		"@types/node": "^22.1.0",
 		"nanoid": "^5.0.7",
 		"sass": "^1.77.6",
 		"svelte": "^5.0.0-next.166",
