@@ -62,7 +62,7 @@ class J4Store {
         await fetch('/api/save', {
             method: 'POST',
             body: JSON.stringify({
-                path: 'C:/Users/admin/OneDrive/j4data.json',
+                path: 'C:/Users/admin/OneDrive/j4dataSSR.json',
                 data: file
             })
         });

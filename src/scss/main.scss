@@ -6,7 +6,7 @@ html {
 }
 
 body {
-    background: #333;
+    background: #f7f7f7;
     font-family: 'Noto Sans', sans-serif;
     margin: 0;
 }
@@ -142,18 +142,22 @@ body {
     width: 99%;
     margin: 0 auto;
     font-size: 0.75rem;
-    background-color: #fff;
     border-radius: 2px;
     overflow: visible;
     display: grid;
     grid-template-columns: min-content min-content 200fr 250fr 80fr 80fr 25px min-content min-content;
     grid-gap: 0;
+    row-gap: 3px;
 
     & > .x-row {
+        border-radius: 3px;
         display: contents;
+        overflow: hidden;
         & > * {
+            background-color: #fff;
             border-right: 1px solid #d9d9d9;
-            border-bottom: 1px solid #d9d9d9;
+            border: 1px solid #b5b5b5;
+            //border-bottom: 1px solid #d9d9d9;
         }
     }
     & > .x-row.x-header > * {
