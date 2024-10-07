@@ -2,6 +2,7 @@
     import JEntryEntity from '$lib/JEntryEntity.svelte';
     import JEntryUpdate from '$lib/JEntryUpdate.svelte';
     import { entitiesStore } from '$lib/stores/entities.store.j4.svelte';
+    import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte.js';
     import { tagsStore } from '$lib/stores/tags.store.j4.svelte';
     import type { EntitiesSchema, EntitySchema, EntryEntitySchema, SuggestionsSchema, TagSchema } from '$lib/types/j4_types';
     import { onMount } from 'svelte';
@@ -63,6 +64,12 @@
         }
     }
 
+    function display(item: EntitySchema): string {
+        const type = entityTypesStore.entityTypes[item.type];
+        const displayFn = new Function('return ' + type.displayFn)();
+        return displayFn(item.raw);
+    }
+
 </script>
 
 <div class="x-cell x-cell-wrapper">
@@ -94,7 +101,7 @@
             {#each entityMatches as entityMatch, i}
                 <span class="x-tag-match"
                       class:selected={entityMatchesSelectedIndex === i}
-                >{entityMatch.item.name}</span>
+                >{display(entityMatch.item)}</span>
             {/each}
         </div>
     {/if}

@@ -136,10 +136,10 @@
                            }
                            }} />
         </div>
-        <i class="fad fa-sm fa-fw fa-flag-checkered"></i>
-        <JDateTime bind:value={entry.dateDue} />
-        <i class="fad fa-sm fa-fw fa-check"></i>
-        <JDateTime bind:value={entry.dateClosed} />
+        <div style="text-wrap: nowrap;"><i class="fad fa-sm fa-fw fa-flag-checkered"></i>
+            <JDateTime bind:value={entry.dateDue} /></div>
+        <div style="text-wrap: nowrap;"><i class="fad fa-sm fa-fw fa-check"></i>
+            <JDateTime bind:value={entry.dateClosed} /></div>
 
     </div>
     <div>

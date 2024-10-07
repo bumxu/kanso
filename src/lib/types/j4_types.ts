@@ -55,7 +55,7 @@ export type EntitySchema = {
     id: string;
     type: string;
     raw?: any;
-    metadata?: any;
+    // metadata?: any;
 }
 
 export type EntitiesSchema = {

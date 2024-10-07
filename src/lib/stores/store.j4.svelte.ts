@@ -1,4 +1,5 @@
 import { entitiesStore } from '$lib/stores/entities.store.j4.svelte';
+import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
 import { journalStore } from '$lib/stores/journal.store.j4.svelte';
 import { tagsStore } from '$lib/stores/tags.store.j4.svelte';
 
@@ -11,6 +12,7 @@ class J4Store {
     public clear(): void {
         journalStore.clear();
         entitiesStore.clear();
+        entityTypesStore.clear();
         tagsStore.clear();
     }
 
@@ -54,6 +56,7 @@ class J4Store {
         console.log('Saving data with SSR...');
 
         const file = {
+            entityTypes: entityTypesStore.entityTypes,
             entities: entitiesStore.entities,
             tags: tagsStore.tags,
             journal: journalStore.journal
@@ -75,6 +78,13 @@ class J4Store {
             method: 'POST'
             //body: JSON.stringify({
         });
+        const data = await file.json();
+        console.log('file ->', data);
+
+        entityTypesStore.entityTypes = data.entityTypes;
+        entitiesStore.entities = data.entities;
+        tagsStore.tags = data.tags;
+        journalStore.journal = data.journal;
     }
 
     public saveToDownload() {

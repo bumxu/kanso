@@ -14,7 +14,8 @@
     onMount(async () => {
         console.log('Iniciando J4...');
 
-        storeManager.loadToLS();
+        //storeManager.loadToLS();
+        await storeManager.loadWithSSR();
 
         // const response = await fetch(SERVER_HOST + '/api/journal/entries');
         // $entries = [...await response.json()];

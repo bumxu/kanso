@@ -4,36 +4,47 @@ import type { EntityType } from '$lib/types/EntityType';
 import type { EntitiesSchema, EntitySchema, SuggestionsSchema, TagSchema } from '$lib/types/j4_types';
 import { nanoid } from 'nanoid';
 import { get } from 'svelte/store';
+import { browser } from '$app/environment';
 
 class EntitiesStore {
     public entities: EntitiesSchema = $state({});
 
     public constructor() {
+        if (browser) {
+            window['k'] = this;
+        }
     }
 
     public findById(entityId: string): EntitySchema | null {
         return this.entities[entityId] || null;
     }
 
-    public getSuggestions(input: string): EntitySchema[] {
+    public getSuggestions(input: string): SuggestionsSchema<EntitySchema> {
         const matches: SuggestionsSchema<EntitySchema> = [];
+
         for (let entity of Object.values(this.entities)) {
             // if (entity.key.toLowerCase().indexOf(input.toLowerCase()) > -1) {
             //     matches.push($state.snapshot(entity));
             // }
             const type = entityTypesStore.entityTypes[entity.type];
             if (type != null) {
-                const parseFn = new Function('return ' + type.lookupFn)();
+                const lookupFn = new Function('return ' + type.lookupFn)();
                 //console.log('running ', parseFn, ' over ', input);
-                const parsed = parseFn(input, entity.raw);
-                if (parsed != null) {
-                    matches.push({ item: $state.snapshot(entity), weight: 1 });
-                    console.log('found -> ', parsed);
-                } else {
-                   // console.log('not parsed');
+                const weight = lookupFn(input, entity.raw);
+                if (weight != 0) {
+                    matches.push({ item: $state.snapshot(entity), weight });
                 }
             }
         }
+
+        for (let type of Object.values(entityTypesStore.entityTypes)) {
+            const parseFn = new Function('return ' + type.parseFn)();
+            const result = parseFn(input);
+            if (result != null) {
+                matches.push({ item: { id: null, type: type.id, raw: result }, weight: -1 });
+            }
+        }
+
         return matches;
     }
 

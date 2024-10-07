@@ -67,6 +67,24 @@ class EntityTypesStoreJ4Svelte {
             };`
         });
 
+        this.add({
+            id: 'user', name: 'Persona',
+            bgColor: '#90b9d5',
+            displayFn: `(raw) => raw.fullname != null ? raw.fullname : '@' + raw.username;`,
+            parseFn: `(str) => {
+                if (/^@\\[a-z]{3}\\d{5}$/.test(str)) {
+                    return { username: str.substring(3) };
+                }
+                return null;
+            };`,
+            lookupFn: `(str, raw) => {
+                if (raw.username != null && /^@\\[a-z]{3}\\d{5}$/.test(str) ) {
+                    return str.substring(1) === raw.username ? 1 : 0;
+                }
+                return 0;
+            };`
+        });
+
         // this.add({ id: nanoid(10), key: 'person' });
         // this.add({ id: nanoid(10), key: 'itsm:crq' });
         // this.add({ id: nanoid(10), key: 'remedy:incident' });
@@ -80,6 +98,9 @@ class EntityTypesStoreJ4Svelte {
         }
         this.entityTypes[entity.id] = entity;
         return $state.snapshot(entity);
+    }
+    public clear(): void {
+        this.entityTypes = {};
     }
 }
 

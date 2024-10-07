@@ -19,7 +19,7 @@ body {
 
 .x-table.x-journal input, .x-table.x-journal textarea {
     font-family: 'Noto Sans', sans-serif;
-    font-size: 0.625rem;
+    font-size: 10px;
     resize: none;
     display: block;
     box-sizing: border-box;
@@ -144,21 +144,37 @@ body {
     font-size: 0.75rem;
     border-radius: 2px;
     overflow: visible;
-    display: grid;
-    grid-template-columns: min-content min-content 200fr 250fr 80fr 80fr 25px min-content min-content;
-    grid-gap: 0;
-    row-gap: 3px;
+    //display: grid;
+    //grid-template-columns:
+    // min-content min-content 200fr 250fr
+    // 80fr 80fr 25px min-content min-content;
+    //grid-gap: 0;
+    //row-gap: 3px;
 
     & > .x-row {
         border-radius: 3px;
-        display: contents;
-        overflow: hidden;
-        & > * {
-            background-color: #fff;
-            border-right: 1px solid #d9d9d9;
-            border: 1px solid #b5b5b5;
-            //border-bottom: 1px solid #d9d9d9;
+        background-color: #fff;
+        border: 1px solid #b5b5b5;
+        margin-bottom: 3px;
+
+        display: flex;
+        flex-flow: row nowrap;
+        //display: grid;
+        //grid-template-columns:
+        //        15px 125px 180fr 220fr 80fr 80fr 25px 10fr 110px;
+
+        & > div {
+            flex: 1 0 0;
         }
+        & > div:nth-child(1) { width: 15px; }
+        & > div:nth-child(2) { width: 125px; }
+        & > div:nth-child(3) { flex-grow: 180; }
+        & > div:nth-child(4) { flex-grow: 220; }
+        & > div:nth-child(5) { flex-grow: 80; }
+        & > div:nth-child(6) { flex-grow: 80; }
+        & > div:nth-child(7) { width: 25px; }
+        & > div:nth-child(8) { flex-grow: 10; }
+        & > div:nth-child(9) { width: 110px; }
     }
     & > .x-row.x-header > * {
         padding: 4px;
@@ -168,36 +184,9 @@ body {
         background-color: #ddd;
         border-color: #999;
     }
+
+
 }
-
-table.x-journal-table {
-    background: #fff;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
-    table-layout: fixed;
-    border-collapse: collapse;
-    font-size: 0.75rem;
-    width: 100%;
-    margin: 0 auto;
-
-    &, td, th {
-        border: 1px solid #d9d9d9;
-        text-align: left;
-    }
-    th {
-        padding: 4px;
-    }
-    tr {
-        font-weight: 700;
-    }
-    td {
-        vertical-align: top;
-        padding: 0; //1px 1px;
-        // hack to make the inner div fill the height:
-        height: 0;
-    }
-}
-
-
 
 
 

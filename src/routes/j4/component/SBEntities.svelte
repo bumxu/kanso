@@ -19,6 +19,16 @@
         console.debug('Selected entity -> ' + entity.id);
     }
 
+    function handleRawChange() {
+        if (selected != null) {
+            try {
+                selected.raw = JSON.parse(selectedRawJSON);
+            } catch (e) {
+                console.error('Error al parsear JSON', e);
+            }
+        }
+    }
+
     function add() {
         const entity: EntitySchema = {
             id: nanoid(10),
@@ -52,7 +62,7 @@
             <input type="text" id="type_name" bind:value={selected.type}>
 
             <label for="tag_data">Raw data</label>
-            <textarea id="tag_data" bind:value={selectedRawJSON}></textarea>
+            <textarea id="tag_data" bind:value={selectedRawJSON} oninput={handleRawChange}></textarea>
         {:else}
             <div class="x-no-selection">
                 <i class="fas fa-fw fa-hand-back-point-up"></i> Seleccione un elemento para editar

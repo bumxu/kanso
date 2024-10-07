@@ -30,6 +30,9 @@
 
     <div class="x-form">
         {#if selected != null}
+            <label for="et_id">#</label>
+            <input type="text" id="et_id" bind:value={selected.id} readonly disabled>
+
             <label for="et_name">Nombre</label>
             <input type="text" id="et_name" bind:value={selected.name}>
 
