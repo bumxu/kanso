@@ -56,8 +56,8 @@ class J4Store {
         console.log('Saving data with SSR...');
 
         const file = {
-            entityTypes: entityTypesStore.entityTypes,
-            entities: entitiesStore.entities,
+            entityTypes: entityTypesStore.save(),
+            entities: entitiesStore.save(),
             tags: tagsStore.tags,
             journal: journalStore.journal
         };
@@ -81,8 +81,8 @@ class J4Store {
         const data = await file.json();
         console.log('file ->', data);
 
-        entityTypesStore.entityTypes = data.entityTypes;
-        entitiesStore.entities = data.entities;
+        entityTypesStore.load(data.entityTypes);
+        entitiesStore.load(data.entities);
         tagsStore.tags = data.tags;
         journalStore.journal = data.journal;
     }

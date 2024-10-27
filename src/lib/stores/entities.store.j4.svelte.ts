@@ -1,18 +1,20 @@
-import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
-import { zentities as entityStore } from '$lib/stores/j3_entities_store';
-import type { EntityType } from '$lib/types/EntityType';
-import type { EntitiesSchema, EntitySchema, SuggestionsSchema, TagSchema } from '$lib/types/j4_types';
-import { nanoid } from 'nanoid';
-import { get } from 'svelte/store';
 import { browser } from '$app/environment';
+import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
+import type { EntitiesSchema, EntitiesStoreSchema, EntitySchema, SuggestionsSchema } from '$lib/types/j4_types';
+import type { RawEntitiesSchema, RawEntitySchema } from '$lib/types/j4raw_types';
+import { nanoid } from 'nanoid';
 
 class EntitiesStore {
-    public entities: EntitiesSchema = $state({});
+    private _store: EntitiesStoreSchema = $state({ nid: 0n, data: {} });
 
     public constructor() {
         if (browser) {
             window['k'] = this;
         }
+    }
+
+    public get entities(): EntitiesSchema {
+        return this._store.data;
     }
 
     public findById(entityId: string): EntitySchema | null {
@@ -49,30 +51,38 @@ class EntitiesStore {
     }
 
     public add(entity: EntitySchema): EntitySchema {
-        const id = nanoid(10);
-        if (this.entities[id]) {
-            throw new Error('Duplicate entity id');
-        }
+        const id = this._store.nid.toString(16);
         entity.id = id;
-        this.entities[id] = entity;
+        this._store.data[id] = entity;
+
+        this._store.nid += 1n;
+
         return $state.snapshot(entity);
     }
 
-    public load(data: EntitiesSchema): void {
-        this.entities = data;
-        // this.add({ id: '8uO4Q2aE-J', type: 'eg:module', raw: { moduleId: '025123' } });
-        // this.add({ id: nanoid(10), type: 'person', raw: { username: 'vaa', fullname: 'Victor' } });
-        // this.add({ id: nanoid(10), type: 'itsm:crq', raw: { crqId: '25012' } });
-        // this.add({ id: nanoid(10), type: 'remedy:incident', raw: { incidentId: '251220' } });
-        // this.add({ id: nanoid(10), type: 'remedy:request', raw: { requestId: '251220' } });
-        // this.add({ id: nanoid(10), type: 'itsm:request', raw: { requestId: '251220' } });
-        // this.add({ id: nanoid(10), type: 'eg:task', raw: { taskId: '025124' } });
-        // this.add({ id: nanoid(10), type: 'eg:task', raw: { taskId: '025125' } });
-        // this.add({ id: nanoid(10), type: 'eg:module', raw: { moduleId: '025126' } });
+    public clear(): void {
+        this._store = { nid: 0n, data: {} };
     }
 
-    public clear(): void {
-        this.entities = {};
+    public load(store: RawEntitiesSchema): void {
+        this._store = {
+            // hex -> bigint
+            nid: BigInt('0x' + store.nid),
+            // array -> map
+            data: store.data.reduce((acc: EntitiesSchema, entity: RawEntitySchema) => {
+                acc[entity.id] = entity;
+                return acc;
+            }, {})
+        };
+    }
+
+    public save(): RawEntitiesSchema {
+        return {
+            // bigint -> hex
+            nid: this._store.nid.toString(16),
+            // map -> array
+            data: Object.values(this._store.data)
+        };
     }
 }
 

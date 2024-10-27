@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
     import { tagsStore } from '$lib/stores/tags.store.j4.svelte';
     import type { EntitiesSchema, EntitySchema, EntrySchema, TagSchema, TagsSchema } from '$lib/types/j4_types';
     import { nanoid } from 'nanoid';
@@ -37,6 +38,15 @@
         entities[entity.id] = entity;
         selected = entities[entity.id];
     }
+
+    function display(entity: EntitySchema) {
+        const entityType = entityTypesStore.entityTypes[entity.type];
+        if (entityType == null) {
+            return 'Tipo?';
+        }
+        const dp = new Function('return ' + entityType.displayFn)();
+        return dp(entity.raw);
+    }
 </script>
 
 <div class="x-sb-section">
@@ -49,7 +59,7 @@
     <button onclick={add}>+</button>
     <ul class="x-item-list">
         {#each Object.values(entities) as entity, i (entity.id)}
-            <button class="x-item" onclick={() => handleSelectItem(entity)}>#{entity.id}</button>
+            <button class="x-item" onclick={() => handleSelectItem(entity)}>{display(entity)} (#{entity.id})</button>
         {/each}
     </ul>
 

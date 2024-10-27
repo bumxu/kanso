@@ -11,7 +11,7 @@
 <div class="x-sidebar">
 
     <SBEntityTypes bind:entityTypes={entityTypesStore.entityTypes} />
-    <SbEntities bind:entities={entitiesStore.entities} />
+    <SbEntities entities={entitiesStore.entities} />
 
     <SBTags bind:tags={tagsStore.tags} />
 

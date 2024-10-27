@@ -1,8 +1,7 @@
-import type { EntitySchema, EntityTypeSchema, EntityTypesSchema } from '$lib/types/j4_types';
-import { nanoid } from 'nanoid';
+import type { EntityTypeSchema, EntityTypesSchema, EntityTypesStoreSchema } from '$lib/types/j4_types';
 
 class EntityTypesStoreJ4Svelte {
-    public entityTypes: EntityTypesSchema = $state({});
+    private _store: EntityTypesStoreSchema = $state({ data: {} });
 
     public constructor() {
         this.add({
@@ -92,6 +91,10 @@ class EntityTypesStoreJ4Svelte {
         // this.add({ id: nanoid(10), key: 'itsm:request' });
     }
 
+    public get entityTypes(): EntityTypesSchema {
+        return this._store.data;
+    }
+
     public add(entity: EntityTypeSchema): EntityTypeSchema {
         if (this.entityTypes[entity.id]) {
             throw new Error('Duplicate entity type id');
@@ -99,8 +102,32 @@ class EntityTypesStoreJ4Svelte {
         this.entityTypes[entity.id] = entity;
         return $state.snapshot(entity);
     }
+
+    public getDisplayFn(id: string): ((raw: any) => string) | null {
+        const type = this.entityTypes[id];
+        if (type == null) {
+            return null;
+        }
+        if (type.displayFn == null || type.displayFn === '') {
+            return (raw) => id;
+        }
+        return new Function('return ' + type.displayFn)();
+    }
+
     public clear(): void {
-        this.entityTypes = {};
+        this._store = { data: {} };
+    }
+
+    public load(store: EntityTypesStoreSchema): void {
+        this._store = {
+            data: store.data
+        };
+    }
+
+    public save(): EntityTypesStoreSchema {
+        return {
+            data: this._store.data
+        };
     }
 }
 

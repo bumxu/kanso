@@ -33,6 +33,13 @@ export type EntryEntitySchema = {
     metadata: any;
 }
 
+// --- ENTITY TYPES
+export type EntityTypesStoreSchema = {
+    data: EntityTypesSchema
+}
+export type EntityTypesSchema = {
+    [id: string]: EntityTypeSchema;
+}
 export type EntityTypeSchema = {
     id: string;
     name: string;
@@ -47,10 +54,15 @@ export type EntityTypeSchema = {
     parseFn: string;
 }
 
-export type EntityTypesSchema = {
-    [id: string]: EntityTypeSchema;
-}
+// --- ENTITIES
 
+export type EntitiesStoreSchema = {
+    nid: bigint;
+    data: EntitiesSchema
+}
+export type EntitiesSchema = {
+    [entityId: string]: EntitySchema
+}
 export type EntitySchema = {
     id: string;
     type: string;
@@ -58,10 +70,7 @@ export type EntitySchema = {
     // metadata?: any;
 }
 
-export type EntitiesSchema = {
-    [entityId: string]: EntitySchema
-}
-
+// --- TAGS
 export type TagSchema = {
     id: string;
     name: string;
