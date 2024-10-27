@@ -77,15 +77,10 @@
     }
 </script>
 
-<svelte:head>
-    <title>Diario de trabajo</title>
-    <meta name="description" content="Diario de trabajo" />
-</svelte:head>
-
 <div class="x-container">
 
     <div class="x-main">
-        <h1>Chaos Manager <!--&#128169--></h1>
+        <h1>K Gestor de tareas</h1>
 
         <div style="position: fixed; background: grey; z-index: 100; padding: 10px">
             <button onclick={add}>Add sample</button>

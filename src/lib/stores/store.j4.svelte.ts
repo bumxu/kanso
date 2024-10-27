@@ -53,38 +53,40 @@ class J4Store {
     }
 
     public async saveWithSSR() {
-        console.log('Saving data with SSR...');
+        // console.log('Saving data with SSR...');
+        //
+        // const file = {
+        //     entityTypes: entityTypesStore.save(),
+        //     entities: entitiesStore.save(),
+        //     tags: tagsStore.tags,
+        //     journal: journalStore.save()
+        // };
+        //
+        // await fetch('/api/save', {
+        //     method: 'POST',
+        //     body: JSON.stringify({
+        //         path: 'C:/Users/admin/OneDrive/j4dataSSR.json',
+        //         data: file
+        //     })
+        // });
 
-        const file = {
-            entityTypes: entityTypesStore.save(),
-            entities: entitiesStore.save(),
-            tags: tagsStore.tags,
-            journal: journalStore.journal
-        };
-
-        await fetch('/api/save', {
-            method: 'POST',
-            body: JSON.stringify({
-                path: 'C:/Users/admin/OneDrive/j4dataSSR.json',
-                data: file
-            })
-        });
+        //console.log(journalStore.save());
     }
 
     public async loadWithSSR() {
-        console.log('Loading data with SSR...');
-
-        const file = await fetch('/api/load', {
-            method: 'POST'
-            //body: JSON.stringify({
-        });
-        const data = await file.json();
-        console.log('file ->', data);
-
-        entityTypesStore.load(data.entityTypes);
-        entitiesStore.load(data.entities);
-        tagsStore.tags = data.tags;
-        journalStore.journal = data.journal;
+        // console.log('Loading data with SSR...');
+        //
+        // const file = await fetch('/api/load', {
+        //     method: 'POST'
+        //     //body: JSON.stringify({
+        // });
+        // const data = await file.json();
+        // console.log('file ->', data);
+        //
+        // entityTypesStore.load(data.entityTypes);
+        // entitiesStore.load(data.entities);
+        // tagsStore.tags = data.tags;
+        // journalStore.load(data.journal);
     }
 
     public saveToDownload() {

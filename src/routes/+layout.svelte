@@ -1,17 +1,18 @@
 <script>
-	import Header from './Header.svelte';
 	import './styles.css';
-
-	export const prerender = true
 </script>
 
 <style global lang="scss">
 	@import '$scss/main';
 </style>
 
-<div class="app">
-	<!--Header /-->
+<svelte:head>
+	<title>Kanso - Gestor de tareas offline</title>
+	<meta name="description" content="Gestor de tareas offline apra la mejora de productividad." />
+	<link rel="icon" type="image/png" href="favicon.ico" />
+</svelte:head>
 
+<div class="app">
 	<main>
 		<slot />
 	</main>

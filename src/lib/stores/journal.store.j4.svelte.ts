@@ -7,6 +7,10 @@ import { get } from 'svelte/store';
 
 class JournalStore {
     public journal: WindowsSchema = $state({});
+    //private _store: WindowsSchema = $state({});
+    private _entryIndex: { [id: string]: EntitySchema } = {};
+    private _entryTree: WindowsSchema = {};
+    private nid: bigint = 0n;
 
     public constructor() {
         this.journal = {};
@@ -23,7 +27,8 @@ class JournalStore {
     //
 
     public add(entry: EntrySchema): EntrySchema {
-        const id = nanoid(10);
+        const id = this.nid.toString(16);
+        this.nid += 1n;
         const dateSince = entry.dateSince;
         const windowId = dateSince.substring(0, 6);
         if (this.journal[windowId] == null) {
@@ -42,12 +47,38 @@ class JournalStore {
         console.log($state.snapshot(this.journal));
     }
 
-    public load(data: WindowsSchema): void {
-        this.journal = data;
+    public load(raw: any): void {
+        const entryIndex = {};
+        const entryTree = {};
+        for (const entry of raw.data) {
+            // Index
+            entryIndex[entry.id] = entry;
+
+            // Tree
+            const mo = entry.dateSince.substring(0, 6);
+            if (entryTree[mo] == null) {
+                entryTree[mo] = { id: mo, entries: [] };
+            }
+            entryTree[mo].entries.push(entry);
+        }
+        console.log('entryTree ->', entryTree);
+        this._entryIndex = entryIndex;
+        this._entryTree = entryTree;
+        this.journal = entryTree;
+    }
+
+    public save(): WindowsSchema {
+        return {
+            nid: this.nid.toString(16),
+            data: Object.values(this.journal).reduce((acc, window) => {
+                acc.push(...window.entries);
+                return acc;
+            }, []).sort((a, b) => a.dateSince.localeCompare(b.dateSince))
+        };
     }
 
     public clear(): void {
-        this.journal = {};
+        //this.journal = {};
     }
 }
 
