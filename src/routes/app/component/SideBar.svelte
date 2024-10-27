@@ -21,7 +21,7 @@
 <style lang="scss">
     .x-sidebar {
         flex: 0 0 300px;
-        height: 100vh;
+        height: 100%;
         min-width: 300px;
         background-color: #f0f0f0;
         overflow: hidden;

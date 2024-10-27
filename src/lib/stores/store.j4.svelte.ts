@@ -5,7 +5,6 @@ import { tagsStore } from '$lib/stores/tags.store.j4.svelte';
 
 class J4Store {
     private fileHandle: FileSystemFileHandle | null = $state(null);
-
     public isFileHandled = $derived(this.fileHandle !== null);
 
     /** Clear all data from the stores in right order. */
@@ -17,7 +16,7 @@ class J4Store {
     }
 
     /** Load data from local storage into the stores in the right order. */
-    public loadToLS(): void {
+    public loadFromLS(): void {
         console.log('Loading data from local storage...');
 
         this.clear();
@@ -55,12 +54,7 @@ class J4Store {
     public async saveWithSSR() {
         // console.log('Saving data with SSR...');
         //
-        // const file = {
-        //     entityTypes: entityTypesStore.save(),
-        //     entities: entitiesStore.save(),
-        //     tags: tagsStore.tags,
-        //     journal: journalStore.save()
-        // };
+        // const file = this.save();
         //
         // await fetch('/api/save', {
         //     method: 'POST',
@@ -83,10 +77,24 @@ class J4Store {
         // const data = await file.json();
         // console.log('file ->', data);
         //
-        // entityTypesStore.load(data.entityTypes);
-        // entitiesStore.load(data.entities);
-        // tagsStore.tags = data.tags;
-        // journalStore.load(data.journal);
+        // this.load(data);
+    }
+
+    private load(raw: any) {
+        this.clear();
+        entityTypesStore.load(raw.entityTypes);
+        entitiesStore.load(raw.entities);
+        tagsStore.tags = raw.tags;
+        journalStore.load(raw.journal);
+    }
+
+    private save() {
+        return {
+            entityTypes: entityTypesStore.save(),
+            entities: entitiesStore.save(),
+            tags: tagsStore.tags,
+            journal: journalStore.save()
+        };
     }
 
     public saveToDownload() {
@@ -103,7 +111,7 @@ class J4Store {
         URL.revokeObjectURL(url);
     }
 
-    public async loadFromFile(content: string) {
+    public async loadFromFile() {
         // console.log('Loading data from file...');
         // const data = JSON.parse(content);
         // entitiesStore.load(data.entities);
@@ -112,17 +120,29 @@ class J4Store {
 
         const options = {
             types: [{
-                description: 'Jornal4 Raw Data File',
+                description: 'Kanso Journal File',
                 accept: {
                     'application/json': ['.json']
                 }
             }]
         };
-        const handle = await window.showSaveFilePicker(options);
-        if (handle === null) {
+        const handlers = await window.showOpenFilePicker(options);
+        if (handlers === null || handlers.length === 0) {
             throw new Error('No file selected');
         }
-        this.fileHandle = handle;
+        this.fileHandle = handlers[0];
+
+        const raw = await (await this.fileHandle!.getFile()).text();
+        this.load(JSON.parse(raw));
+    }
+
+    public async saveToFileHandler() {
+        if (this.fileHandle !== null) {
+            const raw = this.save();
+            const writable = await this.fileHandle.createWritable();
+            await writable.write(JSON.stringify(raw));
+            await writable.close();
+        }
     }
 
     public saveToFile() {

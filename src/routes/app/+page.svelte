@@ -5,11 +5,12 @@
     import type { EntrySchema } from '$lib/types/j4_types';
     import { onMount } from 'svelte';
     import SideBar from './component/SideBar.svelte';
-  import { DateTime } from 'luxon';
+    import { DateTime } from 'luxon';
     //import Row from './Row.svelte';
 
     //let entries: JEntry[] = [];
     let journal = $derived(journalStore.journal);
+
 
     onMount(async () => {
         console.log('Iniciando J4...');
@@ -77,60 +78,118 @@
     }
 </script>
 
-<div class="x-container">
-
-    <div class="x-main">
+<div class="x-app">
+    <header class="x-title-bar">
         <h1>K Gestor de tareas</h1>
-
-        <div style="position: fixed; background: grey; z-index: 100; padding: 10px">
-            <button onclick={add}>Add sample</button>
-            <button onclick={() => journalStore.serialize()}>Serialize</button>
-            <button onclick={() => storeManager.loadToLS()}>Load (LS)</button>
-            <button onclick={() => storeManager.saveToLS()}>Save (LS)</button>
-            <button onclick={() => storeManager.saveWithSSR()}>Save (SSR)</button>
-            <button onclick={() => storeManager.loadWithSSR()}>Load (SSR)</button>
-            <button onclick={() => storeManager.saveToDownload()}>Save (Download)</button>
-            <button onclick={() => storeManager.loadFromFile('')}>Pick local file ({storeManager.isFileHandled ? '✔️' : ''})</button>
-        </div>
-        <br><br>
-
-        <div class="x-table x-journal">
-            <div class="x-row x-header">
-                <div></div>
-                <div>Fechas</div>
-                <div>Asunto</div>
-                <div>Actualizaciones</div>
-                <div>Entidades</div>
-                <div>Tags</div>
-                <div>P</div>
-                <div>Estado</div>
-                <div></div>
+    </header>
+    <nav class="x-mainmenu-bar">
+        <button onclick={add}><i class="fas fa-fw fa-circle-plus"></i> Añadir</button>
+        <br>
+        <!--        <button onclick={() => journalStore.serialize()}>Serialize</button>-->
+        <button onclick={() => storeManager.loadFromLS()}><i class="fas fa-fw fa-file-export"></i> Cargar (LS)</button>
+        <button onclick={() => storeManager.saveToLS()}><i class="fas fa-fw fa-file-import"></i> Guardar (LS)</button>
+        <!--        <button onclick={() => storeManager.saveWithSSR()}>Save (SSR)</button>-->
+        <!--        <button onclick={() => storeManager.loadWithSSR()}>Load (SSR)</button>-->
+        <button onclick={() => storeManager.saveToDownload()}><i class="fas fa-fw fa-download"></i> Descargar</button>
+        <button onclick={() => storeManager.loadFromFile()}><i class="fas fa-fw fa-folder-open"></i> Usar archivo local ({storeManager.isFileHandled ? '✔️' : ''})</button>
+        <button onclick={() => storeManager.saveToFileHandler()}><i class="fas fa-fw fa-save"></i> Guardar a local</button>
+    </nav>
+    <div class="x-container">
+        <div class="x-main">
+            <div class="x-table x-journal">
+                <div class="x-row x-header">
+                    <div></div>
+                    <div>Fechas</div>
+                    <div>Asunto</div>
+                    <div>Actualizaciones</div>
+                    <div>Entidades</div>
+                    <div>Tags</div>
+                    <div>P</div>
+                    <div>Estado</div>
+                    <div></div>
+                </div>
+                {#each Object.keys(journal) as partId, partIdx (partId)}
+                    <JEntriesWindow bind:entriesWindow={journal[partId]}
+                                    onpartitionchange={handlePartitionChange}
+                    />
+                {/each}
             </div>
-            {#each Object.keys(journal) as partId, partIdx (partId)}
-                <JEntriesWindow bind:entriesWindow={journal[partId]}
-                                onpartitionchange={handlePartitionChange}
-                />
-            {/each}
+
+            <br><br>
         </div>
 
-        <br><br>
-    </div>
+        <SideBar />
 
-    <SideBar />
+    </div>
+    <footer class="x-status-bar">
+        Kanso es una aplicación estática y no almacena ni envía datos fuera del equipo del usuario.
+    </footer>
 </div>
 
 <style lang="scss">
+    .x-app {
+        display: flex;
+        flex-direction: column;
+        width: 100vw;
+        height: 100vh;
+        box-sizing: border-box;
+    }
+
+    .x-title-bar {
+        padding: 8px 10px 5px;
+        border-bottom: 1px solid #aaa;
+
+        h1 {
+            font-size: 20px;
+            font-weight: 400;
+            color: #333;
+            padding: 0;
+            margin: 0;
+            text-shadow: 0 0 2px rgba(#333, 0.5);
+        }
+    }
+
+    .x-mainmenu-bar {
+        border-bottom: 1px solid #aaa;
+        padding: 4px 10px;
+
+        button {
+            padding: 0;
+            margin: 0;
+            display: inline;
+            border: 1px solid #aaa;
+            border-radius: 2px;
+            padding: 1px 5px;
+            background: #ddd;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #555;
+        }
+    }
+
     .x-container {
+        flex: 1 0 0;
         display: flex;
         flex-direction: row;
+        overflow: auto;
         width: 100vw;
+        box-sizing: border-box;
     }
 
     .x-main {
-        flex: 1 0;
-        height: 100vh;
+        flex: 1 0 auto;
         overflow: auto;
+        box-sizing: border-box;
     }
 
+    .x-status-bar {
+        flex: 0 0 auto;
+        box-sizing: border-box;
+        font-size: 11px;
+        padding: 3px 6px;
+        border-top: 1px solid #aaa;
+        color: #888;
+    }
 
 </style>
