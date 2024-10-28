@@ -1,24 +1,24 @@
 <script>
-	import './styles.css';
+    import './styles.css';
 
-	// export const ssr = false;
-	// export const prerender = false;
+    export const ssr = false;
+    export const prerender = false;
 </script>
 
 <style global lang="scss">
-	@import '$scss/main';
+    @import '$scss/main';
 </style>
 
 <svelte:head>
-	<title>Kanso - Gestor de tareas offline</title>
-	<meta name="description" content="Gestor de tareas offline apra la mejora de productividad." />
-	<link rel="icon" type="image/png" href="favicon.ico" />
+    <title>Kanso - Gestor de tareas offline</title>
+    <meta name="description" content="Gestor de tareas offline apra la mejora de productividad." />
+    <link rel="icon" type="image/png" href="favicon.ico" />
 </svelte:head>
 
 <div class="app">
-	<main>
-		<slot />
-	</main>
+    <main>
+        <slot />
+    </main>
 </div>
 
 <!--style>
