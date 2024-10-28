@@ -1,8 +1,5 @@
 <script>
     import './styles.css';
-
-    export const ssr = false;
-    export const prerender = true;
 </script>
 
 <style global lang="scss">
