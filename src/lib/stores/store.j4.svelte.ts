@@ -1,6 +1,8 @@
 import { entitiesStore } from '$lib/stores/entities.store.j4.svelte';
 import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
 import { journalStore } from '$lib/stores/journal.store.j4.svelte';
+import { prioritiesStore } from '$lib/stores/priorities.store.j4.svelte';
+import { statusesStore } from '$lib/stores/statuses.store.j4.svelte';
 import { tagsStore } from '$lib/stores/tags.store.j4.svelte';
 
 class J4Store {
@@ -84,7 +86,9 @@ class J4Store {
         this.clear();
         entityTypesStore.load(raw.entityTypes);
         entitiesStore.load(raw.entities);
-        tagsStore.tags = raw.tags;
+        tagsStore.load(raw.tags);
+        statusesStore.load(raw.statuses);
+        prioritiesStore.load(raw.priorities);
         journalStore.load(raw.journal);
     }
 
@@ -92,7 +96,9 @@ class J4Store {
         return {
             entityTypes: entityTypesStore.save(),
             entities: entitiesStore.save(),
-            tags: tagsStore.tags,
+            tags: tagsStore.save(),
+            statuses: statusesStore.save(),
+            priorities: statusesStore.save(),
             journal: journalStore.save()
         };
     }

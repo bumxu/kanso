@@ -1,11 +1,9 @@
 <script lang="ts">
     import JEntryEntity from '$lib/JEntryEntity.svelte';
-    import JEntryUpdate from '$lib/JEntryUpdate.svelte';
     import { entitiesStore } from '$lib/stores/entities.store.j4.svelte';
     import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte.js';
-    import { tagsStore } from '$lib/stores/tags.store.j4.svelte';
-    import type { EntitiesSchema, EntitySchema, EntryEntitySchema, SuggestionsSchema, TagSchema } from '$lib/types/j4_types';
-    import { onMount } from 'svelte';
+    import type { EntitySchema, EntryEntitySchema, SuggestionsSchema } from '$lib/types/j4_types';
+    import { nanoid } from 'nanoid';
 
     let { entryId, entities = $bindable() }: { entryId: number, entities: EntryEntitySchema[] } = $props();
 
@@ -54,6 +52,52 @@
         }
     }
 
+    function handleKeyDown(e: KeyboardEvent) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            console.log('a');
+            if (entityInput.length > 0) {
+                console.log('b');
+                let entity: EntitySchema;
+                if (entityMatchesSelectedIndex === -1) {
+                    //         entity = entitiesStore.add({ name: entityInput });
+                    return;
+                } else {
+                    entity = entityMatches[entityMatchesSelectedIndex].item;
+                }
+                link(entity);
+                //     tagInput = '';
+                //     //domInput.blur();
+            }
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            entityMatchesSelectedIndex = Math.min(entityMatchesSelectedIndex + 1, entityMatches.length - 1);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            entityMatchesSelectedIndex = Math.max(entityMatchesSelectedIndex - 1, -1);
+        } else if (e.key === 'Escape') {
+            domInput.blur();
+        }
+    }
+
+    function link(entity: EntitySchema) {
+        const type = entityTypesStore.entityTypes[entity.type];
+        const displayFn = entityTypesStore.getDisplayFn(type.id);
+        const name = displayFn ? displayFn(entity.raw) : '?';
+
+        console.log('Linking entity -> ', entity);
+        // if (!tagsIds.includes(tag.id)) {
+        console.debug(`Entity ${entity.id} "${name}" añadida al registro`);
+        //     tagsIds.push(tag.id);
+        entities.push({
+            id: nanoid(10),
+            entityId: entity.id,
+            metadata: {}
+        });
+        //     tagMatchesVisible = true;
+        // }
+    }
+
     function applyRaw() {
         try {
             console.log('parseando -> ', entitiesRaw);
@@ -87,19 +131,21 @@
           contenteditable="true"
           tabindex="0"
           bind:this={domInput}
+          bind:textContent={entityInput}
           oninput={handleInput}
           onfocus={handleFocus}
           onblur={handleBlur}
+          onkeydown={handleKeyDown}
     ></span>
 
     {#if entityMatchesVisible}
-        <div class="x-tag-matches">
-            <span class="x-tag-match"
+        <div class="x-entity-matches">
+            <span class="x-entity-match"
                   class:selected={entityMatchesSelectedIndex === -1}>
                 {entityInput} (nueva)
             </span>
             {#each entityMatches as entityMatch, i}
-                <span class="x-tag-match"
+                <span class="x-entity-match"
                       class:selected={entityMatchesSelectedIndex === i}
                 >{display(entityMatch.item)}</span>
             {/each}
@@ -150,6 +196,27 @@
             background-color: #ffffD6;
             outline: none;
             white-space: nowrap;
+        }
+    }
+
+    .x-entity-matches {
+        position: absolute;
+        background: white;
+        border-radius: 2px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        z-index: 100;
+        min-width: calc(100% - 4px);
+
+        .x-entity-match {
+            display: block;
+            padding: 2px 4px;
+            cursor: pointer;
+            font-weight: 600;
+
+            &:hover, &.selected {
+                background: rgba(0, 0, 0, 0.04);
+                color: #000;
+            }
         }
     }
 

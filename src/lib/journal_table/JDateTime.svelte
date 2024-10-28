@@ -287,7 +287,7 @@
     font-family: 'Noto Sans Mono', monospace;
     font-weight: 500;
     font-size: 0.625rem;
-    width: 108px;
+    width: 90px;
     //temp
     display: inline-block !important;
 

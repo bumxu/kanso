@@ -1,16 +1,12 @@
-import { zentities as entityStore } from '$lib/stores/j3_entities_store';
-import type { EntityType } from '$lib/types/EntityType';
-import type { EntitiesSchema, EntitySchema, EntrySchema, WindowsSchema } from '$lib/types/j4_types';
-import { DateTime } from 'luxon';
-import { nanoid } from 'nanoid';
-import { get } from 'svelte/store';
+import type { EntrySchema, WindowsSchema } from '$lib/types/j4_types';
+import type { RawEntriesSchema, RawEntrySchema } from '$lib/types/j4raw_types';
 
 class JournalStore {
+    private _nid: bigint = 0n;
+    private _entryIndex: { [id: string]: EntrySchema } = {};
+    private _entryTree: WindowsSchema = {};
     public journal: WindowsSchema = $state({});
     //private _store: WindowsSchema = $state({});
-    private _entryIndex: { [id: string]: EntitySchema } = {};
-    private _entryTree: WindowsSchema = {};
-    private nid: bigint = 0n;
 
     public constructor() {
         this.journal = {};
@@ -27,8 +23,7 @@ class JournalStore {
     //
 
     public add(entry: EntrySchema): EntrySchema {
-        const id = this.nid.toString(16);
-        this.nid += 1n;
+        const id = this._nid.toString(16);
         const dateSince = entry.dateSince;
         const windowId = dateSince.substring(0, 6);
         if (this.journal[windowId] == null) {
@@ -40,17 +35,21 @@ class JournalStore {
         entry.id = id;
         this.journal[windowId].entries.push(entry);
         this.journal[windowId].entries.sort((a, b) => a.dateSince.localeCompare(b.dateSince));
+
+        this._nid += 1n;
         return $state.snapshot(entry);
     }
 
-    public serialize(): void {
-        console.log($state.snapshot(this.journal));
-    }
-
-    public load(raw: any): void {
-        const entryIndex = {};
-        const entryTree = {};
+    public load(raw: RawEntriesSchema): void {
+        this._nid = BigInt('0x' + raw.nid);
+        const entryIndex: { [id: string]: EntrySchema } = {};
+        const entryTree: WindowsSchema = {};
         for (const entry of raw.data) {
+            // Campos array/objeto que pueden venir a null
+            entry.entities = entry.entities || [];
+            entry.tags = entry.tags || [];
+            entry.updates = entry.updates || [];
+
             // Index
             entryIndex[entry.id] = entry;
 
@@ -67,10 +66,10 @@ class JournalStore {
         this.journal = entryTree;
     }
 
-    public save(): WindowsSchema {
+    public save(): RawEntriesSchema {
         return {
-            nid: this.nid.toString(16),
-            data: Object.values(this.journal).reduce((acc, window) => {
+            nid: this._nid.toString(16),
+            data: Object.values(this.journal).reduce((acc: RawEntrySchema[], window) => {
                 acc.push(...window.entries);
                 return acc;
             }, []).sort((a, b) => a.dateSince.localeCompare(b.dateSince))
@@ -78,7 +77,10 @@ class JournalStore {
     }
 
     public clear(): void {
-        //this.journal = {};
+        this._nid = 0n;
+        this._entryIndex = {};
+        this._entryTree = {};
+        this.journal = {};
     }
 }
 

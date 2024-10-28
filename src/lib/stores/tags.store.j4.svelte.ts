@@ -1,16 +1,17 @@
 import { journalStore } from '$lib/stores/journal.store.j4.svelte';
 import type { SuggestionsSchema, TagSchema, TagsSchema } from '$lib/types/j4_types';
+import type { RawTagSchema, RawTagsSchema } from '$lib/types/j4raw_types';
 import { nanoid } from 'nanoid';
 
 class TagsStore {
-    public tags: TagsSchema = $state({});
+    private _nid: bigint = 0n;
+    private _data: TagsSchema = $state({});
 
     public constructor() {
-        // this.add({ id: '00001', name: 'prueba1' });
-        // this.add({ id: '00002', name: 'prueba2' });
-        // this.add({ id: '00003', name: 'prueba3' });
-        // this.add({ id: '00004', name: 'prueba4' });
-        // this.add({ id: '00005', name: 'prueba5' });
+    }
+
+    public get tags(): TagsSchema {
+        return this._data;
     }
 
     public getById(id: string): TagSchema | null {
@@ -62,7 +63,7 @@ class TagsStore {
         });
 
         if (count > 0) {
-            if (confirm('La etiqueta se usa en ' + count + ' entradas. ¿Desea continuar?')) {
+            if (confirm('La etiqueta se usa en ' + count + ' entradas, se quitará. ¿Desea continuar?')) {
                 Object.values(journalStore.journal).forEach((window) => {
                     window.entries.forEach((entry) => {
                         entry.tags = entry.tags.filter((tagId) => tagId !== id);
@@ -75,12 +76,25 @@ class TagsStore {
         }
     }
 
-    public load(data: TagsSchema): void {
-        this.tags = data;
+    public load(raw: RawTagsSchema): void {
+        this._nid = BigInt('0x' + raw.nid);
+        this._data = raw.data.reduce((acc: TagsSchema, tag: RawTagSchema) => {
+            acc[tag.id] = tag;
+            return acc;
+        }, {});
+    }
+
+    public save(): RawTagsSchema {
+        return {
+            // bigint -> hex
+            nid: this._nid.toString(16),
+            // map -> array
+            data: Object.values(this._data)
+        };
     }
 
     public clear(): void {
-        this.tags = {};
+        //this.tags = {};
     }
 }
 

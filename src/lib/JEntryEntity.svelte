@@ -201,27 +201,27 @@
     <!--         onkeydown={handleKeyDown}-->
     <!--    />-->
 
-    <input type="text"
-           bind:value={userInput}
-           oninput={handleInput}
-           onkeydown={handleKeyDown}
-           onblur={handleBlur}
-           onfocus={handleFocus} />
-    :{entityDisplay ? entityDisplay : '?'}
+<!--    <input type="text"-->
+<!--           bind:value={userInput}-->
+<!--           oninput={handleInput}-->
+<!--           onkeydown={handleKeyDown}-->
+<!--           onblur={handleBlur}-->
+<!--           onfocus={handleFocus} />-->
+    {entityDisplay ? entityDisplay : '?'}
 
-    {#if matchesVisible}
-        <div class="x-tag-matches">
-            <span class="x-tag-match"
-                  class:selected={matchesSelectedIndex === -1}>
-                {userInput} (nueva)
-            </span>
-            {#each matches as entity, i}
-                <span class="x-tag-match" style:background={bgcolor(entity)}
-                      class:selected={matchesSelectedIndex === i}
-                >{aver(entity)}</span>
-            {/each}
-        </div>
-    {/if}
+    <!--{#if matchesVisible}-->
+    <!--    <div class="x-tag-matches">-->
+    <!--        <span class="x-tag-match"-->
+    <!--              class:selected={matchesSelectedIndex === -1}>-->
+    <!--            {userInput} (nueva)-->
+    <!--        </span>-->
+    <!--        {#each matches as entity, i}-->
+    <!--            <span class="x-tag-match" style:background={bgcolor(entity)}-->
+    <!--                  class:selected={matchesSelectedIndex === i}-->
+    <!--            >{aver(entity)}</span>-->
+    <!--        {/each}-->
+    <!--    </div>-->
+    <!--{/if}-->
 </div>
 
 <style lang="scss">

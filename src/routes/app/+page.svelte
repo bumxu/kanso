@@ -1,5 +1,6 @@
 <script lang="ts">
     import JEntriesWindow from '$lib/journal_table/JEntriesWindow.svelte';
+    import JEntry from '$lib/journal_table/JEntry.svelte';
     import { journalStore } from '$lib/stores/journal.store.j4.svelte';
     import { storeManager } from '$lib/stores/store.j4.svelte';
     import type { EntrySchema } from '$lib/types/j4_types';
@@ -11,12 +12,28 @@
     //let entries: JEntry[] = [];
     let journal = $derived(journalStore.journal);
 
+    let order = $state('dateSince');
+    let orderAsc = $state(true);
+
+    let view: EntrySchema[] = $derived.by(() => {
+        const entries = Object.values(journalStore.journal).flatMap(p => p.entries);
+        // if (order === 'dateSince' && orderDir === 'asc') {
+        //     return journalStore.journal;
+        // } else
+        if (order === 'dateSince' && !orderAsc) {
+            return entries.sort((a, b) => b.dateSince.localeCompare(a.dateSince));
+        } //else {
+        //     return journalStore.journal;
+        // }
+        console.log('View updated', entries);
+        return entries;
+    });
 
     onMount(async () => {
-        console.log('Iniciando J4...');
+        console.log('Iniciando Kanso...');
 
         //storeManager.loadToLS();
-        await storeManager.loadWithSSR();
+        //await storeManager.loadWithSSR();
 
         // const response = await fetch(SERVER_HOST + '/api/journal/entries');
         // $entries = [...await response.json()];
@@ -48,7 +65,7 @@
         //         tags: []
         //     }];
         journalStore.add({
-            dateSince: DateTime.local().toFormat('yyyyMMdd'),
+            dateSince: DateTime.local().toFormat('yyyyMMddHHmm'),
             subject: 'Nuevo ' + Math.random(),
             updates: [],
             tags: [],
@@ -58,6 +75,11 @@
 
     function del(evt: CustomEvent) {
         //     $entries = $entries.filter(e => e !== evt.detail.entry);
+    }
+
+    function handleOrderByDateSince() {
+        orderAsc = order === 'dateSince' ? !orderAsc : true;
+        order = 'dateSince';
     }
 
     function handlePartitionChange(entry: EntrySchema, srcPartId: string) {
@@ -98,20 +120,29 @@
         <div class="x-main">
             <div class="x-table x-journal">
                 <div class="x-row x-header">
-                    <div></div>
-                    <div>Fechas</div>
+                    <div>#</div>
+                    <div onclick={handleOrderByDateSince}>Fechas
+                        {#if order === 'dateSince'}
+                            <i class="fas fa-fw" class:fa-caret-up={orderAsc} class:fa-caret-down={!orderAsc}></i>
+                        {/if}
+                    </div>
                     <div>Asunto</div>
                     <div>Actualizaciones</div>
                     <div>Entidades</div>
                     <div>Tags</div>
-                    <div>P</div>
+                    <div>Prioridad</div>
                     <div>Estado</div>
-                    <div></div>
+                    <div>*</div>
                 </div>
-                {#each Object.keys(journal) as partId, partIdx (partId)}
-                    <JEntriesWindow bind:entriesWindow={journal[partId]}
-                                    onpartitionchange={handlePartitionChange}
-                    />
+                <!--{#each Object.keys(journal) as partId, partIdx (partId)}-->
+                <!--    <JEntriesWindow bind:entriesWindow={journal[partId]}-->
+                <!--                    onpartitionchange={handlePartitionChange}-->
+                <!--    />-->
+                <!--{/each}-->
+                {#each view as entry, i (entry.id)}
+                    <JEntry bind:entry={view[i]}
+                            partitionId={entry.dateSince.substring(0, 6)}
+                            onpartitionchange={()=>{}} />
                 {/each}
             </div>
 
@@ -178,13 +209,13 @@
     }
 
     .x-main {
-        flex: 1 0 auto;
+        flex: 1 0 0;
         overflow: auto;
         box-sizing: border-box;
     }
 
     .x-status-bar {
-        flex: 0 0 auto;
+        flex: 0 0 0;
         box-sizing: border-box;
         font-size: 11px;
         padding: 3px 6px;

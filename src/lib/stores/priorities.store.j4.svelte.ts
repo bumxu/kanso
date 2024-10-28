@@ -1,18 +1,18 @@
-import type { StatusesSchema, StatusSchema } from '$lib/types/j4_types';
-import type { RawStatusesSchema, RawStatusSchema } from '$lib/types/j4raw_types';
+import type { PrioritiesSchema, PrioritySchema } from '$lib/types/j4_types';
+import type { RawPrioritiesSchema, RawPrioritySchema } from '$lib/types/j4raw_types';
 
-class StatusesStore {
+class PrioritiesStore {
     private _nid: bigint = 0n;
-    private _data: StatusesSchema = $state({});
+    private _data: PrioritiesSchema = $state({});
 
     public constructor() {
     }
 
-    public get statuses(): StatusesSchema {
+    public get priorities(): PrioritiesSchema {
         return this._data;
     }
 
-    public add(status: StatusSchema): StatusSchema {
+    public add(status: PrioritySchema): PrioritySchema {
         const id = this._nid.toString(16);
         status.id = id;
         this._data[id] = status;
@@ -21,15 +21,15 @@ class StatusesStore {
         return this._data[id];
     }
 
-    public load(raw: RawStatusesSchema): void {
+    public load(raw: RawPrioritiesSchema): void {
         this._nid = BigInt('0x' + raw.nid);
-        this._data = raw.data.reduce((acc: StatusesSchema, status: RawStatusSchema) => {
+        this._data = raw.data.reduce((acc: PrioritiesSchema, status: RawPrioritySchema) => {
             acc[status.id] = status;
             return acc;
         }, {});
     }
 
-    public save(): RawStatusesSchema {
+    public save(): RawPrioritiesSchema {
         return {
             // bigint -> hex
             nid: this._nid.toString(16),
@@ -44,4 +44,4 @@ class StatusesStore {
     }
 }
 
-export const statusesStore = new StatusesStore();
+export const prioritiesStore = new PrioritiesStore();

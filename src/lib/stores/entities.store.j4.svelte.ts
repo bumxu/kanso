@@ -1,20 +1,19 @@
-import { browser } from '$app/environment';
 import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
-import type { EntitiesSchema, EntitiesStoreSchema, EntitySchema, SuggestionsSchema } from '$lib/types/j4_types';
+import type { EntitiesSchema, EntitySchema, SuggestionsSchema } from '$lib/types/j4_types';
 import type { RawEntitiesSchema, RawEntitySchema } from '$lib/types/j4raw_types';
-import { nanoid } from 'nanoid';
 
 class EntitiesStore {
-    private _store: EntitiesStoreSchema = $state({ nid: 0n, data: {} });
+    private _nid: bigint = 0n;
+    private _data: EntitiesSchema = $state({});
 
     public constructor() {
-        if (browser) {
-            window['k'] = this;
-        }
+        // if (browser) {
+        //     window['k'] = this;
+        // }
     }
 
     public get entities(): EntitiesSchema {
-        return this._store.data;
+        return this._data;
     }
 
     public findById(entityId: string): EntitySchema | null {
@@ -51,38 +50,34 @@ class EntitiesStore {
     }
 
     public add(entity: EntitySchema): EntitySchema {
-        const id = this._store.nid.toString(16);
+        const id = this._nid.toString(16);
         entity.id = id;
-        this._store.data[id] = entity;
+        this._data[id] = entity;
 
-        this._store.nid += 1n;
-
-        return $state.snapshot(entity);
+        this._nid += 1n;
+        return this._data[id];
     }
 
-    public clear(): void {
-        this._store = { nid: 0n, data: {} };
-    }
-
-    public load(store: RawEntitiesSchema): void {
-        this._store = {
-            // hex -> bigint
-            nid: BigInt('0x' + store.nid),
-            // array -> map
-            data: store.data.reduce((acc: EntitiesSchema, entity: RawEntitySchema) => {
-                acc[entity.id] = entity;
-                return acc;
-            }, {})
-        };
+    public load(raw: RawEntitiesSchema): void {
+        this._nid = BigInt('0x' + raw.nid);
+        this._data = raw.data.reduce((acc: EntitiesSchema, entity: RawEntitySchema) => {
+            acc[entity.id] = entity;
+            return acc;
+        }, {});
     }
 
     public save(): RawEntitiesSchema {
         return {
             // bigint -> hex
-            nid: this._store.nid.toString(16),
+            nid: this._nid.toString(16),
             // map -> array
-            data: Object.values(this._store.data)
+            data: Object.values(this._data)
         };
+    }
+
+    public clear(): void {
+        this._nid = 0n;
+        this._data = {};
     }
 }
 

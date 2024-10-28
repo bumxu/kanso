@@ -46,7 +46,7 @@
 
 </script>
 
-<div class="x-cell x-cell-wrapper" data-simplebar>
+<div class="x-cell x-cell-wrapper" >
     <link rel="stylesheet" href="https://unpkg.com/simplebar@latest/dist/simplebar.css" />
     <script src="https://unpkg.com/simplebar@latest/dist/simplebar.min.js"></script>
 

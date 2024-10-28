@@ -22,7 +22,7 @@
     let tagMatchesSelectedIndex = $state(-1);
 
     let tags = $derived.by(() => {
-        return tagsIds.map((tagId: string) => tagsStore.getById(tagId));
+        return tagsIds.map((tagId: string) => tagsStore.getById(tagId) ?? { id: tagId, name: '#' + tagId + '?' });
     });
 
     function handleFocus() {
@@ -97,8 +97,8 @@
 
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 
 <div class="x-cell-wrapper x-input-wrapper"
      onclick={handleClickCell}>
@@ -107,7 +107,7 @@
 
     <div class="x-cell" style="overflow: auto">
         {#each tags as tag}
-            <span class="x-tag">{tag ? tag.name : '???'}</span>
+            <span class="x-tag">{tag ? tag.name : '?'}</span>
         {/each}
 
         <span class="x-tag x-new"

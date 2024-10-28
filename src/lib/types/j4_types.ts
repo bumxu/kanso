@@ -16,7 +16,8 @@ export type EntrySchema = {
     tags: EntryTagsSchema;
     dateClosed?: string;
     dateDue?: string;
-    status: string;
+    status?: string;
+    priority?: string;
 }
 
 export type EntryTagsSchema = string[];
@@ -55,11 +56,6 @@ export type EntityTypeSchema = {
 }
 
 // --- ENTITIES
-
-export type EntitiesStoreSchema = {
-    nid: bigint;
-    data: EntitiesSchema
-}
 export type EntitiesSchema = {
     [entityId: string]: EntitySchema
 }
@@ -71,21 +67,17 @@ export type EntitySchema = {
 }
 
 // --- TAGS
-export type TagSchema = {
-    id: string;
-    name: string;
-}
+export type TagsSchema = { [id: string]: TagSchema }
+export type TagSchema = { id: string; name: string; }
 
-export type TagsSchema = {
-    [id: string]: TagSchema
-}
+// --- STATUS
+export type StatusesSchema = { [id: string]: StatusSchema }
+export type StatusSchema = { id: string, name: string }
 
-export type StatusSchema = {
-    id: string,
-    name: string
-}
+// --- PRIORITIES
+export type PrioritiesSchema = { [id: string]: PrioritySchema }
+export type PrioritySchema = { id: string, name: string }
 
-export type StatusesSchema = StatusSchema[];
 
 export type Nil<T> = T | null | undefined;
 
