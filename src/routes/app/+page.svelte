@@ -83,8 +83,6 @@
         <h1>K Gestor de tareas</h1>
     </header>
     <nav class="x-mainmenu-bar">
-        <button onclick={add}><i class="fas fa-fw fa-circle-plus"></i> Añadir</button>
-        <br>
         <!--        <button onclick={() => journalStore.serialize()}>Serialize</button>-->
         <button onclick={() => storeManager.loadFromLS()}><i class="fas fa-fw fa-file-export"></i> Cargar (LS)</button>
         <button onclick={() => storeManager.saveToLS()}><i class="fas fa-fw fa-file-import"></i> Guardar (LS)</button>
@@ -93,6 +91,8 @@
         <button onclick={() => storeManager.saveToDownload()}><i class="fas fa-fw fa-download"></i> Descargar</button>
         <button onclick={() => storeManager.loadFromFile()}><i class="fas fa-fw fa-folder-open"></i> Usar archivo local ({storeManager.isFileHandled ? '✔️' : ''})</button>
         <button onclick={() => storeManager.saveToFileHandler()}><i class="fas fa-fw fa-save"></i> Guardar a local</button>
+        <br>
+        <button onclick={add}><i class="fas fa-fw fa-circle-plus"></i> Añadir</button>
     </nav>
     <div class="x-container">
         <div class="x-main">

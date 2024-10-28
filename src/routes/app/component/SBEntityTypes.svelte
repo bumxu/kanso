@@ -1,5 +1,6 @@
 <script lang="ts">
-    import type { EntityTypeSchema, EntityTypesSchema } from '$lib/types/j4_types';
+    import type { EntitySchema, EntityTypeSchema, EntityTypesSchema } from '$lib/types/j4_types';
+    import { nanoid } from 'nanoid';
 
     type Props = {
         entityTypes: EntityTypesSchema;
@@ -13,6 +14,18 @@
         selected = entityType;
         console.debug('Selected type -> ' + entityType.id);
     }
+
+    function add() {
+        const entityType: EntityTypeSchema = {
+            id: "t" + nanoid(10),
+            name: "Nuevo tipo de entidad",
+            displayFn: "(raw) => '?' + raw.moduleId",
+            parseFn: "(raw) => { return { }; }",
+            lookupFn: "(str, raw) => 0"
+        };
+        entityTypes[entityType.id] = entityType;
+        selected = entityTypes[entityType.id];
+    }
 </script>
 
 <div class="x-sb-section">
@@ -22,6 +35,7 @@
         <i class="fas fa-fw fa-caret-right"></i>
     </div>
 
+    <button onclick={add}>+</button>
     <ul class="x-item-list">
         {#each Object.values(entityTypes) as entityType, i (entityType.id)}
             <button class="x-item" onclick={() => handleSelectItem(entityType)}>{entityType.name}</button>
