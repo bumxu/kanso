@@ -39,8 +39,8 @@
             return '';
         }
         console.debug('entityDisplay ->', entityType.displayFn);
-        const displayFn = new Function('return ' + entityType.displayFn)();
-        return displayFn(entity.raw);
+        const displayFn = entityTypesStore.getDisplayFn(entityType);
+        return displayFn(entity.id, entity.raw);
     });
 
     let domInput: HTMLSpanElement;
@@ -201,12 +201,12 @@
     <!--         onkeydown={handleKeyDown}-->
     <!--    />-->
 
-<!--    <input type="text"-->
-<!--           bind:value={userInput}-->
-<!--           oninput={handleInput}-->
-<!--           onkeydown={handleKeyDown}-->
-<!--           onblur={handleBlur}-->
-<!--           onfocus={handleFocus} />-->
+    <!--    <input type="text"-->
+    <!--           bind:value={userInput}-->
+    <!--           oninput={handleInput}-->
+    <!--           onkeydown={handleKeyDown}-->
+    <!--           onblur={handleBlur}-->
+    <!--           onfocus={handleFocus} />-->
     {entityDisplay ? entityDisplay : '?'}
 
     <!--{#if matchesVisible}-->

@@ -38,17 +38,14 @@ class TagsStore {
     }
 
     public add(tag: TagSchema): TagSchema {
-        if (tag.id == null) {
-            tag.id = nanoid(10);
-        }
-        if (this.tags[tag.id] != null) {
-            throw new Error(`Tag with id ${tag.id} already exists`);
-        }
+        tag.id = this._nid.toString(16);
         if (this.getByName(tag.name) != null) {
             throw new Error(`Tag with name ${tag.name} already exists`);
         }
         this.tags[tag.id] = tag;
-        return tag;
+
+        this._nid += 1n;
+        return this.tags[tag.id];
     }
 
     public delete(id: string): void {
@@ -94,7 +91,8 @@ class TagsStore {
     }
 
     public clear(): void {
-        //this.tags = {};
+        this._nid = 0n;
+        this._data = {};
     }
 }
 

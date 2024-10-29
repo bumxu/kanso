@@ -1,4 +1,4 @@
-import type { EntityTypeSchema, EntityTypesSchema, EntityTypesStoreSchema } from '$lib/types/j4_types';
+import type { EntityTypeSchema, EntityTypesSchema, EntityTypesStoreSchema, ETypeDisplayFn } from '$lib/types/j4_types';
 
 class EntityTypesStoreJ4Svelte {
     private _store: EntityTypesStoreSchema = $state({ data: {} });
@@ -90,21 +90,37 @@ class EntityTypesStoreJ4Svelte {
         return this._store.data;
     }
 
+    public exists(id: string): boolean {
+        return this.get(id) != null;
+    }
+
+    public get(id: string): EntityTypeSchema | null {
+        return this.entityTypes[id] || null;
+    }
+
     public add(entity: EntityTypeSchema): EntityTypeSchema {
-        if (this.entityTypes[entity.id]) {
-            throw new Error('Duplicate entity type id');
+        if (entity.id == null) {
+            throw new Error('The entity type id is required.');
+        }
+        if (this.entityTypes[entity.id] != null) {
+            throw new Error(`The given id already exists for the entity type ${this.entityTypes[entity.id].name}.`);
         }
         this.entityTypes[entity.id] = entity;
         return $state.snapshot(entity);
     }
 
-    public getDisplayFn(id: string): ((raw: any) => string) | null {
-        const type = this.entityTypes[id];
+    public getDisplayFn(id: string): ETypeDisplayFn | null ;
+    public getDisplayFn(etype: EntityTypeSchema): ETypeDisplayFn | null ;
+    public getDisplayFn(arg: EntityTypeSchema | string): ETypeDisplayFn | null {
+        const type = typeof arg === 'string' ? this.entityTypes[arg] : arg;
+        const typeId = typeof arg === 'string' ? arg : arg.id;
         if (type == null) {
-            return null;
+            // Tipo desconocido
+            return (id, raw) => typeId + ':' + id + ' (er:UKT)';
         }
         if (type.displayFn == null || type.displayFn === '') {
-            return (raw) => id;
+            // No hay display function
+            return (id, raw) => typeId + ':' + id + ' (er:NDP)';
         }
         return new Function('return ' + type.displayFn)();
     }

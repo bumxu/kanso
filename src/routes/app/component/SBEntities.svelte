@@ -1,9 +1,7 @@
 <script lang="ts">
+    import { entitiesStore } from '$lib/stores/entities.store.j4.svelte';
     import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
-    import { tagsStore } from '$lib/stores/tags.store.j4.svelte';
-    import type { EntitiesSchema, EntitySchema, EntrySchema, TagSchema, TagsSchema } from '$lib/types/j4_types';
-    import { nanoid } from 'nanoid';
-    import { onMount } from 'svelte';
+    import type { EntitiesSchema, EntitySchema, EntityTypeSchema, ETypeDisplayFn } from '$lib/types/j4_types';
 
     type Props = {
         entities: EntitiesSchema;
@@ -11,8 +9,11 @@
 
     let { entities = $bindable() }: Props = $props();
 
-    let selected: EntitySchema | undefined = $state();
+    let selected: EntitySchema | null = $state(null);
     let selectedRawJSON = $state('');
+    let selectedType: EntityTypeSchema | null = $derived.by(() => {
+        return selected?.type ? entityTypesStore.get(selected.type) : null;
+    });
 
     function handleSelectItem(entity: EntitySchema) {
         selected = entity;
@@ -31,21 +32,19 @@
     }
 
     function add() {
-        const entity: EntitySchema = {
-            id: nanoid(10),
-            type: '?'
-        };
-        entities[entity.id] = entity;
-        selected = entities[entity.id];
+        const entity: EntitySchema = entitiesStore.add({
+            id: undefined,
+            type: undefined,
+            raw: {}
+        });
+        selected = entity;
     }
 
     function display(entity: EntitySchema) {
-        const entityType = entityTypesStore.entityTypes[entity.type];
-        if (entityType == null) {
-            return 'Tipo?';
+        const displayFn: ETypeDisplayFn | null = entityTypesStore.getDisplayFn(entity.type);
+        if (displayFn != null) {
+            return displayFn(entity.id, entity!.raw);
         }
-        const dp = new Function('return ' + entityType.displayFn)();
-        return dp(entity.raw);
     }
 </script>
 
@@ -59,7 +58,7 @@
     <button onclick={add}>+</button>
     <ul class="x-item-list">
         {#each Object.values(entities) as entity, i (entity.id)}
-            <button class="x-item" onclick={() => handleSelectItem(entity)}>{display(entity)} (#{entity.id})</button>
+            <button class="x-item" onclick={() => handleSelectItem(entity)}>{display(entity)}</button>
         {/each}
     </ul>
 
@@ -69,7 +68,15 @@
             <input type="text" id="tag_id" bind:value={selected.id} readonly disabled>
 
             <label for="type_name">Tipo</label>
-            <input type="text" id="type_name" bind:value={selected.type}>
+            <select bind:value={selected.type} style="width: 95%">
+                <option value={undefined}>(Tipo no seleccionado)</option>
+                {#each Object.values(entityTypesStore.entityTypes) as etype, i (etype.id)}
+                    <option value={etype.id}>{etype.name}</option>
+                {/each}
+            </select>
+            {#if selected.type != null && selectedType == null}
+                <input type="text" id="type_name" bind:value={selected.type}>
+            {/if}
 
             <label for="tag_data">Raw data</label>
             <textarea id="tag_data" bind:value={selectedRawJSON} oninput={handleRawChange}></textarea>
@@ -101,7 +108,9 @@
         cursor: pointer;
         display: block;
         border: none;
+        font-size: 12px;
         background-color: transparent;
+        text-align: left;
     }
 
 </style>

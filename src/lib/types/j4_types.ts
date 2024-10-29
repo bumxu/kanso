@@ -62,7 +62,7 @@ export type EntitiesSchema = {
 export type EntitySchema = {
     id: string;
     type: string;
-    raw?: any;
+    raw: any;
     // metadata?: any;
 }
 
@@ -78,6 +78,15 @@ export type StatusSchema = { id: string, name: string }
 export type PrioritiesSchema = { [id: string]: PrioritySchema }
 export type PrioritySchema = { id: string, name: string }
 
+// -- BASIC FILTERS
+export type BasicFiltersSchema = BasicFilterSchema[];
+export type BasicFilterSchema = {
+    id: string;
+    desc: string;
+    filterFn: string;
+    active: boolean;
+}
+
 
 export type Nil<T> = T | null | undefined;
 
@@ -85,3 +94,5 @@ export type SuggestionsSchema<T> = {
     item: T;
     weight: number;
 }[];
+
+export type ETypeDisplayFn = (id: string, raw: any) => string;

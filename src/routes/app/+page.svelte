@@ -1,22 +1,35 @@
 <script lang="ts">
-    import JEntriesWindow from '$lib/journal_table/JEntriesWindow.svelte';
     import JEntry from '$lib/journal_table/JEntry.svelte';
+    import { entitiesStore } from '$lib/stores/entities.store.j4.svelte';
+    import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
+    import { filtersStore } from '$lib/stores/filters.store.j4.svelte';
     import { journalStore } from '$lib/stores/journal.store.j4.svelte';
+    import { prioritiesStore } from '$lib/stores/priorities.store.j4.svelte';
+    import { statusesStore } from '$lib/stores/statuses.store.j4.svelte';
     import { storeManager } from '$lib/stores/store.j4.svelte';
+    import { tagsStore } from '$lib/stores/tags.store.j4.svelte';
     import type { EntrySchema } from '$lib/types/j4_types';
-    import { onMount } from 'svelte';
-    import SideBar from './component/SideBar.svelte';
     import { DateTime } from 'luxon';
+    import { onMount } from 'svelte';
+    import SbEntities from './component/SBEntities.svelte';
+    import SBEntityTypes from './component/SBEntityTypes.svelte';
+    import SBFilters from './component/SBFilters.svelte';
+    import SBPriorities from './component/SBPriorities.svelte';
+    import SBStatuses from './component/SBStatuses.svelte';
+    import SBTags from './component/SBTags.svelte';
     //import Row from './Row.svelte';
 
     //let entries: JEntry[] = [];
     let journal = $derived(journalStore.journal);
 
+    let sbOpen = $state(false);
+    let sbTool: string | null = $state(null);
+
     let order = $state('dateSince');
     let orderAsc = $state(true);
 
     let view: EntrySchema[] = $derived.by(() => {
-        const entries = Object.values(journalStore.journal).flatMap(p => p.entries);
+        let entries = Object.values(journalStore.journal).flatMap(p => p.entries);
         // if (order === 'dateSince' && orderDir === 'asc') {
         //     return journalStore.journal;
         // } else
@@ -26,6 +39,20 @@
         //     return journalStore.journal;
         // }
         console.log('View updated', entries);
+
+        // Aplicar filtros
+        entries = entries.filter(entry => {
+            for (const filter of filtersStore.filters) {
+                if (filter.active) {
+                    const filterFn = new Function('return ' + filter.filterFn)();
+                    if (!filterFn(entry)) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        });
+
         return entries;
     });
 
@@ -75,6 +102,15 @@
 
     function del(evt: CustomEvent) {
         //     $entries = $entries.filter(e => e !== evt.detail.entry);
+    }
+
+    function toggleSb(sbId: string) {
+        if (sbOpen && sbTool === sbId) {
+            sbOpen = false;
+        } else {
+            sbOpen = true;
+            sbTool = sbId;
+        }
     }
 
     function handleOrderByDateSince() {
@@ -149,7 +185,59 @@
             <br><br>
         </div>
 
-        <SideBar />
+        <!--        <SideBar />-->
+
+        {#if sbOpen}
+            <div class="x-sidebar x-sb-floating">
+                {#if sbTool === 'etypes'}
+                    <SBEntityTypes bind:entityTypes={entityTypesStore.entityTypes} />
+                {/if}
+                {#if sbTool === 'entities'}
+                    <SbEntities entities={entitiesStore.entities} />
+                {/if}
+                {#if sbTool === 'tags'}
+                    <SBTags bind:tags={tagsStore.tags} />
+                {/if}
+                {#if sbTool === 'statuses'}
+                    <SBStatuses bind:statuses={statusesStore.statuses} />
+                {/if}
+                {#if sbTool === 'priorities'}
+                    <SBPriorities bind:priorities={prioritiesStore.priorities} />
+                {/if}
+                {#if sbTool === 'filters'}
+                    <SBFilters bind:basicFilters={filtersStore.filters} />
+                {/if}
+            </div>
+        {/if}
+
+        <div class="x-sb-menu">
+            <ul>
+                <li>
+                    <button onclick={()=>toggleSb('etypes')}
+                            title="Tipos de entidad"><i class="fas fa-cube"></i></button>
+                </li>
+                <li>
+                    <button onclick={()=>toggleSb('entities')}
+                            title="Entidades"><i class="fas fa-cubes-stacked"></i></button>
+                </li>
+                <li>
+                    <button onclick={()=>toggleSb('tags')}
+                            title="Tags"><i class="fas fa-tag"></i></button>
+                </li>
+                <li>
+                    <button onclick={()=>toggleSb('statuses')}
+                            title="Estados"><i class="fas fa-percent"></i></button>
+                </li>
+                <li>
+                    <button onclick={()=>toggleSb('priorities')}
+                            title="Prioridades"><i class="fas fa-fire"></i></button>
+                </li>
+                <li>
+                    <button onclick={()=>toggleSb('filters')}
+                            title="Filtros básicos"><i class="fas fa-filters"></i></button>
+                </li>
+            </ul>
+        </div>
 
     </div>
     <footer class="x-status-bar">
@@ -185,7 +273,6 @@
         padding: 4px 10px;
 
         button {
-            padding: 0;
             margin: 0;
             display: inline;
             border: 1px solid #aaa;
@@ -205,6 +292,7 @@
         flex-direction: row;
         overflow: auto;
         width: 100vw;
+        position: relative;
         box-sizing: border-box;
     }
 
@@ -214,6 +302,45 @@
         box-sizing: border-box;
     }
 
+    .x-sb-menu {
+        flex: 0 0 40px;
+        background: #f7f7f7;
+        z-index: 100;
+        border-left: 1px solid #aaa;
+
+        ul, li {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        button {
+            width: 100%;
+            height: 40px;
+            color: #333;
+            margin-bottom: 1px;
+            border: 0;
+            font-size: 15px;
+            background-color: rgba(0, 0, 0, 0);
+            cursor: pointer;
+            transition: 0.08s linear 0s background-color;
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.06);
+            }
+        }
+    }
+
+    .x-sb-floating {
+        background: #f7f7f7;
+        position: absolute;
+        right: 41px;
+        top: 0;
+        bottom: 0;
+        width: 400px;
+        z-index: 50;
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+    }
+
     .x-status-bar {
         flex: 0 0 0;
         box-sizing: border-box;
@@ -221,6 +348,46 @@
         padding: 3px 6px;
         border-top: 1px solid #aaa;
         color: #888;
+    }
+
+
+
+    .x-sidebar {
+        //flex: 0 0 300px;
+        //height: 100%;
+        //min-width: 300px;
+        overflow: auto;
+        //display: flex;
+        //flex-direction: column;
+    }
+
+    .x-sidebar :global(.x-sb-section) {
+        flex: 1 1;
+        min-height: 300px;
+        overflow: auto;
+    }
+
+
+    .x-sidebar :global(.x-sb-header) {
+        background: #333;
+        padding: 5px;
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.85);
+    }
+
+    .x-sidebar :global(.x-no-selection) {
+        font-size: 0.85rem;
+        color: #666;
+        pointer-events: none;
+    }
+    .x-sidebar :global(.x-form) {
+        padding: 10px;
+    }
+    .x-sidebar :global(.x-form label) {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-top: 5px;
     }
 
 </style>

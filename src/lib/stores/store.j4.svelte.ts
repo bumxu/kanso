@@ -1,5 +1,6 @@
 import { entitiesStore } from '$lib/stores/entities.store.j4.svelte';
 import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
+import { filtersStore } from '$lib/stores/filters.store.j4.svelte';
 import { journalStore } from '$lib/stores/journal.store.j4.svelte';
 import { prioritiesStore } from '$lib/stores/priorities.store.j4.svelte';
 import { statusesStore } from '$lib/stores/statuses.store.j4.svelte';
@@ -29,6 +30,7 @@ class J4Store {
         tagsStore.load(JSON.parse(localStorage.getItem('j4tags') || '{}'));
         statusesStore.load(JSON.parse(localStorage.getItem('j4statuses') || '{}'));
         prioritiesStore.load(JSON.parse(localStorage.getItem('j4priorities') || '{}'));
+        filtersStore.load(JSON.parse(localStorage.getItem('j4filters') || '{}'));
         journalStore.load(JSON.parse(localStorage.getItem('j4journal') || '{}'));
     }
 
@@ -42,6 +44,7 @@ class J4Store {
         localStorage.setItem('j4tags', JSON.stringify(tagsStore.save()));
         localStorage.setItem('j4statuses', JSON.stringify(statusesStore.save()));
         localStorage.setItem('j4priorities', JSON.stringify(prioritiesStore.save()));
+        localStorage.setItem('j4filters', JSON.stringify(filtersStore.save()));
         localStorage.setItem('j4journal', JSON.stringify(journalStore.save()));
     }
 
@@ -81,6 +84,7 @@ class J4Store {
         tagsStore.load(raw.tags);
         statusesStore.load(raw.statuses);
         prioritiesStore.load(raw.priorities);
+        filtersStore.load(raw.filters);
         journalStore.load(raw.journal);
     }
 
@@ -91,6 +95,7 @@ class J4Store {
             tags: tagsStore.save(),
             statuses: statusesStore.save(),
             priorities: prioritiesStore.save(),
+            filters: filtersStore.save(),
             journal: journalStore.save()
         };
     }

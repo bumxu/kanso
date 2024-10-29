@@ -16,12 +16,16 @@
     }
 
     function add() {
+        const id = prompt('Enter an ID for the new entity type');
+        if (id == null) {
+            return;
+        }
         const entityType: EntityTypeSchema = {
-            id: "t" + nanoid(10),
-            name: "Nuevo tipo de entidad",
-            displayFn: "(raw) => '?' + raw.moduleId",
-            parseFn: "(raw) => { return { }; }",
-            lookupFn: "(str, raw) => 0"
+            id,
+            name: 'Nuevo tipo de entidad',
+            displayFn: '(raw) => \'?\' + raw.moduleId',
+            parseFn: '(raw) => { return { }; }',
+            lookupFn: '(str, raw) => 0'
         };
         entityTypes[entityType.id] = entityType;
         selected = entityTypes[entityType.id];

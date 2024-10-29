@@ -61,3 +61,16 @@ export type RawPrioritySchema = {
     id: string;
     name: string;
 }
+
+// --- BASIC FILTERS
+export type RawBasicFiltersSchema = {
+    /** Next id (hex). */
+    nid: string;
+    data: RawBasicFilterSchema[];
+}
+export type RawBasicFilterSchema = {
+    id: string;
+    desc: string;
+    filterFn: string;
+    active: boolean;
+}
