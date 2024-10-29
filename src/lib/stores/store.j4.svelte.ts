@@ -15,6 +15,8 @@ class J4Store {
         entitiesStore.clear();
         entityTypesStore.clear();
         tagsStore.clear();
+        statusesStore.clear();
+        prioritiesStore.clear();
     }
 
     /** Load data from local storage into the stores in the right order. */
@@ -22,35 +24,25 @@ class J4Store {
         console.log('Loading data from local storage...');
 
         this.clear();
-
-        const entities = JSON.parse(localStorage.getItem('j4entities') ?? '{}');
-        console.debug('entities ->', entities);
-        entitiesStore.load(entities);
-
-        const tags = JSON.parse(localStorage.getItem('j4tags') ?? '{}');
-        console.debug('tags ->', tags);
-        tagsStore.load(tags);
-
-        const journal = JSON.parse(localStorage.getItem('j4journal') ?? '{}');
-        console.debug('journal ->', journal);
-        journalStore.load(journal);
+        entityTypesStore.load(JSON.parse(localStorage.getItem('j4entityTypes') || '{}'));
+        entitiesStore.load(JSON.parse(localStorage.getItem('j4entities') || '{}'));
+        tagsStore.load(JSON.parse(localStorage.getItem('j4tags') || '{}'));
+        statusesStore.load(JSON.parse(localStorage.getItem('j4statuses') || '{}'));
+        prioritiesStore.load(JSON.parse(localStorage.getItem('j4priorities') || '{}'));
+        journalStore.load(JSON.parse(localStorage.getItem('j4journal') || '{}'));
     }
 
     /** Save data from the stores to local storage. */
     public saveToLS(): void {
         console.log('Saving data to local storage...');
 
-        const entities = JSON.stringify(entitiesStore.entities);
-        console.debug('entities ->', entities);
-        localStorage.setItem('j4entities', entities);
-
-        const tags = JSON.stringify(tagsStore.tags);
-        console.debug('tags ->', tags);
-        localStorage.setItem('j4tags', tags);
-
-        const journal = JSON.stringify(journalStore.journal);
-        console.debug('journal ->', journal);
-        localStorage.setItem('j4journal', journal);
+        const raw = entitiesStore.save();
+        localStorage.setItem('j4entityTypes', JSON.stringify(entityTypesStore.save()));
+        localStorage.setItem('j4entities', JSON.stringify(raw));
+        localStorage.setItem('j4tags', JSON.stringify(tagsStore.save()));
+        localStorage.setItem('j4statuses', JSON.stringify(statusesStore.save()));
+        localStorage.setItem('j4priorities', JSON.stringify(prioritiesStore.save()));
+        localStorage.setItem('j4journal', JSON.stringify(journalStore.save()));
     }
 
     public async saveWithSSR() {
@@ -98,7 +90,7 @@ class J4Store {
             entities: entitiesStore.save(),
             tags: tagsStore.save(),
             statuses: statusesStore.save(),
-            priorities: statusesStore.save(),
+            priorities: prioritiesStore.save(),
             journal: journalStore.save()
         };
     }

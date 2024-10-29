@@ -1,9 +1,6 @@
 <script lang="ts">
-    import { SERVER_HOST } from '$lib/constants';
     import { tagsStore } from '$lib/stores/tags.store.j4.svelte';
-    import { ztags } from '$lib/stores/tags_store';
     import type { SuggestionsSchema, TagSchema } from '$lib/types/j4_types';
-    import type { JTagType } from '$lib/types/JTagType';
     import { tick } from 'svelte';
 
     type Props = { entryId: string, tagsIds: string[] };

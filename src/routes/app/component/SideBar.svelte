@@ -1,9 +1,13 @@
 <script lang="ts">
     import { entitiesStore } from '$lib/stores/entities.store.j4.svelte';
     import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
+    import { prioritiesStore } from '$lib/stores/priorities.store.j4.svelte';
+    import { statusesStore } from '$lib/stores/statuses.store.j4.svelte';
     import { tagsStore } from '$lib/stores/tags.store.j4.svelte';
     import SbEntities from './SBEntities.svelte';
     import SBEntityTypes from './SBEntityTypes.svelte';
+    import SBPriorities from './SBPriorities.svelte';
+    import SBStatuses from './SBStatuses.svelte';
     import SBTags from './SBTags.svelte';
 
 </script>
@@ -12,9 +16,9 @@
 
     <SBEntityTypes bind:entityTypes={entityTypesStore.entityTypes} />
     <SbEntities entities={entitiesStore.entities} />
-
     <SBTags bind:tags={tagsStore.tags} />
-
+    <SBStatuses bind:statuses={statusesStore.statuses} />
+    <SBPriorities bind:priorities={prioritiesStore.priorities} />
 
 </div>
 
@@ -24,13 +28,14 @@
         height: 100%;
         min-width: 300px;
         background-color: #f0f0f0;
-        overflow: hidden;
+        overflow: auto;
         display: flex;
         flex-direction: column;
     }
 
     .x-sidebar :global(.x-sb-section) {
         flex: 1 1;
+        min-height: 300px;
         overflow: auto;
     }
 

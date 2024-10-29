@@ -4,6 +4,7 @@
     import JDateTimeCell from '$lib/journal_table/JDateTimeCell.svelte';
     import JEntities from '$lib/journal_table/JEntities.svelte';
     import JTagsCell from '$lib/journal_table/JTagsCell.svelte';
+    import { prioritiesStore } from '$lib/stores/priorities.store.j4.svelte';
     import { statusesStore } from '$lib/stores/statuses.store.j4.svelte';
     import type { EntrySchema } from '$lib/types/j4_types';
     import { onMount } from 'svelte';
@@ -137,9 +138,11 @@
                            }} />
         </div>
         <div style="text-wrap: nowrap;"><i class="fad fa-sm fa-fw fa-flag-checkered"></i>
-            <JDateTime bind:value={entry.dateDue} /></div>
+            <JDateTime bind:value={entry.dateDue} />
+        </div>
         <div style="text-wrap: nowrap;"><i class="fad fa-sm fa-fw fa-check"></i>
-            <JDateTime bind:value={entry.dateClosed} /></div>
+            <JDateTime bind:value={entry.dateClosed} />
+        </div>
 
     </div>
     <div>
@@ -155,14 +158,28 @@
         <JTagsCell entryId={entry.id} bind:tagsIds={entry.tags} />
     </div>
     <div>
+        <select bind:value={entry.priority} style="width: 95%">
+            <option value="">--</option>
+            {#each Object.values(prioritiesStore.priorities) as priority, i (priority.id)}
+                <option value={priority.id}>{priority.name}</option>
+            {/each}
+        </select>
+<!--        <input type="text" bind:value={entry.priority} style="border: 1px solid #333; width: 50px" />-->
         <!--        <JPriorityCell bind:value={entry.priority} />-->
     </div>
     <div>
-        <select bind:value={entry.status}>
-            {#each statusesStore.statuses as status, i (status.id) }
+        <select bind:value={entry.status} style="width: 95%">
+            <option value="">--</option>
+            {#each Object.values(statusesStore.statuses) as status, i (status.id)}
                 <option value={status.id}>{status.name}</option>
             {/each}
         </select>
+<!--        <input type="text" bind:value={entry.status} style="border: 1px solid #333; width: 50px" />-->
+        <!--        <select bind:value={entry.status}>-->
+        <!--            {#each statusesStore.statuses as status, i (status.id) }-->
+        <!--                <option value={status.id}>{status.name}</option>-->
+        <!--            {/each}-->
+        <!--        </select>-->
     </div>
     <div>
         <!--        <button class="btn btn-sm btn-ic" on:click={remove}>-->
