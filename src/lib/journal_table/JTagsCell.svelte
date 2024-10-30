@@ -104,7 +104,7 @@
 
     <div class="x-cell" style="overflow: auto">
         {#each tags as tag}
-            <span class="x-tag">{tag ? tag.name : '?'}</span>
+            <span class="x-tag" style:background-color={tag.bgColor} style:color={tag.color}>{tag ? tag.name : '?'}</span>
         {/each}
 
         <span class="x-tag x-new"
@@ -171,16 +171,16 @@
     .x-tag {
         display: block;
         float: left;
-        padding: 0 2px;
-        border-radius: 2px;
+        padding: 0 3px;
+        border-radius: 1px;
         background: #ddd;
         margin-right: 2px;
         margin-bottom: 2px;
         font-size: 0.6rem;
-        font-weight: 700;
+        font-weight: 600;
         text-rendering: optimizeLegibility;
         color: #555;
-        border: 1px solid #ccc;
+        border: 1px solid rgba(0, 0, 0, 0.25);
 
         &.x-new {
             background-color: #ffffD6;

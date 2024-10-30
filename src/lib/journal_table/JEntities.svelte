@@ -117,9 +117,9 @@
 </script>
 
 <div class="x-cell x-cell-wrapper">
-    <div>
-        <textarea bind:value={entitiesRaw} style="border:1px solid red; height: 20px" onchange={applyRaw}></textarea>
-    </div>
+<!--    <div>-->
+<!--        <textarea bind:value={entitiesRaw} style="border:1px solid red; height: 20px" onchange={applyRaw}></textarea>-->
+<!--    </div>-->
     <div class="x-entities">
         {#each entities as entity}
             <!--    &lt;!&ndash;    <div>{entity.entity.extId}</div>&ndash;&gt;-->

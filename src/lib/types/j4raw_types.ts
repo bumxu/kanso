@@ -39,6 +39,8 @@ export type RawTagsSchema = {
 export type RawTagSchema = {
     id: string;
     name: string;
+    bgColor?: string;
+    color?: string;
 }
 
 // --- STATUS

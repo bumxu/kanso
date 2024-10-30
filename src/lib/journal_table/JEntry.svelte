@@ -52,6 +52,12 @@
         tippy(domIdIcon);
     });
 
+    $effect(() => {
+        if (entry.dateClosed != null) {
+            entry.dateUpdated = entry.dateClosed;
+        }
+    });
+
     function handleStatusChange() {
         const id = entry.status;
         if (id != null) {

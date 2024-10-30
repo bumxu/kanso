@@ -45,6 +45,14 @@
 
             <label for="tag_name">Nombre</label>
             <input type="text" id="tag_name" bind:value={selected.name}>
+
+            <label for="tag_bgColor">Color</label>
+            <input type="color" id="tag_bgColor" bind:value={selected.bgColor}>
+            <button onclick={() => selected.bgColor = ''}>Quitar</button>
+
+            <label for="tag_color">Color de texto</label>
+            <input type="color" id="tag_color" bind:value={selected.color}>
+            <button onclick={() => selected.color = ''}>Quitar</button>
         {:else}
             <div class="x-no-selection">
                 <i class="fas fa-fw fa-hand-back-point-up"></i> Seleccione un elemento para editar
@@ -74,7 +82,6 @@
         border: none;
         background-color: transparent;
     }
-
 
 
 </style>
