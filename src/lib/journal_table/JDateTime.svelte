@@ -25,6 +25,10 @@
     let focused = $state(false);
     let domInput: HTMLInputElement;
 
+    $effect(() => {
+        inputValue = formatValue(value) || '';
+    });
+
     export function focus() {
         domInput.focus();
     }

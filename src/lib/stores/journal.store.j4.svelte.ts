@@ -3,7 +3,7 @@ import type { RawEntriesSchema, RawEntrySchema } from '$lib/types/j4raw_types';
 
 class JournalStore {
     private _nid: bigint = 0n;
-    private _entryIndex: { [id: string]: EntrySchema } = {};
+    private _entryIndex: { [id: string]: EntrySchema } = $state({});
     private _entryTree: WindowsSchema = {};
     public journal: WindowsSchema = $state({});
     //private _store: WindowsSchema = $state({});
@@ -22,6 +22,10 @@ class JournalStore {
     // }
     //
 
+    public get(id: string): EntrySchema | null {
+        return this._entryIndex[id] || null;
+    }
+
     public add(entry: EntrySchema): EntrySchema {
         const id = this._nid.toString(16);
         const dateSince = entry.dateSince;
@@ -37,7 +41,7 @@ class JournalStore {
         this.journal[windowId].entries.sort((a, b) => a.dateSince.localeCompare(b.dateSince));
 
         this._nid += 1n;
-        return $state.snapshot(entry);
+        return this.journal[windowId].entries.find((e) => e.id === id) as EntrySchema;
     }
 
     public load(raw: RawEntriesSchema): void {
@@ -62,7 +66,7 @@ class JournalStore {
         }
         console.log('entryTree ->', entryTree);
         this._entryIndex = entryIndex;
-        this._entryTree = entryTree;
+        // this._entryTree = entryTree;
         this.journal = entryTree;
     }
 

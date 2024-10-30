@@ -1,12 +1,12 @@
 <script lang="ts">
     import JEntryTopicCell from '$lib/JEntryTopicCell.svelte';
     import JEntryUpdates from '$lib/JEntryUpdates.svelte';
-    import JDateTimeCell from '$lib/journal_table/JDateTimeCell.svelte';
     import JEntities from '$lib/journal_table/JEntities.svelte';
     import JTagsCell from '$lib/journal_table/JTagsCell.svelte';
     import { prioritiesStore } from '$lib/stores/priorities.store.j4.svelte';
     import { statusesStore } from '$lib/stores/statuses.store.j4.svelte';
     import type { EntrySchema } from '$lib/types/j4_types';
+    import { DateTime } from 'luxon';
     import { onMount } from 'svelte';
     import tippy from 'tippy.js';
     import JDateTime from './JDateTime.svelte';
@@ -48,6 +48,16 @@
         // Tippy
         tippy(domIdIcon);
     });
+
+    function handleStatusChange() {
+        const id = entry.status;
+        if (id != null) {
+            const status = statusesStore.get(id);
+            if (status != null && status.final) {
+                entry.dateClosed = DateTime.local().toFormat('yyyyMMddHHmm');
+            }
+        }
+    }
 
     /** Marca el registro como modificado y lanza el proceso de guardado diferido. */
     async function dirty() {
@@ -159,22 +169,22 @@
     </div>
     <div>
         <select bind:value={entry.priority} style="width: 95%">
-            <option value="">--</option>
+            <option value={undefined}></option>
             {#each Object.values(prioritiesStore.priorities) as priority, i (priority.id)}
                 <option value={priority.id}>{priority.name}</option>
             {/each}
         </select>
-<!--        <input type="text" bind:value={entry.priority} style="border: 1px solid #333; width: 50px" />-->
+        <!--        <input type="text" bind:value={entry.priority} style="border: 1px solid #333; width: 50px" />-->
         <!--        <JPriorityCell bind:value={entry.priority} />-->
     </div>
     <div>
-        <select bind:value={entry.status} style="width: 95%">
-            <option value="">--</option>
+        <select bind:value={entry.status} onchange={()=>handleStatusChange()} style="width: 95%">
+            <option value={undefined}></option>
             {#each Object.values(statusesStore.statuses) as status, i (status.id)}
                 <option value={status.id}>{status.name}</option>
             {/each}
         </select>
-<!--        <input type="text" bind:value={entry.status} style="border: 1px solid #333; width: 50px" />-->
+        <!--        <input type="text" bind:value={entry.status} style="border: 1px solid #333; width: 50px" />-->
         <!--        <select bind:value={entry.status}>-->
         <!--            {#each statusesStore.statuses as status, i (status.id) }-->
         <!--                <option value={status.id}>{status.name}</option>-->

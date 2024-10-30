@@ -12,7 +12,11 @@ class StatusesStore {
         return this._data;
     }
 
-    public add(status: StatusSchema): StatusSchema {
+    public get(id: string): StatusSchema | null {
+        return this.statuses[id] || null;
+    }
+
+    public add(status: Omit<StatusSchema, 'id'>): StatusSchema {
         const id = this._nid.toString(16);
         status.id = id;
         this._data[id] = status;

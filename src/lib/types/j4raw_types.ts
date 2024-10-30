@@ -49,6 +49,7 @@ export type RawStatusesSchema = {
 export type RawStatusSchema = {
     id: string;
     name: string;
+    final: boolean;
 }
 
 // --- PRIORITIES

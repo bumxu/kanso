@@ -22,11 +22,10 @@
     }
 
     function add() {
-        const status: StatusSchema = {
-            id: '',
-            name: 'Nuevo estado'
-        };
-        statusesStore.add(status);
+        statusesStore.add({
+            name: 'Nuevo estado',
+            final: false
+        });
     }
 
 </script>
@@ -50,11 +49,14 @@
 
     <div class="x-form">
         {#if selected != null}
-            <label for="status_id">#</label>
-            <input type="text" id="status_id" bind:value={selected.id} readonly disabled>
+            <div class="x-id ff-mono">#{selected.id}</div>
 
             <label for="status_name">Nombre</label>
             <input type="text" id="status_name" bind:value={selected.name}>
+
+            <label for="status_final">Final</label>
+            <input type="checkbox" id="status_final" bind:checked={selected.final}>
+
         {:else}
             <div class="x-no-selection">
                 <i class="fas fa-fw fa-hand-back-point-up"></i> Seleccione un elemento para editar
@@ -85,5 +87,10 @@
         background-color: transparent;
     }
 
+    .x-id {
+        color: #888;
+        font-weight: 500;
+        font-size: 15px;
+    }
 
 </style>

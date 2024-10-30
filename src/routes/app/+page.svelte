@@ -17,10 +17,9 @@
     import SBPriorities from './component/SBPriorities.svelte';
     import SBStatuses from './component/SBStatuses.svelte';
     import SBTags from './component/SBTags.svelte';
-    //import Row from './Row.svelte';
 
     //let entries: JEntry[] = [];
-    let journal = $derived(journalStore.journal);
+    let journal = $derived(Object.values(journalStore._entryIndex));
 
     let sbOpen = $state(false);
     let sbTool: string | null = $state(null);
@@ -30,15 +29,15 @@
 
     let view: EntrySchema[] = $derived.by(() => {
         let entries = Object.values(journalStore.journal).flatMap(p => p.entries);
-        // if (order === 'dateSince' && orderDir === 'asc') {
-        //     return journalStore.journal;
-        // } else
-        if (order === 'dateSince' && !orderAsc) {
-            return entries.sort((a, b) => b.dateSince.localeCompare(a.dateSince));
+
+        // Orden
+        if (order === 'dateSince' && orderAsc) {
+            entries.sort((a, b) => a.dateSince.localeCompare(b.dateSince));
+        } else if (order === 'dateSince' && !orderAsc) {
+            entries.sort((a, b) => b.dateSince.localeCompare(a.dateSince));
         } //else {
         //     return journalStore.journal;
         // }
-        console.log('View updated', entries);
 
         // Aplicar filtros
         entries = entries.filter(entry => {
@@ -95,8 +94,7 @@
             dateSince: DateTime.local().toFormat('yyyyMMddHHmm'),
             subject: 'Nuevo ' + Math.random(),
             updates: [],
-            tags: [],
-            status: 'active'
+            tags: []
         });
     }
 
@@ -176,9 +174,8 @@
                 <!--    />-->
                 <!--{/each}-->
                 {#each view as entry, i (entry.id)}
-                    <JEntry bind:entry={view[i]}
-                            partitionId={entry.dateSince.substring(0, 6)}
-                            onpartitionchange={()=>{}} />
+                    <JEntry entry={view[i]}
+                    />
                 {/each}
             </div>
 

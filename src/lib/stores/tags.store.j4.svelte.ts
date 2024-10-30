@@ -37,7 +37,7 @@ class TagsStore {
         return matches;
     }
 
-    public add(tag: TagSchema): TagSchema {
+    public add(tag: Omit<TagSchema, 'id'>): TagSchema {
         tag.id = this._nid.toString(16);
         if (this.getByName(tag.name) != null) {
             throw new Error(`Tag with name ${tag.name} already exists`);

@@ -21,8 +21,8 @@
             console.debug('entity -> linkedEntity is null');
             return null;
         }
-        console.debug('linkedEntity', linkedEntity);
-        console.debug('entity ->', entitiesStore.entities[linkedEntity.entityId]);
+        // console.debug('linkedEntity', linkedEntity);
+        // console.debug('entity ->', entitiesStore.entities[linkedEntity.entityId]);
         return entitiesStore.entities[linkedEntity.entityId];
     });
     let entityType = $derived.by(() => {
@@ -30,12 +30,12 @@
             console.debug('entityType -> entity is null');
             return null;
         }
-        console.debug('entityType ->', entityTypesStore.entityTypes[entity.type]);
+        //console.debug('entityType ->', entityTypesStore.entityTypes[entity.type]);
         return entityTypesStore.entityTypes[entity.type];
     });
     let entityDisplay = $derived.by(() => {
         if (entity == null || entityType == null) {
-            console.debug('entityDisplay -> entity or entityType is null');
+            //console.debug('entityDisplay -> entity or entityType is null');
             return '';
         }
         console.debug('entityDisplay ->', entityType.displayFn);
