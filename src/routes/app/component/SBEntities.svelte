@@ -37,7 +37,7 @@
             type: undefined,
             raw: {}
         });
-        selected = entity;
+        handleSelectItem(entity);
     }
 
     function display(entity: EntitySchema) {

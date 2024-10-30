@@ -113,10 +113,14 @@ class EntityTypesStoreJ4Svelte {
     public getDisplayFn(etype: EntityTypeSchema): ETypeDisplayFn | null ;
     public getDisplayFn(arg: EntityTypeSchema | string): ETypeDisplayFn | null {
         const type = typeof arg === 'string' ? this.entityTypes[arg] : arg;
-        const typeId = typeof arg === 'string' ? arg : arg.id;
+        const typeId = typeof arg === 'string' ? arg : type?.id;
+        if (typeId == null) {
+            // Id del tipo nulo
+            return (id, raw) => 'Entity #' + id + ' (er:NLT)';
+        }
         if (type == null) {
             // Tipo desconocido
-            return (id, raw) => typeId + ':' + id + ' (er:UKT)';
+            return (id, raw) => (typeId || '') + ':' + id + ' (er:UKT)';
         }
         if (type.displayFn == null || type.displayFn === '') {
             // No hay display function
