@@ -10,14 +10,15 @@ export type WindowSchema = {
 export type EntrySchema = {
     id?: string;
     dateSince: string;
+    dateUpdated: string;
     subject: string;
     updates: EntreUpdateSchema[];
     entities?: EntryEntitySchema[];
     tags: EntryTagsSchema;
-    dateClosed?: string;
+    priority?: string;
     dateDue?: string;
     status?: string;
-    priority?: string;
+    dateClosed?: string;
 }
 
 export type EntryTagsSchema = string[];

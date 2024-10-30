@@ -7,6 +7,7 @@ export type RawEntriesSchema = {
 export type RawEntrySchema = {
     id: string;
     dateSince: string;
+    dateUpdated: string;
     subject: string;
     updates: any[];
     entities?: any[];

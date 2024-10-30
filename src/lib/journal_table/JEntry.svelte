@@ -37,6 +37,9 @@
 
     // Hooks
     onMount(() => {
+        if (entry.dateUpdated == null) {
+            entry.dateUpdated = entry.dateSince;
+        }
         //     // Cuando se cree el componente, si se trata de un nuevo registro,
         //     // lo enviamos a basede datos de forma inmediata
         //     if (isNew) {
@@ -57,6 +60,11 @@
                 entry.dateClosed = DateTime.local().toFormat('yyyyMMddHHmm');
             }
         }
+    }
+
+    function updateDateUpdated(ev) {
+        ev.preventDefault();
+        entry.dateUpdated = DateTime.local().toFormat('yyyyMMddHHmm');
     }
 
     /** Marca el registro como modificado y lanza el proceso de guardado diferido. */
@@ -139,7 +147,7 @@
     </div>
 
     <div>
-        <div style="text-wrap: nowrap;"><i class="fad fa-sm fa-fw fa-play"></i>
+        <div class="x-dt-wrapper"><i class="fad fa-sm fa-fw fa-play"></i>
             <JDateTime bind:value={entry.dateSince}
                        onchange={()=>{
                            if (entry.dateSince.substring(0, 6) !== partitionId) {
@@ -147,11 +155,9 @@
                            }
                            }} />
         </div>
-        <div style="text-wrap: nowrap;"><i class="fad fa-sm fa-fw fa-flag-checkered"></i>
-            <JDateTime bind:value={entry.dateDue} />
-        </div>
-        <div style="text-wrap: nowrap;"><i class="fad fa-sm fa-fw fa-check"></i>
-            <JDateTime bind:value={entry.dateClosed} />
+        <div class="x-dt-wrapper" style="opacity: 0.4;">
+            <i class="fad fa-sm fa-fw fa-pen" title="Doble click para actualizar" style="cursor: pointer" ondblclick={updateDateUpdated}></i>
+            <JDateTime bind:value={entry.dateUpdated} />
         </div>
 
     </div>
@@ -174,6 +180,10 @@
                 <option value={priority.id}>{priority.name}</option>
             {/each}
         </select>
+
+        <div class="x-dt-wrapper"><i class="fad fa-sm fa-fw fa-flag-checkered"></i>
+            <JDateTime bind:value={entry.dateDue} />
+        </div>
         <!--        <input type="text" bind:value={entry.priority} style="border: 1px solid #333; width: 50px" />-->
         <!--        <JPriorityCell bind:value={entry.priority} />-->
     </div>
@@ -184,6 +194,10 @@
                 <option value={status.id}>{status.name}</option>
             {/each}
         </select>
+
+        <div class="x-dt-wrapper"><i class="fad fa-sm fa-fw fa-check"></i>
+            <JDateTime bind:value={entry.dateClosed} />
+        </div>
         <!--        <input type="text" bind:value={entry.status} style="border: 1px solid #333; width: 50px" />-->
         <!--        <select bind:value={entry.status}>-->
         <!--            {#each statusesStore.statuses as status, i (status.id) }-->
@@ -199,6 +213,22 @@
 </div>
 
 <style lang="scss">
+
+    .x-dt-wrapper {
+        text-wrap: nowrap;
+        height: 14px;
+        line-height: 14px;
+
+        i.fas, i.fad {
+            color: #333;
+            font-size: 9px;
+            vertical-align: middle;
+        }
+
+        input {
+            vertical-align: middle;
+        }
+    }
 
     #fld-id {
         font-size: 10px;
