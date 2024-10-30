@@ -106,12 +106,12 @@ class EntityTypesStoreJ4Svelte {
             throw new Error(`The given id already exists for the entity type ${this.entityTypes[entity.id].name}.`);
         }
         this.entityTypes[entity.id] = entity;
-        return $state.snapshot(entity);
+        return this.entityTypes[entity.id];
     }
 
-    public getDisplayFn(id: string): ETypeDisplayFn | null ;
-    public getDisplayFn(etype: EntityTypeSchema): ETypeDisplayFn | null ;
-    public getDisplayFn(arg: EntityTypeSchema | string): ETypeDisplayFn | null {
+    public getDisplayFn(id: string): ETypeDisplayFn  ;
+    public getDisplayFn(etype: EntityTypeSchema): ETypeDisplayFn  ;
+    public getDisplayFn(arg: EntityTypeSchema | string): ETypeDisplayFn {
         const type = typeof arg === 'string' ? this.entityTypes[arg] : arg;
         const typeId = typeof arg === 'string' ? arg : type?.id;
         if (typeId == null) {

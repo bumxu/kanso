@@ -9,6 +9,14 @@
 
     let { entities = $bindable() }: Props = $props();
 
+    let view = $derived.by(() => {
+        return Object.values(entities).sort((a, b) => {
+            const adisplayed = display(a);
+            const bdisplayed = display(b);
+            return adisplayed.localeCompare(bdisplayed);
+        });
+    });
+
     let selected: EntitySchema | null = $state(null);
     let selectedRawJSON = $state('');
     let selectedType: EntityTypeSchema | null = $derived.by(() => {
@@ -57,7 +65,7 @@
 
     <button onclick={add}>+</button>
     <ul class="x-item-list">
-        {#each Object.values(entities) as entity, i (entity.id)}
+        {#each view as entity, i (entity.id)}
             <button class="x-item" onclick={() => handleSelectItem(entity)}>{display(entity)}</button>
         {/each}
     </ul>
@@ -79,7 +87,9 @@
             {/if}
 
             <label for="tag_data">Raw data</label>
-            <textarea id="tag_data" bind:value={selectedRawJSON} oninput={handleRawChange}></textarea>
+            <div class="x-tx-wrapper">
+                <textarea id="tag_data" class="ff-mono" bind:value={selectedRawJSON} oninput={handleRawChange}></textarea>
+            </div>
         {:else}
             <div class="x-no-selection">
                 <i class="fas fa-fw fa-hand-back-point-up"></i> Seleccione un elemento para editar
@@ -111,6 +121,15 @@
         font-size: 12px;
         background-color: transparent;
         text-align: left;
+    }
+
+    .x-tx-wrapper {
+        textarea {
+            box-sizing: border-box;
+            width: 100%;
+            height: 60px;
+            font-size: 10px;
+        }
     }
 
 </style>

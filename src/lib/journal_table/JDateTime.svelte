@@ -276,7 +276,7 @@
     }
 </script>
 
-<input class="x-datetime-input date" class:valid={valid}
+<input class="x-datetime-input ff-mono date" class:valid={valid}
        placeholder={placeholder}
        bind:value={inputValue}
        bind:this={domInput}
@@ -288,7 +288,6 @@
 <style lang="scss">
 
 .x-datetime-input {
-    font-family: 'Noto Sans Mono', monospace;
     font-weight: 500;
     font-size: 0.625rem;
     width: 90px;

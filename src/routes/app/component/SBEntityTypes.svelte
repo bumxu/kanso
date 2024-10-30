@@ -1,12 +1,19 @@
 <script lang="ts">
-    import type { EntitySchema, EntityTypeSchema, EntityTypesSchema } from '$lib/types/j4_types';
-    import { nanoid } from 'nanoid';
+    import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
+    import type { EntityTypeSchema, EntityTypesSchema } from '$lib/types/j4_types';
+    import Button from './Button.svelte';
 
     type Props = {
         entityTypes: EntityTypesSchema;
     }
 
     let { entityTypes = $bindable() }: Props = $props();
+
+    let view = $derived.by(() => {
+        return Object.values(entityTypes).sort((a, b) => {
+            return a.name.localeCompare(b.name);
+        });
+    });
 
     let selected: EntityTypeSchema | undefined = $state();
 
@@ -20,15 +27,15 @@
         if (id == null) {
             return;
         }
-        const entityType: EntityTypeSchema = {
+        const entityType: EntityTypeSchema = entityTypesStore.add({
             id,
             name: 'Nuevo tipo de entidad',
             displayFn: '(raw) => \'?\' + raw.moduleId',
             parseFn: '(raw) => { return { }; }',
             lookupFn: '(str, raw) => 0'
-        };
-        entityTypes[entityType.id] = entityType;
-        selected = entityTypes[entityType.id];
+        });
+
+        selected = entityType;
     }
 </script>
 
@@ -39,10 +46,16 @@
         <i class="fas fa-fw fa-caret-right"></i>
     </div>
 
-    <button onclick={add}>+</button>
-    <ul class="x-item-list">
-        {#each Object.values(entityTypes) as entityType, i (entityType.id)}
-            <button class="x-item" onclick={() => handleSelectItem(entityType)}>{entityType.name}</button>
+    <div class="x-bar">
+        <Button sm icon="fas fa-fw fa-plus" onclick={add}>Nuevo</Button>
+    </div>
+
+    <ul class="x-list">
+        {#each view as entityType, i (entityType.id)}
+            <li class="x-list-item">
+                <i class="fa-fw fa-xs {entityType?.icon}"></i>
+                <button class="x-item" onclick={() => handleSelectItem(entityType)}>{entityType.name}</button>
+            </li>
         {/each}
     </ul>
 
@@ -55,19 +68,28 @@
             <input type="text" id="et_name" bind:value={selected.name}>
 
             <label for="et_displayfn">Display Function</label>
-            <textarea id="et_displayfn" wrap="off" bind:value={selected.displayFn}></textarea>
+            <div class="x-tx-wrapper">
+                <textarea id="et_displayfn" class="ff-mono" wrap="off" bind:value={selected.displayFn}></textarea>
+            </div>
 
             <label for="et_parsefn">Parse Function</label>
-            <textarea id="et_parsefn" wrap="off" bind:value={selected.parseFn}></textarea>
+            <div class="x-tx-wrapper">
+                <textarea id="et_parsefn" class="ff-mono" wrap="off" bind:value={selected.parseFn}></textarea>
+            </div>
 
             <label for="et_lookupfn">Lookup Function</label>
-            <textarea id="et_lookupfn" wrap="off" bind:value={selected.lookupFn}></textarea>
+            <div class="x-tx-wrapper">
+                <textarea id="et_lookupfn" class="ff-mono" wrap="off" bind:value={selected.lookupFn}></textarea>
+            </div>
 
             <label for="et_color">Color</label>
             <input type="text" id="et_color" bind:value={selected.color}>
 
             <label for="et_bgcolor">Color de fondo</label>
             <input type="text" id="et_bgcolor" bind:value={selected.bgColor}>
+
+            <label for="et_icon">Icono</label>
+            <input type="text" id="et_icon" placeholder="fax fa-xxx" bind:value={selected.icon}>
         {:else}
             <div class="x-no-selection">
                 <i class="fas fa-fw fa-hand-back-point-up"></i> Seleccione un elemento para editar
@@ -78,29 +100,63 @@
 
 <style lang="scss">
 
-    .x-item-list {
+    //.btn {
+    //    margin: 0;
+    //    display: inline;
+    //    border: 1px solid #aaa;
+    //    border-radius: 2px;
+    //    padding: 1px 5px;
+    //    background: #ddd;
+    //    font-size: 12px;
+    //    font-weight: 600;
+    //    cursor: pointer;
+    //    color: #555;
+    //}
+
+    .x-bar {
+        border-bottom: 1px solid rgba(#000, 0.2);
+        padding: 2px;
+    }
+
+    .x-list {
         background: #fff;
         height: 120px;
         overflow: auto;
         padding: 0;
         margin: 0;
+        border-bottom: 1px solid rgba(#000, 0.2);
+    }
+    .x-list-item {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        align-items: center;
 
-        li {
-            list-style: none;
+        i {
+            margin: 0 4px;
+            opacity: 0.75;
+            display: inline-block;
+            flex: 0 0 auto;
+        }
+        button {
+            background: none;
+            border: none;
             padding: 0;
-            margin: 0;
+            cursor: pointer;
+            text-align: left;
+            flex: 1 0 0;
         }
     }
 
-    textarea {
-        overflow: auto;
+    .x-tx-wrapper {
+        textarea {
+            box-sizing: border-box;
+            width: 100%;
+            height: 50px;
+            font-size: 10px;
+        }
     }
 
-    .x-item {
-        cursor: pointer;
-        display: block;
-        border: none;
-        background-color: transparent;
-    }
 
 </style>

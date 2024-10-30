@@ -38,6 +38,19 @@ class EntitiesStore {
             }
         }
 
+        // Ordenar por peso, luego por tipo, y luego por display
+        matches.sort((a, b) => {
+            if (a.weight === b.weight) {
+                if (a.item.type === b.item.type) {
+                    const adp = entityTypesStore.getDisplayFn(a.item.type)(a.item.id, a.item.raw);
+                    const bdp = entityTypesStore.getDisplayFn(b.item.type)(b.item.id, b.item.raw);
+                    return adp.localeCompare(bdp);
+                }
+                return a.item.type.localeCompare(b.item.type);
+            }
+            return b.weight - a.weight;
+        });
+
         for (let type of Object.values(entityTypesStore.entityTypes)) {
             const parseFn = new Function('return ' + type.parseFn)();
             const result = parseFn(input);

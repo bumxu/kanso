@@ -98,8 +98,7 @@
 
     .x-body-ce {
         display: inline-block;
-        font-family: "Noto Sans", sans-serif;
-        font-size: 0.625rem;
+        font-size: 11px;
         text-rendering: optimizeLegibility;
         resize: none;
         box-sizing: border-box;
@@ -126,7 +125,6 @@
     }
 
     textarea {
-        font-family: 'Noto Sans', sans-serif;
         font-size: 0.68rem;
         font-weight: 400;
         transform: translateZ(0);

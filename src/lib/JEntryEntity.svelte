@@ -1,13 +1,18 @@
 <script lang="ts">
 
-    import { SERVER_HOST } from '$lib/constants';
-    import { EntitiesService } from '$lib/services/EntitiesService';
     import { entitiesStore } from '$lib/stores/entities.store.j4.svelte';
     import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
-    import type { EntitySchema, EntryEntitySchema, EntrySchema } from '$lib/types/j4_types';
+    import type { EntitySchema, EntryEntitySchema } from '$lib/types/j4_types';
     import { onMount } from 'svelte';
+    import type { EventHandler } from 'svelte/elements';
 
-    let { linkedEntity }: { linkedEntity: EntryEntitySchema } = $props();
+    let {
+        linkedEntity,
+        onUnlinkEntity
+    }: {
+        linkedEntity: EntryEntitySchema,
+        onUnlinkEntity: EventHandler
+    } = $props();
 
     //export let entryId: number;
     //export let linkedEntity: any;
@@ -38,7 +43,7 @@
             //console.debug('entityDisplay -> entity or entityType is null');
             return '';
         }
-        console.debug('entityDisplay ->', entityType.displayFn);
+        // console.debug('entityDisplay ->', entityType.displayFn);
         const displayFn = entityTypesStore.getDisplayFn(entityType);
         return displayFn(entity.id, entity.raw);
     });
@@ -167,99 +172,48 @@
         }
     }
 
-    function aver(entity: EntitySchema): any {
-        if (entity != null) {
-            const type = entityTypesStore.entityTypes[entity.type];
-            const displayFn = new Function('return ' + type.displayFn)();
-            return displayFn(entity.raw);
-        } else {
-            return '#' + entity.id + '(?)';
-        }
-    }
-
-    function bgcolor(entity: EntitySchema): any {
-        if (entity != null) {
-            const type = entityTypesStore.entityTypes[entity.type];
-            return type.bgColor;
-        } else {
-            return 'inherit';
-        }
-    }
-
 </script>
 
-<div>
-    <!--    <div class="x-input"-->
-    <!--         role="textbox"-->
-    <!--         contenteditable="true"-->
-    <!--         tabindex="0"-->
-    <!--         bind:this={domInput}-->
-    <!--         bind:textContent={userInput}-->
-    <!--         oninput={handleInput}-->
-    <!--         onfocus={handleFocus}-->
-    <!--         onblur={handleBlur}-->
-    <!--         onkeydown={handleKeyDown}-->
-    <!--    />-->
-
-    <!--    <input type="text"-->
-    <!--           bind:value={userInput}-->
-    <!--           oninput={handleInput}-->
-    <!--           onkeydown={handleKeyDown}-->
-    <!--           onblur={handleBlur}-->
-    <!--           onfocus={handleFocus} />-->
-    {entityDisplay ? entityDisplay : '?'}
-
-    <!--{#if matchesVisible}-->
-    <!--    <div class="x-tag-matches">-->
-    <!--        <span class="x-tag-match"-->
-    <!--              class:selected={matchesSelectedIndex === -1}>-->
-    <!--            {userInput} (nueva)-->
-    <!--        </span>-->
-    <!--        {#each matches as entity, i}-->
-    <!--            <span class="x-tag-match" style:background={bgcolor(entity)}-->
-    <!--                  class:selected={matchesSelectedIndex === i}-->
-    <!--            >{aver(entity)}</span>-->
-    <!--        {/each}-->
-    <!--    </div>-->
-    <!--{/if}-->
+<div class="x-entity">
+    <div class="x-label" title="{entityDisplay}">
+        {#if entityType?.icon}
+            <i class="fa-fw fa-xs {entityType?.icon}"></i>
+        {/if}
+        {entityDisplay ? entityDisplay : '?'}
+    </div>
+    <div class="x-side">
+        <button class="fas fa-fw fa-sm fa-times"
+                aria-label="Quitar" title="Quitar"
+                onclick={onUnlinkEntity}></button>
+    </div>
 </div>
 
 <style lang="scss">
-    .x-input {
-        display: block;
-        padding: 0 3px;
-        border-radius: 2px;
-        height: 18px;
-        font-size: 0.68rem;
-        line-height: 18px;
-        text-rendering: optimizeLegibility;
-        border-bottom: 1px dashed #eee;
-
-        &:focus {
-            background-color: #ffffD6;
-            outline: none;
-            white-space: nowrap;
+    .x-entity {
+        font-size: 11px;
+        padding: 0 4px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        display: flex;
+    }
+    .x-label {
+        flex: 1 0 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0;
+        i {
+            //margin-right: 2px;
+            opacity: 0.75;
         }
     }
+    .x-side {
+        flex: 0 0 auto;
+    }
 
-    .x-tag-matches {
-        position: absolute;
-        background: white;
-        border-radius: 2px;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-        z-index: 1000;
-        min-width: calc(100% - 4px);
-
-        .x-tag-match {
-            display: block;
-            padding: 2px 4px;
-            cursor: pointer;
-            font-weight: 600;
-
-            &:hover, &.selected {
-                background: rgba(0, 0, 0, 0.04);
-                color: #000;
-            }
-        }
+    button {
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
     }
 </style>

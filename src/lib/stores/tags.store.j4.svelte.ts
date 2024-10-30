@@ -26,7 +26,8 @@ class TagsStore {
     public getSuggestions(input: string): SuggestionsSchema<TagSchema> {
         const matches: SuggestionsSchema<TagSchema> = [];
         for (let tag of Object.values(this.tags)) {
-            const iof = tag.name.toLowerCase().indexOf(input.toLowerCase());
+            const iof = tag.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().indexOf(
+                input.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase());
             if (iof === 0) {
                 matches.push({ item: tag, weight: 10 });
             } else if (iof > -1) {

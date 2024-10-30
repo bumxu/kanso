@@ -61,6 +61,10 @@
         }
     }
 
+    function unlink(tag: TagSchema) {
+        tagsIds = tagsIds.filter((tagId) => tagId !== tag.id);
+    }
+
     function handleKeyDown(e: KeyboardEvent) {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -77,10 +81,16 @@
             }
         } else if (e.key === 'ArrowDown') {
             e.preventDefault();
-            tagMatchesSelectedIndex = Math.min(tagMatchesSelectedIndex + 1, tagMatches.length - 1);
+            tagMatchesSelectedIndex = tagMatchesSelectedIndex + 1;
+            if (tagMatchesSelectedIndex >= tagMatches.length) {
+                tagMatchesSelectedIndex = -1;
+            }
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
-            tagMatchesSelectedIndex = Math.max(tagMatchesSelectedIndex - 1, -1);
+            tagMatchesSelectedIndex = tagMatchesSelectedIndex - 1;
+            if (tagMatchesSelectedIndex < -1) {
+                tagMatchesSelectedIndex = tagMatches.length - 1;
+            }
         } else if (e.key === 'Escape') {
             domInput.blur();
         }
@@ -90,6 +100,11 @@
         focused = true;
         await tick();
         domInput.focus();
+    }
+
+    function handleClickUnlink(ev: MouseEvent, tag: TagSchema) {
+        ev.stopPropagation();
+        unlink(tag);
     }
 
 </script>
@@ -104,7 +119,12 @@
 
     <div class="x-cell" style="overflow: auto">
         {#each tags as tag}
-            <span class="x-tag" style:background-color={tag.bgColor} style:color={tag.color}>{tag ? tag.name : '?'}</span>
+            <span class="x-tag" style:background-color={tag.bgColor} style:color={tag.color}>
+                {tag ? tag.name : '?'}
+                <i class="fas fa-fw fa-sm fa-times" style="cursor: pointer"
+                   aria-label="Quitar" title="Quitar"
+                   onclick={(ev) => handleClickUnlink(ev,tag)}></i>
+            </span>
         {/each}
 
         <span class="x-tag x-new"
@@ -124,15 +144,15 @@
 
     {#if tagMatchesVisible}
         <div class="x-tag-matches">
-            <span class="x-tag-match"
-                  class:selected={tagMatchesSelectedIndex === -1}>
-                {tagInput} (nueva)
-            </span>
             {#each tagMatches as tagMatch, i}
                 <span class="x-tag-match"
                       class:selected={tagMatchesSelectedIndex === i}
                 >{tagMatch.item.name}</span>
             {/each}
+            <span class="x-tag-match"
+                  class:selected={tagMatchesSelectedIndex === -1}>
+                {tagInput} (nueva)
+            </span>
         </div>
     {/if}
 

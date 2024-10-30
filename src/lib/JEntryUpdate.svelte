@@ -81,7 +81,6 @@
 
         textarea {
             width: calc(100% - 30px);
-            font-family: 'Noto Sans', sans-serif;
             font-size: 0.68rem;
             font-weight: 400;
             padding: 2px 4px 3px;
@@ -122,7 +121,6 @@
 
     .x-date-ce {
         display: inline-block;
-        font-family: "Noto Sans", sans-serif;
         font-size: 0.625rem;
         text-rendering: optimizeLegibility;
         box-sizing: border-box;
@@ -156,7 +154,6 @@
 
     .x-body-ce {
         display: inline-block;
-        font-family: "Noto Sans", sans-serif;
         font-size: 0.625rem;
         text-rendering: optimizeLegibility;
         box-sizing: border-box;

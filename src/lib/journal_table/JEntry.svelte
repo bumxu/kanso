@@ -38,7 +38,7 @@
     // Hooks
     onMount(() => {
         if (entry.dateUpdated == null) {
-            entry.dateUpdated = entry.dateSince;
+            entry.dateUpdated = entry.dateClosed ?? entry.dateSince;
         }
         //     // Cuando se cree el componente, si se trata de un nuevo registro,
         //     // lo enviamos a basede datos de forma inmediata

@@ -3,6 +3,7 @@
     import { entitiesStore } from '$lib/stores/entities.store.j4.svelte';
     import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte.js';
     import type { EntitySchema, EntryEntitySchema, SuggestionsSchema } from '$lib/types/j4_types';
+    import type { Nil } from '$lib/types/j4_types.js';
     import { nanoid } from 'nanoid';
 
     let { entryId, entities = $bindable() }: { entryId: number, entities: EntryEntitySchema[] } = $props();
@@ -34,7 +35,7 @@
     }
 
     async function handleInput(e: any) {
-        const term = e.target.innerText;
+        const term = e.target.value;
         if (term.length > 0) {
             entityMatches = entitiesStore.getSuggestions(term);
             console.debug(entityMatches);
@@ -108,34 +109,39 @@
         }
     }
 
+    function handleUnlink(entity: EntitySchema) {
+        console.log('Unlinking entity -> ', entity);
+        entities = entities.filter(e => e.id !== entity.id);
+    }
+
     function display(item: EntitySchema): string {
         const displayFn = entityTypesStore.getDisplayFn(item.type);
         return displayFn(item.id, item.raw);
     }
 
+    function typeIcon(item: EntitySchema): Nil<string> {
+        const type = entityTypesStore.get(item.type);
+        return type?.icon;
+    }
+
 </script>
 
 <div class="x-cell x-cell-wrapper">
-<!--    <div>-->
-<!--        <textarea bind:value={entitiesRaw} style="border:1px solid red; height: 20px" onchange={applyRaw}></textarea>-->
-<!--    </div>-->
+
     <div class="x-entities">
         {#each entities as entity}
-            <!--    &lt;!&ndash;    <div>{entity.entity.extId}</div>&ndash;&gt;-->
-            <JEntryEntity entryId={entryId} linkedEntity={entity} />
+            <JEntryEntity entryId={entryId} linkedEntity={entity} onUnlinkEntity={()=>handleUnlink(entity)} />
         {/each}
     </div>
-    <span class="x-entity x-new"
-          role="textbox"
-          contenteditable="true"
-          tabindex="0"
-          bind:this={domInput}
-          bind:textContent={entityInput}
-          oninput={handleInput}
-          onfocus={handleFocus}
-          onblur={handleBlur}
-          onkeydown={handleKeyDown}
-    ></span>
+
+    <input type="text" class="x-entity x-new"
+           placeholder="· ·"
+           bind:value={entityInput}
+           bind:this={domInput}
+           oninput={handleInput}
+           onfocus={handleFocus}
+           onblur={handleBlur}
+           onkeydown={handleKeyDown} />
 
     {#if entityMatchesVisible}
         <div class="x-entity-matches">
@@ -144,24 +150,15 @@
                 {entityInput} (nueva)
             </span>
             {#each entityMatches as entityMatch, i}
-                <span class="x-entity-match"
-                      class:selected={entityMatchesSelectedIndex === i}
-                >{display(entityMatch.item)}</span>
+                <span class="x-match"
+                      class:selected={entityMatchesSelectedIndex === i}>
+                    <i class="fa-fw fa-xs {typeIcon(entityMatch.item)}"></i>
+                    <span class="x-label">{display(entityMatch.item)}</span>
+                </span>
             {/each}
         </div>
     {/if}
 
-    <!--
-        class:hidden={!focused && tagInput.length === 0}
-    bind:textContent={tagInput}
-    oninput={handleInput}
-    onfocus={handleFocus}
-    onblur={handleBlur}
-    onkeydown={handleKeyDown}
--->
-<!--    <button onclick={add}>-->
-<!--        <i class="fas fa-caret-down fa-sm"></i>-->
-<!--    </button>-->
 </div>
 
 <style lang="scss">
@@ -175,45 +172,63 @@
 
     .x-entities {
         flex-grow: 1;
+        overflow: auto;
     }
 
     .x-entity.x-new {
         display: block;
-        float: left;
-        padding: 0 2px;
-        border-radius: 2px;
-        background: #ddd;
-        margin-right: 2px;
-        margin-bottom: 2px;
-        font-size: 0.6rem;
-        font-weight: 700;
+        background-color: transparent;
         text-rendering: optimizeLegibility;
-        color: #555;
-        border: 1px solid #ccc;
+        border: 0; //1px solid #ccc;
+        font-size: 11px;
+        padding: 0 4px;
+        outline: none;
 
-        &.x-new {
+        &:hover, &:focus {
             background-color: #ffffD6;
-            outline: none;
-            white-space: nowrap;
+        }
+
+        &:empty:not(:focus) {
+            font-size: 6px;
         }
     }
 
     .x-entity-matches {
         position: absolute;
         background: white;
-        border-radius: 2px;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        border-radius: 1px;
+        box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
         z-index: 100;
-        min-width: calc(100% - 4px);
+        top: 100%;
+        min-width: calc(100% - 2px);
+        max-width: 120%;
 
-        .x-entity-match {
-            display: block;
-            padding: 2px 4px;
+        .x-match {
+            display: flex;
+            padding: 1px 4px;
             cursor: pointer;
-            font-weight: 600;
+            font-size: 12px;
+            font-weight: 500;
+            align-items: center;
 
-            &:hover, &.selected {
+            i {
+                opacity: 0.75;
+                margin-right: 4px;
+                flex: 0 0 auto;
+            }
+            .x-label {
+                flex: 1 0 0;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            &.selected {
                 background: rgba(0, 0, 0, 0.04);
+                color: #000;
+            }
+            &:hover {
+                background: rgba(0, 0, 0, 0.08);
                 color: #000;
             }
         }

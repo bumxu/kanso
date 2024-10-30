@@ -47,6 +47,7 @@ export type EntityTypeSchema = {
     name: string;
     color?: string;
     bgColor?: string;
+    icon?: string;
     lookupFn: string;
     displayFn: string
     /**
