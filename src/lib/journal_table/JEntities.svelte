@@ -109,9 +109,8 @@
     }
 
     function display(item: EntitySchema): string {
-        const type = entityTypesStore.entityTypes[item.type];
-        const displayFn = new Function('return ' + type.displayFn)();
-        return displayFn(item.raw);
+        const displayFn = entityTypesStore.getDisplayFn(item.type);
+        return displayFn(item.id, item.raw);
     }
 
 </script>
@@ -160,9 +159,9 @@
     onblur={handleBlur}
     onkeydown={handleKeyDown}
 -->
-    <button onclick={add}>
-        <i class="fas fa-caret-down fa-sm"></i>
-    </button>
+<!--    <button onclick={add}>-->
+<!--        <i class="fas fa-caret-down fa-sm"></i>-->
+<!--    </button>-->
 </div>
 
 <style lang="scss">

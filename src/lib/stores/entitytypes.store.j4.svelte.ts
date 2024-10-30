@@ -122,7 +122,16 @@ class EntityTypesStoreJ4Svelte {
             // No hay display function
             return (id, raw) => typeId + ':' + id + ' (er:NDP)';
         }
-        return new Function('return ' + type.displayFn)();
+        const diplayfn = new Function('return ' + type.displayFn)();
+        // Wrapper por si hay errores en al ejecutar la función
+        return (id, raw) => {
+            try {
+                return diplayfn(id, raw);
+            } catch (e) {
+                console.warn('Error al ejecutar la displayFn del tipo de entidad "' + typeId + '" para la entidad "' + JSON.stringify(id) + '"', e);
+                return typeId + ':' + id + ' (er:EXC)';
+            }
+        };
     }
 
     public clear(): void {
