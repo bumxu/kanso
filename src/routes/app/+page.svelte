@@ -11,6 +11,7 @@
     import type { EntrySchema } from '$lib/types/j4_types';
     import { DateTime } from 'luxon';
     import { onMount } from 'svelte';
+    import SBConsole from './component/SBConsole.svelte';
     import SbEntities from './component/SBEntities.svelte';
     import SBEntityTypes from './component/SBEntityTypes.svelte';
     import SBFilters from './component/SBFilters.svelte';
@@ -204,6 +205,9 @@
                 {#if sbTool === 'filters'}
                     <SBFilters bind:basicFilters={filtersStore.filters} />
                 {/if}
+                {#if sbTool === 'console'}
+                    <SBConsole />
+                {/if}
             </div>
         {/if}
 
@@ -232,6 +236,10 @@
                 <li>
                     <button onclick={()=>toggleSb('filters')}
                             title="Filtros básicos"><i class="fas fa-filters"></i></button>
+                </li>
+                <li>
+                    <button onclick={()=>toggleSb('console')}
+                            title="Consola"><i class="fas fa-terminal"></i></button>
                 </li>
             </ul>
         </div>

@@ -20,6 +20,7 @@
     <SBStatuses bind:statuses={statusesStore.statuses} />
     <SBPriorities bind:priorities={prioritiesStore.priorities} />
 
+
 </div>
 
 <style lang="scss">
