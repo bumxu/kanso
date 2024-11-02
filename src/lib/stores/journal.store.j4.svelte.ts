@@ -1,5 +1,6 @@
 import type { EntrySchema, WindowsSchema } from '$lib/types/j4_types';
 import type { RawEntriesSchema, RawEntrySchema } from '$lib/types/j4raw_types';
+import { nanoid } from 'nanoid';
 
 class JournalStore {
     private _nid: bigint = 0n;
@@ -51,6 +52,11 @@ class JournalStore {
             this.journal[windowId].entries = this.journal[windowId].entries.filter((e) => e.id !== id);
             //delete this._entryIndex[id];
         }
+    }
+
+    public addUpdate(entryId: string, update: any, position: number = 0): void {
+        const entry = this._entryIndex[entryId];
+        updates.splice(position, 0, { id: nanoid(10), body: '' });
     }
 
     public load(raw: RawEntriesSchema): void {

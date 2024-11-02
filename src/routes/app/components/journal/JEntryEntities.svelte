@@ -1,4 +1,5 @@
 <script lang="ts">
+    import SimpleBar from '$lib/components/SimpleBar.svelte';
     import { entitiesStore } from '$lib/stores/entities.store.j4.svelte.js';
     import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte.js';
     import type { EntitySchema, EntryEntitySchema, SuggestionsSchema } from '$lib/types/j4_types';
@@ -117,24 +118,29 @@
         return type?.icon;
     }
 
+    function handleCellClick(e: MouseEvent) {
+        domInput.focus();
+    }
+
 </script>
 
-<div class="x-cell-wrapper">
+<div class="x-cell-content">
 
-    <div class="x-entities">
-        {#each entities as entity}
-            <JEntryEntity entryId={entryId} linkedEntity={entity} onUnlinkEntity={()=>handleUnlink(entity)} />
-        {/each}
-    </div>
-
-    <input type="text" class="x-entity x-new"
-           placeholder="· ·"
-           bind:value={entityInput}
-           bind:this={domInput}
-           oninput={handleInput}
-           onfocus={handleFocus}
-           onblur={handleBlur}
-           onkeydown={handleKeyDown} />
+    <SimpleBar tabindex="-1">
+        <div class="x-entities" onclick={handleCellClick}>
+            {#each entities as entity}
+                <JEntryEntity entryId={entryId} linkedEntity={entity} onUnlinkEntity={()=>handleUnlink(entity)} />
+            {/each}
+            <input type="text" class="x-entity x-new"
+                   placeholder="· ·"
+                   bind:value={entityInput}
+                   bind:this={domInput}
+                   oninput={handleInput}
+                   onfocus={handleFocus}
+                   onblur={handleBlur}
+                   onkeydown={handleKeyDown} />
+        </div>
+    </SimpleBar>
 
     {#if entityMatchesVisible}
         <div class="x-entity-matches">
@@ -151,27 +157,27 @@
 </div>
 
 <style lang="scss">
-    .x-cell-wrapper {
+    .x-cell-content {
         width: 100%;
         height: 100%;
         position: relative;
         display: flex;
         flex-direction: column;
-    }
 
-    .x-entities {
-        flex-grow: 1;
-        overflow: auto;
+        &:hover {
+            background-color: var(--color-hovered);
+        }
     }
 
     .x-entity.x-new {
         display: block;
         background-color: transparent;
         text-rendering: optimizeLegibility;
-        border: 0; //1px solid #ccc;
+        border: 0;
         font-size: 11px;
         padding: 0 4px;
         outline: none;
+        width: 100%;
 
         &:hover, &:focus {
             background-color: var(--color-focused);

@@ -203,6 +203,7 @@
 <div class="x-app">
     <header class="x-title-bar">
         <h1>K Gestor de tareas</h1>
+        <div class="x-logo" use:tippyAction={{content: 'A web tool by bumxu / ©2024'}}></div>
     </header>
     <nav class="x-mainmenu-bar">
         <div class="flex">
@@ -370,6 +371,18 @@
 </div>
 
 <style lang="scss">
+    .x-logo {
+        width: 22px;
+        background: url('https://www.bumxu.com/g/logo-preview.svg') no-repeat center center;
+        background-size: contain;
+        filter: saturate(0.4);
+        opacity: 0.5;
+        position: absolute;
+        right: 15px;
+        top: 0;
+        bottom: 0;
+    }
+
     .x-app {
         display: flex;
         flex-direction: column;
@@ -381,6 +394,7 @@
     .x-title-bar {
         padding: 8px 10px 5px;
         border-bottom: 1px solid #aaa;
+        position: relative;
 
         h1 {
             font-size: 20px;

@@ -10,33 +10,32 @@
     let inputValue: string = $state(value);
     let hasFocus: boolean = $state(false);
 
-    // DOM
     let domTopicCe: HTMLDivElement;
 
-    function handleBlur() {
+    function handleInputBlur() {
         hasFocus = false;
-        handleChange();
+        applyInputValue();
     }
 
-    function handleChange() {
+    function applyInputValue() {
         if (inputValue !== value) {
             value = inputValue;
             // Remove html
             inputValue = inputValue.replace(/<[^>]*>?/gm, '');
-            console.log(`Modificación del asunto de la entrada #${entryId} consolidada -> ` + value);
+            console.log(`Modificación del asunto de la entrada #${entryId} consolidada -> "` + value + '"');
         }
     }
 
-    function handleKeydown(event: KeyboardEvent) {
-        if (event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault();
-            event.stopPropagation();
+    function handleInputKeydown(ev: KeyboardEvent) {
+        if (ev.key === 'Enter' && !ev.shiftKey) {
+            ev.preventDefault();
+            ev.stopPropagation();
             domTopicCe.blur();
-        } else if (event.key === 'Escape') {
+        } else if (ev.key === 'Escape') {
             if (inputValue !== value) {
                 inputValue = value;
                 domTopicCe.blur();
-                console.log(`Modificación del asunto de la entrada #${entryId} cancelada -> ` + value);
+                console.log(`Modificación del asunto de la entrada #${entryId} cancelada -> "` + value + '"');
             }
         }
     }
@@ -44,26 +43,20 @@
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
-<div class="x-cell-wrapper" class:x-focused={hasFocus} role="none" onclick={()=>domTopicCe.focus()}>
+<div class="x-cell-content" class:focused={hasFocus} role="none" onclick={()=>domTopicCe.focus()}>
     <SimpleBar tabindex="-1">
-        <div class="x-body-ce" contenteditable="true" bind:textContent={inputValue}
-             spellcheck="false"
-             role="textbox"
-             tabindex="0"
-             bind:this={domTopicCe}
-             onkeydown={handleKeydown}
-             onfocus={() => hasFocus = true}
-             onblur={handleBlur}></div>
+        <div class="x-text-input" contenteditable="true" bind:textContent={inputValue}
+             spellcheck="false" role="textbox" tabindex="0" bind:this={domTopicCe}
+             onfocus={() => hasFocus = true} onblur={handleInputBlur}
+             onkeydown={handleInputKeydown}></div>
     </SimpleBar>
 </div>
 
 <style lang="scss">
-    .x-cell-wrapper {
+    .x-cell-content {
         width: 100%;
         height: 100%;
         position: relative;
-        overflow: auto;
-        box-sizing: border-box;
         cursor: text;
         transition: background-color 0.15s;
 
@@ -71,12 +64,12 @@
             background-color: var(--color-hovered);
         }
 
-        &.x-focused {
+        &.focused {
             background-color: var(--color-focused);
         }
     }
 
-    .x-body-ce {
+    .x-text-input {
         display: inline-block;
         font-size: 10.6px;
         font-weight: 450;

@@ -188,15 +188,15 @@
     </div>
     {#if appStore.ctrlKeyPressed}
         <div class="x-side">
-            <button class="fas fa-fw fa-sm fa-filter"
-                    aria-label="Filtrar" title="Filtrar"
-                    onclick={handleClickEdit}></button>
-            <button class="fas fa-fw fa-sm fa-pen"
-                    aria-label="Editar" title="Editar"
-                    onclick={handleClickEdit}></button>
-            <button class="fas fa-fw fa-sm fa-trash"
+<!--            <button class="fas fa-fw fa-sm fa-filter"-->
+<!--                    aria-label="Filtrar" title="Filtrar"-->
+<!--                    onclick={handleClickEdit}></button>-->
+<!--            <button class="fas fa-fw fa-sm fa-pen"-->
+<!--                    aria-label="Editar" title="Editar"-->
+<!--                    onclick={handleClickEdit}></button>-->
+            <button class="far fa-fw fa-sm fa-trash" style="color: #aaa"
                     aria-label="Quitar" title="Quitar"
-                    onclick={onUnlinkEntity}></button>
+                    onclick={(ev) => {ev.stopPropagation();onUnlinkEntity();}}></button>
         </div>
     {/if}
 </div>
