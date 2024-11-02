@@ -4,58 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e9cf873a-9b04-43b2-83e6-08f1658a1220" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryTopic.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.github/workflows/deploy.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/app-bcc-lapse.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/build.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.npmrc" beforeDir="false" afterPath="$PROJECT_DIR$/.npmrc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/api/load/+server.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/api/save/+server.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.d.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/demo/j4dataSSR.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/JEntryEntity.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryEntity.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/JEntryTopicCell.svelte" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/JEntryUpdate.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/JEntryUpdate.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/JEntryUpdates.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/JEntryUpdates.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/journal_table/JDateTime.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/journal_table/JDateTime.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/journal_table/JEntities.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryEntities.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/journal_table/JEntriesWindow.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/journal_table/JEntriesWindow.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/journal_table/JEntry.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/journal/JEntry.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/journal_table/JTagsCell.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryTags.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/stores/entities.store.j4.svelte.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/stores/entities.store.j4.svelte.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/stores/journal.store.j4.svelte.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/stores/journal.store.j4.svelte.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/types/j4_types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/types/j4_types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/+layout.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/+layout.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/+page.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/+page.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/app/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/+page.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/app/component/Button.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/components/Button.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/app/component/SBConsole.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBConsole.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/app/component/SBEntities.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBEntities.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/app/component/SBEntityTypes.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBEntityTypes.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/app/component/SBFilters.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBFilters.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/app/component/SBPriorities.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBPriorities.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/app/component/SBStatuses.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBStatuses.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/app/component/SBTags.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBTags.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/app/component/SideBar.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/obsolete/SideBar.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/styles.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/scss/main.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/scss/main.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/svelte.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/svelte.config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/vite.config.ts" afterDir="false" />
+    <list default="true" id="e9cf873a-9b04-43b2-83e6-08f1658a1220" name="Changes" comment="Snapshot">
+      <change afterPath="$PROJECT_DIR$/.github/workflows/deploy.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/obsolete/api/load/+server.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/obsolete/api/save/+server.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/messages/en.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/messages/es.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project.inlang/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project.inlang/project_id" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project.inlang/settings.json" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,6 +73,7 @@
       <recent name="C:\Users\admin\Desktop\workspace\kanso\src\scss" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\admin\Desktop\workspace\kanso\obsolete" />
       <recent name="C:\Users\admin\Desktop\workspace\kanso\src\routes\app\components\journal" />
     </key>
   </component>
@@ -162,9 +121,43 @@
       <option name="presentableId" value="Default" />
       <updated>1730417940951</updated>
     </task>
+    <task id="LOCAL-00001" summary="Snapshot">
+      <option name="closed" value="true" />
+      <created>1730545448892</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1730545448892</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Snapshot">
+      <option name="closed" value="true" />
+      <created>1730545616350</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1730545616350</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <MESSAGE value="Snapshot" />
+    <option name="LAST_COMMIT_MESSAGE" value="Snapshot" />
   </component>
 </project>
