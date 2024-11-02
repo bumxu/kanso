@@ -101,17 +101,17 @@ class J4Store {
     }
 
     public saveToDownload() {
-        console.log('Saving data to download...');
-        const entities = JSON.stringify(entitiesStore.entities);
-        const tags = JSON.stringify(tagsStore.tags);
-        const journal = JSON.stringify(journalStore.journal);
-        const blob = new Blob([entities, tags, journal], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'j4data.json';
-        a.click();
-        URL.revokeObjectURL(url);
+        // console.log('Saving data to download...');
+        // const entities = JSON.stringify(entitiesStore.entities);
+        // const tags = JSON.stringify(tagsStore.tags);
+        // const journal = JSON.stringify(journalStore.journal);
+        // const blob = new Blob([entities, tags, journal], { type: 'application/json' });
+        // const url = URL.createObjectURL(blob);
+        // const a = document.createElement('a');
+        // a.href = url;
+        // a.download = 'j4data.json';
+        // a.click();
+        // URL.revokeObjectURL(url);
     }
 
     public async loadFromFile() {
@@ -148,17 +148,17 @@ class J4Store {
         }
     }
 
-    public saveToFile() {
-        console.log('Saving data to file...');
-        const entities = JSON.stringify(entitiesStore.entities);
-        const tags = JSON.stringify(tagsStore.tags);
-        const journal = JSON.stringify(journalStore.journal);
-        const blob = new Blob([entities, tags, journal], { type: 'application/json' });
-        this.fileHandle?.createWritable().then((writable) => {
-            writable.write(blob);
-            writable.close();
-        });
-    }
+    // public saveToFile() {
+    //     console.log('Saving data to file...');
+    //     const entities = JSON.stringify(entitiesStore.entities);
+    //     const tags = JSON.stringify(tagsStore.tags);
+    //     const journal = JSON.stringify(journalStore.journal);
+    //     const blob = new Blob([entities, tags, journal], { type: 'application/json' });
+    //     this.fileHandle?.createWritable().then((writable) => {
+    //         writable.write(blob);
+    //         writable.close();
+    //     });
+    // }
 }
 
 export const storeManager = new J4Store();

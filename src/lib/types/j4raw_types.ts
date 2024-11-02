@@ -9,13 +9,25 @@ export type RawEntrySchema = {
     dateSince: string;
     dateUpdated: string;
     subject: string;
-    updates: any[];
+    updates: RawEntryUpdatesSchema;
     entities?: any[];
     tags: string[];
     dateClosed?: string;
     dateDue?: string;
     status?: string;
     priority?: string;
+}
+
+// --- ENTRY UPDATES
+export type RawEntryUpdatesSchema = {
+    /** Next id (hex). */
+    nid: string;
+    data?: RawEntryUpdateSchema[];
+}
+export type RawEntryUpdateSchema = {
+    id: string;
+    date?: string;
+    body?: string;
 }
 
 // --- ENTITIES

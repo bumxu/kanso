@@ -39,33 +39,29 @@ class TagsStore {
     }
 
     public add(tag: Omit<TagSchema, 'id'>): TagSchema {
-        tag.id = this._nid.toString(16);
+        const id = this._nid.toString(16);
         if (this.getByName(tag.name) != null) {
             throw new Error(`Tag with name ${tag.name} already exists`);
         }
-        this.tags[tag.id] = tag;
+        this.tags[id] = { ...tag, id };
 
         this._nid += 1n;
-        return this.tags[tag.id];
+        return this.tags[id];
     }
 
     public delete(id: string): void {
         // Count
         let count = 0;
-        Object.values(journalStore.journal).forEach((window) => {
-            window.entries.forEach((entry) => {
-                if (entry.tags.includes(id)) {
-                    count++;
-                }
-            });
+        Object.values(journalStore.entries).forEach((entry) => {
+            if (entry.tags.includes(id)) {
+                count++;
+            }
         });
 
         if (count > 0) {
             if (confirm('La etiqueta se usa en ' + count + ' entradas, se quitará. ¿Desea continuar?')) {
-                Object.values(journalStore.journal).forEach((window) => {
-                    window.entries.forEach((entry) => {
-                        entry.tags = entry.tags.filter((tagId) => tagId !== id);
-                    });
+                Object.values(journalStore.entries).forEach((entry) => {
+                    entry.tags = entry.tags.filter((tagId) => tagId !== id);
                 });
                 delete this.tags[id];
             }

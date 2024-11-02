@@ -16,7 +16,7 @@ class EntitiesStore {
         return this._data;
     }
 
-    public findById(entityId: string): EntitySchema | null {
+    public get(entityId: string): EntitySchema | null {
         return this.entities[entityId] || null;
     }
 
@@ -73,8 +73,7 @@ class EntitiesStore {
 
     public add(entity: EntitySchema): EntitySchema {
         const id = this._nid.toString(16);
-        entity.id = id;
-        this._data[id] = entity;
+        this._data[id] = { ...entity, id };
 
         this._nid += 1n;
         return this._data[id];

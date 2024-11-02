@@ -12,9 +12,9 @@ class BasicFiltersStore {
         return this._data;
     }
 
-    public add(filter: BasicFilterSchema): BasicFilterSchema {
-        filter.id = this._nid.toString(16);
-        this._data.push(filter);
+    public add(filter: Omit<BasicFilterSchema, 'id'>): BasicFilterSchema {
+        const id = this._nid.toString(16);
+        this._data.push({ ...filter, id });
 
         this._nid += 1n;
         return this._data[this._data.length - 1];

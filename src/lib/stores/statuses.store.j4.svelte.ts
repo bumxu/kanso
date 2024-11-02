@@ -18,8 +18,7 @@ class StatusesStore {
 
     public add(status: Omit<StatusSchema, 'id'>): StatusSchema {
         const id = this._nid.toString(16);
-        status.id = id;
-        this._data[id] = status;
+        this._data[id] = { ...status, id };
 
         this._nid += 1n;
         return this._data[id];

@@ -12,7 +12,7 @@ export type EntrySchema = {
     dateSince: string;
     dateUpdated?: string;
     subject: string;
-    updates: EntryUpdateSchema[];
+    updates: EntryUpdatesSchema;
     entities: EntryEntitySchema[];
     tags: EntryTagsSchema;
     priority?: string;
@@ -23,10 +23,14 @@ export type EntrySchema = {
 
 export type EntryTagsSchema = string[];
 
+export type EntryUpdatesSchema = {
+    nid: string;
+    data: EntryUpdateSchema[];
+}
 export type EntryUpdateSchema = {
-    id?: string;
+    id: string;
     date?: string;
-    body: string;
+    body?: string;
 }
 
 export type EntryEntitySchema = {

@@ -1,7 +1,8 @@
 <script lang="ts">
     import SimpleBar from '$lib/components/SimpleBar.svelte';
     import JEntryUpdate from '$lib/JEntryUpdate.svelte';
-    import type { EntryUpdateSchema } from '$lib/types/j4_types';
+    import { journalStore } from '$lib/stores/journal.store.j4.svelte';
+    import type { EntryUpdateSchema, EntryUpdatesSchema } from '$lib/types/j4_types';
     import { nanoid } from 'nanoid';
     import { onMount } from 'svelte';
 
@@ -10,7 +11,7 @@
         updates = $bindable()
     }: {
         entryId: string,
-        updates: EntryUpdateSchema[]
+        updates: EntryUpdatesSchema
     } = $props();
 
     onMount(async () => {
@@ -18,11 +19,11 @@
     });
 
     function add(position: number) {
-        updates.splice(position, 0, { id: nanoid(10), body: '' });
+        journalStore.addUpdate(entryId, {}, position);
     }
 
     function del(id: string) {
-        updates = updates.filter(e => e.id !== id);
+        journalStore.delUpdate(entryId, id);
     }
 </script>
 
@@ -30,8 +31,8 @@
     <SimpleBar tabindex="-1">
         <div class="x-separa" onclick={() => add(0)}></div>
         <div class="x-updates">
-            {#each updates as update, i (update.id)}
-                <JEntryUpdate bind:value={updates[i]} ondelete={del} />
+            {#each updates.data as update, i (update.id)}
+                <JEntryUpdate bind:value={updates.data[i]} ondelete={del} />
                 <div class="x-separa" onclick={() => add(i+1)}></div>
             {/each}
         </div>

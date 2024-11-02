@@ -45,7 +45,7 @@
     }
 
     let view: EntrySchema[] = $derived.by(() => {
-        let entries = Object.values(journalStore.journal).flatMap(p => p.entries);
+        let entries = journalStore.entries;
 
         // Orden
         if (order === 'dateSince' && orderAsc) {
@@ -161,7 +161,7 @@
             dateSince: DateTime.local().toFormat('yyyyMMddHHmm'),
             subject: '',
             entities: [],
-            updates: [],
+            updates: { nid: '0', data: [] },
             tags: []
         });
     }

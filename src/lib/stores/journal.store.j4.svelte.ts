@@ -1,105 +1,89 @@
-import type { EntrySchema, WindowsSchema } from '$lib/types/j4_types';
-import type { RawEntriesSchema, RawEntrySchema } from '$lib/types/j4raw_types';
+import type { EntrySchema, EntryUpdateSchema } from '$lib/types/j4_types';
+import type { RawEntriesSchema } from '$lib/types/j4raw_types';
 import { nanoid } from 'nanoid';
 
 class JournalStore {
     private _nid: bigint = 0n;
     private _entryIndex: { [id: string]: EntrySchema } = $state({});
-    private _entryTree: WindowsSchema = {};
-    public journal: WindowsSchema = $state({});
-    //private _store: WindowsSchema = $state({});
 
     public constructor() {
-        this.journal = {};
-
-        // this.add({ dateSince: '20240601', subject: 'Entry A', updates: [{ id: '45fdrt432', date: '20240630', body: 'Revisado. Sin novedades.' }], tags: [], dateClosed: '20240601', dateDue: '20240601', status: 'active' });
-        // this.add({ dateSince: '20240605', subject: 'Entry B', updates: [], tags: [], dateClosed: '20240601', dateDue: '20240601', status: 'active' });
-        // this.add({ dateSince: '20240602', subject: 'Entry C', updates: [], tags: [], dateClosed: '20240601', dateDue: '20240601', status: 'active' });
-        // this.add({ dateSince: '20240603', subject: 'Entry D', updates: [], tags: [], dateClosed: '20240601', dateDue: '20240601', status: 'active' });
     }
 
-    // public findById(entityId: string): EntitySchema | null {
-    //     return this.entities[entityId] || null;
-    // }
-    //
+    public get entries(): EntrySchema[] {
+        return Object.values(this._entryIndex);
+    }
 
     public get(id: string): EntrySchema | null {
         return this._entryIndex[id] || null;
     }
 
-    public add(entry: EntrySchema): EntrySchema {
+    public add(entry: Omit<EntrySchema, 'id'>): EntrySchema {
         const id = this._nid.toString(16);
-        const dateSince = entry.dateSince;
-        const windowId = dateSince.substring(0, 6);
-        if (this.journal[windowId] == null) {
-            this.journal[windowId] = {
-                id: windowId,
-                entries: []
-            };
-        }
-        entry.id = id;
-        this.journal[windowId].entries.push(entry);
-        this.journal[windowId].entries.sort((a, b) => a.dateSince.localeCompare(b.dateSince));
+        this._entryIndex[id] = { ...entry, id };
 
         this._nid += 1n;
-        return this.journal[windowId].entries.find((e) => e.id === id) as EntrySchema;
+        return this._entryIndex[id];
     }
 
     public del(id: string): void {
-        const entry = this._entryIndex[id];
-        if (entry != null) {
-            const windowId = entry.dateSince.substring(0, 6);
-            this.journal[windowId].entries = this.journal[windowId].entries.filter((e) => e.id !== id);
-            //delete this._entryIndex[id];
-        }
+        delete this._entryIndex[id];
     }
 
-    public addUpdate(entryId: string, update: any, position: number = 0): void {
+    public getUpdate(entryId: string, updateId: string): EntryUpdateSchema | null {
         const entry = this._entryIndex[entryId];
-        updates.splice(position, 0, { id: nanoid(10), body: '' });
+        return entry?.updates.data.find(u => u.id === updateId) ?? null;
+    }
+
+    public addUpdate(entryId: string, update: Omit<EntryUpdateSchema, 'id'>, position: number = 0): void {
+        const entry = this._entryIndex[entryId];
+        entry.updates.data.splice(position, 0, { id: nanoid(10), body: '' });
+    }
+
+    public delUpdate(entryId: string, updateId: string): void {
+        const entry = this._entryIndex[entryId];
+        const index = entry.updates.data.findIndex(u => u.id === updateId);
+        if (index >= 0) {
+            entry.updates.data.splice(index, 1);
+        }
     }
 
     public load(raw: RawEntriesSchema): void {
         this._nid = BigInt('0x' + raw.nid);
         const entryIndex: { [id: string]: EntrySchema } = {};
-        const entryTree: WindowsSchema = {};
         for (const entry of raw.data) {
             // Campos array/objeto que pueden venir a null
             entry.entities = entry.entities || [];
             entry.tags = entry.tags || [];
-            entry.updates = entry.updates || [];
+
+            // migration
+            if (Array.isArray(entry.updates)) {
+                console.log(`Migrating updates from old format for entry ${entry.id}...`);
+                let tmpNid = 0n;
+                const tmpData = [];
+                for (const update of entry.updates) {
+                    tmpData.push({ id: tmpNid.toString(16), date: update.date, body: update.body });
+                    tmpNid += 1n;
+                }
+                entry.updates = { nid: tmpNid.toString(16), data: tmpData };
+            }
+            entry.updates = entry.updates || { nid: '0', data: [] };
 
             // Index
             entryIndex[entry.id] = entry;
-
-            // Tree
-            const mo = entry.dateSince.substring(0, 6);
-            if (entryTree[mo] == null) {
-                entryTree[mo] = { id: mo, entries: [] };
-            }
-            entryTree[mo].entries.push(entry);
         }
-        console.log('entryTree ->', entryTree);
         this._entryIndex = entryIndex;
-        // this._entryTree = entryTree;
-        this.journal = entryTree;
     }
 
     public save(): RawEntriesSchema {
         return {
             nid: this._nid.toString(16),
-            data: Object.values(this.journal).reduce((acc: RawEntrySchema[], window) => {
-                acc.push(...window.entries);
-                return acc;
-            }, []).sort((a, b) => a.dateSince.localeCompare(b.dateSince))
+            data: Object.values(this._entryIndex).sort((a, b) => a.dateSince.localeCompare(b.dateSince))
         };
     }
 
     public clear(): void {
         this._nid = 0n;
         this._entryIndex = {};
-        this._entryTree = {};
-        this.journal = {};
     }
 }
 

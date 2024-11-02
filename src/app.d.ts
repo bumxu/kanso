@@ -6,6 +6,8 @@ declare global {
         currentTarget: EventTarget & HTMLInputElement;
     };
 
+    //type Optional<T, K extends keyof T> = Omit<T, K> & Partial<T>;
+
     namespace App {
         // interface Error {}
         // interface Locals {}
