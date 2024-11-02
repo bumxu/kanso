@@ -1,6 +1,7 @@
 <script lang="ts">
-    import { entitiesStore } from '$lib/stores/entities.store.j4.svelte';
-    import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
+    import Button from '$lib/components/Button.svelte';
+    import { entitiesStore } from '$lib/stores/entities.store.j4.svelte.js';
+    import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte.js';
     import type { EntitiesSchema, EntitySchema, EntityTypeSchema, ETypeDisplayFn } from '$lib/types/j4_types';
 
     type Props = {
@@ -54,19 +55,29 @@
             return displayFn(entity.id, entity!.raw);
         }
     }
+
+    function getIcon(typeId: string) {
+        const entityType = entityTypesStore.get(typeId);
+        return entityType?.icon;
+    }
 </script>
 
 <div class="x-sb-section">
     <div class="x-sb-header">
-        <i class="fas fa-fw fa-cubes-stacked"></i>
+        <i class="fad fa-fw fa-cubes-stacked"></i>
         Entidades
-        <i class="fas fa-fw fa-caret-right"></i>
     </div>
 
-    <button onclick={add}>+</button>
-    <ul class="x-item-list">
+    <div class="x-bar">
+        <Button icon="fas fa-fw fa-plus" onclick={add}>Nuevo</Button>
+    </div>
+
+    <ul class="x-list">
         {#each view as entity, i (entity.id)}
-            <button class="x-item" onclick={() => handleSelectItem(entity)}>{display(entity)}</button>
+            <li class="x-list-item">
+                <i class="fa-fw fa-2xs {getIcon(entity.type)}"></i>
+                <button class="x-item" onclick={() => handleSelectItem(entity)}>{display(entity)}</button>
+            </li>
         {/each}
     </ul>
 
@@ -99,28 +110,41 @@
 </div>
 
 <style lang="scss">
+    .x-bar {
+        border-bottom: 1px solid rgba(#000, 0.2);
+        padding: 2px;
+        display: flex;
+    }
 
-    .x-item-list {
+    .x-list {
         background: #fff;
         height: 120px;
         overflow: auto;
         padding: 0;
         margin: 0;
-
-        li {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+        border-bottom: 1px solid rgba(#000, 0.2);
     }
+    .x-list-item {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        align-items: center;
 
-    .x-item {
-        cursor: pointer;
-        display: block;
-        border: none;
-        font-size: 12px;
-        background-color: transparent;
-        text-align: left;
+        i {
+            margin: 0 4px;
+            opacity: 0.75;
+            display: inline-block;
+            flex: 0 0 auto;
+        }
+        button {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            text-align: left;
+            flex: 1 0 0;
+        }
     }
 
     .x-tx-wrapper {

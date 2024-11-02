@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { tagsStore } from '$lib/stores/tags.store.j4.svelte';
+    import { tagsStore } from '$lib/stores/tags.store.j4.svelte.js';
     import type { TagSchema, TagsSchema } from '$lib/types/j4_types';
     import { onMount } from 'svelte';
 
@@ -24,9 +24,8 @@
 
 <div class="x-sb-section">
     <div class="x-sb-header">
-        <i class="fas fa-fw fa-tag"></i>
-        Tags
-        <i class="fas fa-fw fa-caret-right"></i>
+        <i class="fad fa-fw fa-tag"></i>
+        Etiquetas
     </div>
 
     <ul class="x-item-list">

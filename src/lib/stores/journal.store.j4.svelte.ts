@@ -44,6 +44,15 @@ class JournalStore {
         return this.journal[windowId].entries.find((e) => e.id === id) as EntrySchema;
     }
 
+    public del(id: string): void {
+        const entry = this._entryIndex[id];
+        if (entry != null) {
+            const windowId = entry.dateSince.substring(0, 6);
+            this.journal[windowId].entries = this.journal[windowId].entries.filter((e) => e.id !== id);
+            //delete this._entryIndex[id];
+        }
+    }
+
     public load(raw: RawEntriesSchema): void {
         this._nid = BigInt('0x' + raw.nid);
         const entryIndex: { [id: string]: EntrySchema } = {};

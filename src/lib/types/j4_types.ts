@@ -8,12 +8,12 @@ export type WindowSchema = {
 }
 
 export type EntrySchema = {
-    id?: string;
+    id: string;
     dateSince: string;
-    dateUpdated: string;
+    dateUpdated?: string;
     subject: string;
     updates: EntreUpdateSchema[];
-    entities?: EntryEntitySchema[];
+    entities: EntryEntitySchema[];
     tags: EntryTagsSchema;
     priority?: string;
     dateDue?: string;
@@ -94,6 +94,7 @@ export type Nil<T> = T | null | undefined;
 
 export type SuggestionsSchema<T> = {
     item: T;
+    displayName: string;
     weight: number;
 }[];
 

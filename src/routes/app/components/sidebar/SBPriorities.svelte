@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { prioritiesStore } from '$lib/stores/priorities.store.j4.svelte';
+    import { prioritiesStore } from '$lib/stores/priorities.store.j4.svelte.js';
     import type { PrioritiesSchema, PrioritySchema } from '$lib/types/j4_types';
 
     type Props = {
@@ -31,9 +31,8 @@
 
 <div class="x-sb-section">
     <div class="x-sb-header">
-        <i class="fas fa-fw fa-fire"></i>
-        Priorities
-        <i class="fas fa-fw fa-caret-right"></i>
+        <i class="fad fa-fw fa-fire"></i>
+        Prioridades
     </div>
 
     <button onclick={add}>+</button>

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { statusesStore } from '$lib/stores/statuses.store.j4.svelte';
+    import { statusesStore } from '$lib/stores/statuses.store.j4.svelte.js';
     import type { StatusSchema, StatusesSchema, EntitySchema } from '$lib/types/j4_types';
     import { nanoid } from 'nanoid';
     import { onMount } from 'svelte';
@@ -32,9 +32,8 @@
 
 <div class="x-sb-section">
     <div class="x-sb-header">
-        <i class="fas fa-fw fa-percent"></i>
-        Statuses
-        <i class="fas fa-fw fa-caret-right"></i>
+        <i class="fad fa-fw fa-percent"></i>
+        Estados
     </div>
 
     <button onclick={add}>+</button>

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { filtersStore } from '$lib/stores/filters.store.j4.svelte';
+    import { filtersStore } from '$lib/stores/filters.store.j4.svelte.js';
     import type { BasicFilterSchema, BasicFiltersSchema } from '$lib/types/j4_types';
 
     type Props = {
@@ -28,9 +28,8 @@
 
 <div class="x-sb-section">
     <div class="x-sb-header">
-        <i class="far fa-fw fa-cube"></i>
+        <i class="fad fa-fw fa-filters"></i>
         Filtros básicos
-        <i class="fas fa-fw fa-caret-right"></i>
     </div>
 
     <button onclick={add}>+</button>

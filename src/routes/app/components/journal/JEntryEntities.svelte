@@ -1,74 +1,67 @@
 <script lang="ts">
-    import JEntryEntity from '$lib/JEntryEntity.svelte';
-    import { entitiesStore } from '$lib/stores/entities.store.j4.svelte';
+    import { entitiesStore } from '$lib/stores/entities.store.j4.svelte.js';
     import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte.js';
     import type { EntitySchema, EntryEntitySchema, SuggestionsSchema } from '$lib/types/j4_types';
     import type { Nil } from '$lib/types/j4_types.js';
     import { nanoid } from 'nanoid';
+    import JEntryEntity from './JEntryEntity.svelte';
 
-    let { entryId, entities = $bindable() }: { entryId: number, entities: EntryEntitySchema[] } = $props();
+    type Props = {
+        entryId: number;
+        entities: EntryEntitySchema[];
+    }
+    let { entryId, entities = $bindable() }: Props = $props();
 
     let domInput: HTMLSpanElement;
     let focused = $state(false);
 
     let entityInput = $state('');
     let entityMatches: SuggestionsSchema<EntitySchema> = $state([]);
-    let entityMatchesVisible = $state(false);
     let entityMatchesSelectedIndex = $state(-1);
 
     let entitiesRaw = $state(JSON.stringify(entities));
 
-    function add() {
-        //entities.push({entity: null});
-    }
+    let entityMatchesVisible = $derived.by(() => focused && entityMatches.length > 0);
 
     function handleFocus() {
         focused = true;
-        if (entityInput.length > 0) {
-            entityMatchesVisible = true;
-        }
     }
-
     function handleBlur() {
         focused = false;
-        entityMatchesVisible = false;
     }
 
-    async function handleInput(e: any) {
-        const term = e.target.value;
+    async function handleInput(e: GenericInputEvent) {
+        let matches: SuggestionsSchema<EntitySchema> = [];
+        const term = e.currentTarget.value;
         if (term.length > 0) {
-            entityMatches = entitiesStore.getSuggestions(term);
-            console.debug(entityMatches);
+            matches = entitiesStore.getSuggestions(term);
+            console.debug(matches);
 
-            if (entityMatches.length > 0) {
+            if (matches.length > 0) {
                 entityMatchesSelectedIndex = 0;
             } else {
                 entityMatchesSelectedIndex = -1;
             }
-
-            entityMatchesVisible = true;
-        } else {
-            entityMatches = [];
-            entityMatchesVisible = false;
         }
+        entityMatches = matches;
     }
 
     function handleKeyDown(e: KeyboardEvent) {
         if (e.key === 'Enter') {
             e.preventDefault();
-            console.log('a');
             if (entityInput.length > 0) {
-                console.log('b');
                 let entity: EntitySchema;
-                if (entityMatchesSelectedIndex === -1) {
-                    //         entity = entitiesStore.add({ name: entityInput });
-                    return;
+                const entityMatchesSelected = entityMatches[entityMatchesSelectedIndex];
+                if (entityMatchesSelected.weight < 0) {
+                    const entitySkel = entityMatchesSelected.item;
+                    entity = entitiesStore.add(entitySkel);
                 } else {
-                    entity = entityMatches[entityMatchesSelectedIndex].item;
+                    entity = entityMatchesSelected.item;
+                    console.debug('eh', entityMatches, entityMatchesSelectedIndex, entity);
                 }
                 link(entity);
-                //     tagInput = '';
-                //     //domInput.blur();
+                entityMatches = [];
+                entityInput = '';
             }
         } else if (e.key === 'ArrowDown') {
             e.preventDefault();
@@ -84,7 +77,7 @@
     function link(entity: EntitySchema) {
         const type = entityTypesStore.entityTypes[entity.type];
         const displayFn = entityTypesStore.getDisplayFn(type.id);
-        const name = displayFn ? displayFn(entity.raw) : '?';
+        const name = displayFn ? displayFn(entity.id, entity.raw) : '?';
 
         console.log('Linking entity -> ', entity);
         // if (!tagsIds.includes(tag.id)) {
@@ -126,7 +119,7 @@
 
 </script>
 
-<div class="x-cell x-cell-wrapper">
+<div class="x-cell-wrapper">
 
     <div class="x-entities">
         {#each entities as entity}
@@ -145,15 +138,11 @@
 
     {#if entityMatchesVisible}
         <div class="x-entity-matches">
-            <span class="x-entity-match"
-                  class:selected={entityMatchesSelectedIndex === -1}>
-                {entityInput} (nueva)
-            </span>
             {#each entityMatches as entityMatch, i}
-                <span class="x-match"
+                <span class="x-match" class:x-new={entityMatch.weight < 0}
                       class:selected={entityMatchesSelectedIndex === i}>
                     <i class="fa-fw fa-xs {typeIcon(entityMatch.item)}"></i>
-                    <span class="x-label">{display(entityMatch.item)}</span>
+                    <span class="x-label">{entityMatch.displayName}</span>
                 </span>
             {/each}
         </div>
@@ -185,7 +174,7 @@
         outline: none;
 
         &:hover, &:focus {
-            background-color: #ffffD6;
+            background-color: var(--color-focused);
         }
 
         &:empty:not(:focus) {
@@ -230,6 +219,11 @@
             &:hover {
                 background: rgba(0, 0, 0, 0.08);
                 color: #000;
+            }
+
+            &.x-new {
+                //background: rgb(221, 246, 207);
+                color: #217323;
             }
         }
     }

@@ -33,7 +33,11 @@ class EntitiesStore {
                 //console.log('running ', parseFn, ' over ', input);
                 const weight = lookupFn(input, entity.raw);
                 if (weight != 0) {
-                    matches.push({ item: $state.snapshot(entity), weight });
+                    matches.push({
+                        item: $state.snapshot(entity),
+                        displayName: entityTypesStore.getDisplayFn(entity.type)(entity.id, entity.raw),
+                        weight
+                    });
                 }
             }
         }
@@ -42,8 +46,8 @@ class EntitiesStore {
         matches.sort((a, b) => {
             if (a.weight === b.weight) {
                 if (a.item.type === b.item.type) {
-                    const adp = entityTypesStore.getDisplayFn(a.item.type)(a.item.id, a.item.raw);
-                    const bdp = entityTypesStore.getDisplayFn(b.item.type)(b.item.id, b.item.raw);
+                    const adp = a.displayName;
+                    const bdp = b.displayName;
                     return adp.localeCompare(bdp);
                 }
                 return a.item.type.localeCompare(b.item.type);
@@ -51,11 +55,16 @@ class EntitiesStore {
             return b.weight - a.weight;
         });
 
+        // NEW SUGGESTIONS (PARSE)
         for (let type of Object.values(entityTypesStore.entityTypes)) {
             const parseFn = new Function('return ' + type.parseFn)();
             const result = parseFn(input);
             if (result != null) {
-                matches.push({ item: { id: null, type: type.id, raw: result }, weight: -1 });
+                matches.push({
+                    item: { id: null, type: type.id, raw: result },
+                    displayName: entityTypesStore.getDisplayFn(type.id)('*', result) + ' (nueva)',
+                    weight: -1
+                });
             }
         }
 

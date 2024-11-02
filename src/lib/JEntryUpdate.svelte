@@ -2,7 +2,7 @@
     import { SERVER_HOST } from '$lib/constants';
     import JEntryDateTime from '$lib/journal_table/JDateTime.svelte';
     import type { EntreUpdateSchema } from '$lib/types/j4_types';
-    import autosize from 'autosize';
+    //import autosize from 'autosize';
     import { onMount } from 'svelte';
 
     //const dispatch = createEventDispatcher();

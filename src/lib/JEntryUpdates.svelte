@@ -25,9 +25,7 @@
     }
 </script>
 
-<div class="x-cell x-cell-updates">
-    <!--link rel="stylesheet" href="https://unpkg.com/simplebar@latest/dist/simplebar.css" />
-    <script src="https://unpkg.com/simplebar@latest/dist/simplebar.min.js"></script-->
+<div class="x-cell-updates">
 
     <div class="x-separa" onclick={() => add(0)}></div>
     <div class="x-updates" data-simplebarx>

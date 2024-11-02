@@ -1,13 +1,13 @@
 <script lang="ts">
-    import { tagsStore } from '$lib/stores/tags.store.j4.svelte';
-    import type { TagSchema, TagsSchema } from '$lib/types/j4_types';
-    import { onMount } from 'svelte';
+
+    import { tick } from 'svelte';
 
     let content = $state('');
     let domInput: HTMLTextAreaElement;
 
-    $effect(() => {
+    $effect(async () => {
         content = window.consoleBuffer;
+        await tick();
         domInput.scrollTop = domInput.scrollHeight;
     });
 
@@ -15,20 +15,32 @@
 
 <div class="x-sb-section">
     <div class="x-sb-header">
-        <i class="fas fa-fw fa-terminal"></i>
-        Console output
+        <i class="fad fa-fw fa-sm fa-terminal"></i>
+        Salida de consola
     </div>
 
     <textarea class="x-textarea ff-mono" bind:value={content} readonly bind:this={domInput}></textarea>
 </div>
 
 <style lang="scss">
+    .x-sb-section {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    .x-sb-header{
+        flex: 0 0 auto;
+    }
+
     .x-textarea {
         font-size: 9px;
+        font-weight: 400;
+        flex: 1 0 0px;
         width: 100%;
         box-sizing: border-box;
-        top: 0;
-        bottom: 0;
-        position: absolute;
+        border: none;
+        resize: none;
+        outline: none;
+        //white-space: pre;
     }
 </style>

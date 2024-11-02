@@ -10,7 +10,7 @@
         required?: boolean,
         onchange?: () => void,
         onfocus?: () => any,
-        onblur?: () => any
+        onblur?: () => any,
     };
 
     let {
@@ -271,12 +271,12 @@
             ? DateTime.fromFormat(value, 'yyyyMMdd')
             : DateTime.fromFormat(value, 'yyyyMMddHHmm');
         return value.length === 8
-            ? dt.toFormat('dd/MM/yyyy')
-            : dt.toFormat('dd/MM/yyyy HH:mm');
+            ? dt.toFormat('dd/MM/yy')
+            : dt.toFormat('dd/MM/yy HH:mm');
     }
 </script>
 
-<input class="x-datetime-input ff-mono date" class:valid={valid}
+<input class="x-datetime-input date" class:valid={valid}
        placeholder={placeholder}
        bind:value={inputValue}
        bind:this={domInput}
@@ -293,6 +293,7 @@
     width: 90px;
     //temp
     display: inline-block !important;
+    color: inherit;
 
     &:not(.valid) {
         background: #fdd;

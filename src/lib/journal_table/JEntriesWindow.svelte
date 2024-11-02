@@ -1,5 +1,5 @@
 <script lang="ts">
-    import JEntry from '$lib/journal_table/JEntry.svelte';
+    import JEntry from '../../routes/app/components/journal/JEntry.svelte';
     import type { EntrySchema, WindowSchema } from '$lib/types/j4_types';
 
     type Props = {

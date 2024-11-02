@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { tagsStore } from '$lib/stores/tags.store.j4.svelte';
+    import SimpleBar from '$lib/components/SimpleBar.svelte';
+    import { tagsStore } from '$lib/stores/tags.store.j4.svelte.js';
     import type { SuggestionsSchema, TagSchema } from '$lib/types/j4_types';
     import { tick } from 'svelte';
 
@@ -15,41 +16,30 @@
 
     let tagInput = $state('');
     let tagMatches: SuggestionsSchema<TagSchema> = $state([]);
-    let tagMatchesVisible = $state(false);
     let tagMatchesSelectedIndex = $state(-1);
+
+    let tagMatchesVisible = $derived(focused && tagMatches.length > 0 && tagInput.trim().length > 0);
 
     let tags = $derived.by(() => {
         return tagsIds.map((tagId: string) => tagsStore.getById(tagId) ?? { id: tagId, name: '#' + tagId + '?' });
     });
 
-    function handleFocus() {
-        focused = true;
-        if (tagInput.length > 0) {
-            tagMatchesVisible = true;
-        }
-    }
-
-    function handleBlur() {
-        focused = false;
-        tagMatchesVisible = false;
-    }
+    function handleFocus() { focused = true; }
+    function handleBlur() { focused = false; }
 
     async function handleInput(e: any) {
-        const term = e.target.innerText;
+        const term = e.target?.innerText?.trim();
         if (term.length > 0) {
             tagMatches = tagsStore.getSuggestions(term);
-            console.debug(tagMatches);
+            console.debug('Etiquetas coincidentes:', $state.snapshot(tagMatches).map((tag) => tag.item.name));
 
             if (tagMatches.length > 0) {
                 tagMatchesSelectedIndex = 0;
             } else {
                 tagMatchesSelectedIndex = -1;
             }
-
-            tagMatchesVisible = true;
         } else {
             tagMatches = [];
-            tagMatchesVisible = false;
         }
     }
 
@@ -57,7 +47,7 @@
         if (!tagsIds.includes(tag.id)) {
             console.debug(`Tag ${tag.id} "${tag.name}" añadida al registro`);
             tagsIds.push(tag.id);
-            tagMatchesVisible = true;
+            tagMatches = [];
         }
     }
 
@@ -77,7 +67,6 @@
                 }
                 link(tag);
                 tagInput = '';
-                //domInput.blur();
             }
         } else if (e.key === 'ArrowDown') {
             e.preventDefault();
@@ -100,6 +89,7 @@
         focused = true;
         await tick();
         domInput.focus();
+        domInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     function handleClickUnlink(ev: MouseEvent, tag: TagSchema) {
@@ -109,38 +99,36 @@
 
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-
-<div class="x-cell-wrapper x-input-wrapper"
+<div class="x-cell-wrapper"
+     role="none"
      onclick={handleClickCell}>
-    <link rel="stylesheet" href="https://unpkg.com/simplebar@latest/dist/simplebar.css" />
-    <script src="https://unpkg.com/simplebar@latest/dist/simplebar.min.js"></script>
 
-    <div class="x-cell" style="overflow: auto">
-        {#each tags as tag}
+    <SimpleBar>
+        <div class="x-tags">
+            {#each tags as tag}
             <span class="x-tag" style:background-color={tag.bgColor} style:color={tag.color}>
                 {tag ? tag.name : '?'}
                 <i class="fas fa-fw fa-sm fa-times" style="cursor: pointer"
                    aria-label="Quitar" title="Quitar"
                    onclick={(ev) => handleClickUnlink(ev,tag)}></i>
             </span>
-        {/each}
+            {/each}
 
-        <span class="x-tag x-new"
-              role="textbox"
-              contenteditable="true"
-              tabindex="0"
-              class:hidden={!focused && tagInput.length === 0}
-              bind:this={domInput}
-              bind:textContent={tagInput}
-              oninput={handleInput}
-              onfocus={handleFocus}
-              onblur={handleBlur}
-              onkeydown={handleKeyDown}
-        ></span>
-        <div style="clear: both" />
-    </div>
+            <span class="x-tag x-new"
+                  role="textbox"
+                  contenteditable="true"
+                  tabindex="0"
+                  class:hidden={!focused && tagInput.length === 0}
+                  bind:this={domInput}
+                  bind:textContent={tagInput}
+                  oninput={handleInput}
+                  onfocus={handleFocus}
+                  onblur={handleBlur}
+                  onkeydown={handleKeyDown}
+            ></span>
+        </div>
+    </SimpleBar>
 
     {#if tagMatchesVisible}
         <div class="x-tag-matches">
@@ -161,51 +149,48 @@
 <style lang="scss">
     .x-cell-wrapper {
         width: 100%;
-        overflow: visible;
+        height: 100%;
         position: relative;
-        padding: 2px 2px 0;
         box-sizing: border-box;
-        padding-bottom: 8px;
+        cursor: text;
 
-        &::after {
-            content: '';
-            display: block;
-            background: red;
-            pointer-events: none;
-            height: 15px;
-            left: 0;
-            right: 0;
-            position: absolute;
-            bottom: 0;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.9) 100%);
+        &:hover {
+            background-color: var(--color-hovered);
+            transition: background-color 0.15s;
+
+            .x-tag {
+                border: 1px solid rgba(0, 0, 0, 0.2);
+                transition: border 0.15s;
+            }
         }
     }
 
-    .x-input-wrapper {
-        cursor: text;
-        &:hover {
-            background: rgba(0, 0, 0, 0.03);
-        }
+    .x-tags {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 2px;
     }
 
     .x-tag {
         display: block;
-        float: left;
+        flex: 0 0 auto;
         padding: 0 3px;
         border-radius: 1px;
-        background: #ddd;
-        margin-right: 2px;
-        margin-bottom: 2px;
-        font-size: 0.6rem;
-        font-weight: 600;
+        background: #eee;
+        margin-right: 3px;
+        margin-bottom: 3px;
+        font-size: 10px;
+        line-height: 1.45;
+        font-weight: 500;
         text-rendering: optimizeLegibility;
-        color: #555;
-        border: 1px solid rgba(0, 0, 0, 0.25);
+        color: #444;
+        border: 1px solid rgba(0, 0, 0, 0.1);
 
         &.x-new {
-            background-color: #ffffD6;
+            background-color: var(--color-focused);
             outline: none;
             white-space: nowrap;
+            min-width: 10px;
         }
 
         &.hidden {

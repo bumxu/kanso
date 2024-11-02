@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
+    import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte.js';
     import type { EntityTypeSchema, EntityTypesSchema } from '$lib/types/j4_types';
-    import Button from './Button.svelte';
+    import Button from '$lib/components/Button.svelte';
 
     type Props = {
         entityTypes: EntityTypesSchema;
@@ -30,8 +30,8 @@
         const entityType: EntityTypeSchema = entityTypesStore.add({
             id,
             name: 'Nuevo tipo de entidad',
-            displayFn: '(raw) => \'?\' + raw.moduleId',
-            parseFn: '(raw) => { return { }; }',
+            displayFn: '(id,raw) => \'?\' + raw.moduleId',
+            parseFn: '(raw) => { return null; }',
             lookupFn: '(str, raw) => 0'
         });
 
@@ -41,19 +41,18 @@
 
 <div class="x-sb-section">
     <div class="x-sb-header">
-        <i class="far fa-fw fa-cube"></i>
+        <i class="fad fa-fw fa-cube"></i>
         Tipos de entidad
-        <i class="fas fa-fw fa-caret-right"></i>
     </div>
 
     <div class="x-bar">
-        <Button sm icon="fas fa-fw fa-plus" onclick={add}>Nuevo</Button>
+        <Button icon="fas fa-fw fa-plus" onclick={add}>Nuevo</Button>
     </div>
 
     <ul class="x-list">
         {#each view as entityType, i (entityType.id)}
             <li class="x-list-item">
-                <i class="fa-fw fa-xs {entityType?.icon}"></i>
+                <i class="fa-fw fa-2xs {entityType?.icon}"></i>
                 <button class="x-item" onclick={() => handleSelectItem(entityType)}>{entityType.name}</button>
             </li>
         {/each}
@@ -100,22 +99,10 @@
 
 <style lang="scss">
 
-    //.btn {
-    //    margin: 0;
-    //    display: inline;
-    //    border: 1px solid #aaa;
-    //    border-radius: 2px;
-    //    padding: 1px 5px;
-    //    background: #ddd;
-    //    font-size: 12px;
-    //    font-weight: 600;
-    //    cursor: pointer;
-    //    color: #555;
-    //}
-
     .x-bar {
         border-bottom: 1px solid rgba(#000, 0.2);
         padding: 2px;
+        display: flex;
     }
 
     .x-list {

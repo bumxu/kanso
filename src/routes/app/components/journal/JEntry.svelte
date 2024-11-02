@@ -1,15 +1,17 @@
 <script lang="ts">
-    import JEntryTopicCell from '$lib/JEntryTopicCell.svelte';
     import JEntryUpdates from '$lib/JEntryUpdates.svelte';
-    import JEntities from '$lib/journal_table/JEntities.svelte';
-    import JTagsCell from '$lib/journal_table/JTagsCell.svelte';
-    import { prioritiesStore } from '$lib/stores/priorities.store.j4.svelte';
-    import { statusesStore } from '$lib/stores/statuses.store.j4.svelte';
+    import JDateTime from '$lib/journal_table/JDateTime.svelte';
+    import JEntryTags from './JEntryTags.svelte';
+    import { journalStore } from '$lib/stores/journal.store.j4.svelte';
+    import { prioritiesStore } from '$lib/stores/priorities.store.j4.svelte.js';
+    import { statusesStore } from '$lib/stores/statuses.store.j4.svelte.js';
     import type { EntrySchema } from '$lib/types/j4_types';
     import { DateTime } from 'luxon';
     import { onMount } from 'svelte';
     import tippy from 'tippy.js';
-    import JDateTime from './JDateTime.svelte';
+    import JEntryDateSince from './JEntryDateSince.svelte';
+    import JEntryEntities from './JEntryEntities.svelte';
+    import JEntryTopic from './JEntryTopic.svelte';
 
     type Props = {
         entry: EntrySchema,
@@ -66,11 +68,6 @@
                 entry.dateClosed = DateTime.local().toFormat('yyyyMMddHHmm');
             }
         }
-    }
-
-    function updateDateUpdated(ev) {
-        ev.preventDefault();
-        entry.dateUpdated = DateTime.local().toFormat('yyyyMMddHHmm');
     }
 
     /** Marca el registro como modificado y lanza el proceso de guardado diferido. */
@@ -140,10 +137,15 @@
     //     }
     // }
 
+    function del(entryId: string) {
+        console.log('Borrando registro...');
+        journalStore.del(entryId);
+    }
+
 </script>
 
 <div class="x-row">
-    <div>
+    <div class="x-cell text-center">
         <span id="fld-id">
             <i class="fas fa-hashtag fa-fw fa-sm"
                bind:this={domIdIcon}
@@ -152,34 +154,22 @@
         </span>
     </div>
 
-    <div>
-        <div class="x-dt-wrapper"><i class="fad fa-sm fa-fw fa-play"></i>
-            <JDateTime bind:value={entry.dateSince}
-                       onchange={()=>{
-                           if (entry.dateSince.substring(0, 6) !== partitionId) {
-                               onpartitionchange(entry, partitionId);
-                           }
-                           }} />
-        </div>
-        <div class="x-dt-wrapper" style="opacity: 0.4;">
-            <i class="fad fa-sm fa-fw fa-pen" title="Doble click para actualizar" style="cursor: pointer" ondblclick={updateDateUpdated}></i>
-            <JDateTime bind:value={entry.dateUpdated} />
-        </div>
-
+    <div class="x-cell">
+        <JEntryDateSince entry={entry} />
     </div>
-    <div>
-        <JEntryTopicCell bind:value={entry.subject} />
+    <div class="x-cell">
+        <JEntryTopic entryId={entry.id} bind:value={entry.subject} />
     </div>
-    <div>
+    <div class="x-cell">
         <JEntryUpdates entryId={entry.id} bind:updates={entry.updates} />
     </div>
-    <div>
-        <JEntities entryId={entry.id} bind:entities={entry.entities} />
+    <div class="x-cell">
+        <JEntryEntities entryId={entry.id} bind:entities={entry.entities} />
     </div>
-    <div>
-        <JTagsCell entryId={entry.id} bind:tagsIds={entry.tags} />
+    <div class="x-cell">
+        <JEntryTags entryId={entry.id} bind:tagsIds={entry.tags} />
     </div>
-    <div>
+    <div class="x-cell">
         <select bind:value={entry.priority} style="width: 95%">
             <option value={undefined}></option>
             {#each Object.values(prioritiesStore.priorities) as priority, i (priority.id)}
@@ -193,7 +183,7 @@
         <!--        <input type="text" bind:value={entry.priority} style="border: 1px solid #333; width: 50px" />-->
         <!--        <JPriorityCell bind:value={entry.priority} />-->
     </div>
-    <div>
+    <div class="x-cell">
         <select bind:value={entry.status} onchange={()=>handleStatusChange()} style="width: 95%">
             <option value={undefined}></option>
             {#each Object.values(statusesStore.statuses) as status, i (status.id)}
@@ -211,10 +201,11 @@
         <!--            {/each}-->
         <!--        </select>-->
     </div>
-    <div>
+    <div class="x-cell">
         <!--        <button class="btn btn-sm btn-ic" on:click={remove}>-->
         <!--            <i class="fas fa-xmark fa-fw fa-sm" />-->
         <!--        </button>-->
+        <i class="fas fa-trash fa-fw" style="cursor: pointer" onclick={()=>del(entry.id)}></i>
     </div>
 </div>
 
@@ -237,8 +228,7 @@
     }
 
     #fld-id {
-        font-size: 10px;
-        font-family: 'Roboto Mono', monospace;
+        font-size: 9px;
     }
 
     .status {

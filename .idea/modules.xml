@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/app-bcc-lapse.iml" filepath="$PROJECT_DIR$/.idea/app-bcc-lapse.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/kanso.iml" filepath="$PROJECT_DIR$/.idea/kanso.iml" />
     </modules>
   </component>
 </project>

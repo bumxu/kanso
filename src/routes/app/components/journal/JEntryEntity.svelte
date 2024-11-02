@@ -1,10 +1,11 @@
 <script lang="ts">
 
-    import { entitiesStore } from '$lib/stores/entities.store.j4.svelte';
-    import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
+    import { entitiesStore } from '$lib/stores/entities.store.j4.svelte.js';
+    import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte.js';
     import type { EntitySchema, EntryEntitySchema } from '$lib/types/j4_types';
     import { onMount } from 'svelte';
     import type { EventHandler } from 'svelte/elements';
+    import { appStore } from '../../appstate.store.svelte';
 
     let {
         linkedEntity,
@@ -172,6 +173,10 @@
         }
     }
 
+    function handleClickEdit() {
+        console.debug('handleClickEdit');
+    }
+
 </script>
 
 <div class="x-entity">
@@ -181,18 +186,26 @@
         {/if}
         {entityDisplay ? entityDisplay : '?'}
     </div>
-    <div class="x-side">
-        <button class="fas fa-fw fa-sm fa-times"
-                aria-label="Quitar" title="Quitar"
-                onclick={onUnlinkEntity}></button>
-    </div>
+    {#if appStore.ctrlKeyPressed}
+        <div class="x-side">
+            <button class="fas fa-fw fa-sm fa-filter"
+                    aria-label="Filtrar" title="Filtrar"
+                    onclick={handleClickEdit}></button>
+            <button class="fas fa-fw fa-sm fa-pen"
+                    aria-label="Editar" title="Editar"
+                    onclick={handleClickEdit}></button>
+            <button class="fas fa-fw fa-sm fa-trash"
+                    aria-label="Quitar" title="Quitar"
+                    onclick={onUnlinkEntity}></button>
+        </div>
+    {/if}
 </div>
 
 <style lang="scss">
     .x-entity {
         font-size: 11px;
         padding: 0 4px;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        border-bottom: 1px dotted var(--table-sep-color);
         display: flex;
     }
     .x-label {

@@ -1,5 +1,7 @@
 <script lang="ts">
-    import JEntry from '$lib/journal_table/JEntry.svelte';
+    import Button from '$lib/components/Button.svelte';
+    import { appStore } from './appstate.store.svelte';
+    import JEntry from './components/journal/JEntry.svelte';
     import { entitiesStore } from '$lib/stores/entities.store.j4.svelte';
     import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
     import { filtersStore } from '$lib/stores/filters.store.j4.svelte';
@@ -10,17 +12,20 @@
     import { tagsStore } from '$lib/stores/tags.store.j4.svelte';
     import type { EntrySchema } from '$lib/types/j4_types';
     import { DateTime } from 'luxon';
-    import { onMount } from 'svelte';
-    import SBConsole from './component/SBConsole.svelte';
-    import SbEntities from './component/SBEntities.svelte';
-    import SBEntityTypes from './component/SBEntityTypes.svelte';
-    import SBFilters from './component/SBFilters.svelte';
-    import SBPriorities from './component/SBPriorities.svelte';
-    import SBStatuses from './component/SBStatuses.svelte';
-    import SBTags from './component/SBTags.svelte';
+    import { onMount, tick } from 'svelte';
+    import SBConsole from './components/sidebar/SBConsole.svelte';
+    import SbEntities from './components/sidebar/SBEntities.svelte';
+    import SBEntityTypes from './components/sidebar/SBEntityTypes.svelte';
+    import SBFilters from './components/sidebar/SBFilters.svelte';
+    import SBPriorities from './components/sidebar/SBPriorities.svelte';
+    import SBStatuses from './components/sidebar/SBStatuses.svelte';
+    import SBTags from './components/sidebar/SBTags.svelte';
+    import { tippyAction } from '$lib/actions/tippy.action';
+
+    import '../../scss/main.scss';
 
     //let entries: JEntry[] = [];
-    let journal = $derived(Object.values(journalStore._entryIndex));
+    //let journal = $derived(Object.values(journalStore._entryIndex));
 
     let sbOpen = $state(false);
     let sbTool: string | null = $state(null);
@@ -28,22 +33,72 @@
     let order = $state('dateSince');
     let orderAsc = $state(true);
 
+    let qFilterTopic = $state('');
+    let qFilterEntities = $state('');
+    let qFilterTags = $state('');
+
+    function getDateUpdated(entry: EntrySchema) {
+        if (entry.dateClosed != null) {
+            return entry.dateClosed;
+        }
+        return entry.dateUpdated ?? entry.dateSince;
+    }
+
     let view: EntrySchema[] = $derived.by(() => {
         let entries = Object.values(journalStore.journal).flatMap(p => p.entries);
 
         // Orden
         if (order === 'dateSince' && orderAsc) {
+            console.debug('Aplicando orden por "fecha de inicio" ascendente...');
             entries.sort((a, b) => a.dateSince.localeCompare(b.dateSince));
         } else if (order === 'dateSince' && !orderAsc) {
+            console.debug('Aplicando orden por "fecha de inicio" descendente...');
             entries.sort((a, b) => b.dateSince.localeCompare(a.dateSince));
-        } //else {
+        } else if (order === 'dateUpdated' && orderAsc) {
+            console.debug('Aplicando orden por "fecha de actualización" ascendente...');
+            entries.sort((a, b) => getDateUpdated(a).localeCompare(getDateUpdated(b)));
+        } else if (order === 'dateUpdated' && !orderAsc) {
+            console.debug('Aplicando orden por "fecha de actualización" descendente...');
+            entries.sort((a, b) => getDateUpdated(b).localeCompare(getDateUpdated(a)));
+        }
         //     return journalStore.journal;
         // }
 
-        // Aplicar filtros
+        // Aplicar filtros rápidos
+        if (qFilterTopic) {
+            console.debug('Aplicando filtro rápido en "asunto"...');
+            entries = entries.filter(entry => entry.subject.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(qFilterTopic.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')));
+        }
+        if (qFilterEntities) {
+            console.debug('Aplicando filtro rápido en "entidades"...');
+            entries = entries.filter(entry => {
+                return entry.entities.some(entryEntity => {
+                    const entity = entitiesStore.entities[entryEntity.entityId];
+                    const desplayName = entityTypesStore.getDisplayFn(entity.type)(entity.id, entity.raw);
+                    console.debug('Comparando ' + desplayName + ' con ' + qFilterEntities);
+                    if (desplayName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(qFilterEntities.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''))) {
+                        return true;
+                    }
+                });
+            });
+        }
+        if (qFilterTags) {
+            console.debug('Aplicando filtro rápido en "etiquetas"...');
+            entries = entries.filter(entry => {
+                return entry.tags.some(tagId => {
+                    const tag = tagsStore.tags[tagId];
+                    if (tag.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(qFilterTags.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''))) {
+                        return true;
+                    }
+                });
+            });
+        }
+
+        // Aplicar filtros personalizados
         entries = entries.filter(entry => {
             for (const filter of filtersStore.filters) {
                 if (filter.active) {
+                    console.debug(`Aplicando filtro básico "${filter.desc}"...`);
                     const filterFn = new Function('return ' + filter.filterFn)();
                     if (!filterFn(entry)) {
                         return false;
@@ -59,48 +114,56 @@
     onMount(async () => {
         console.log('Iniciando Kanso...');
 
-        //storeManager.loadToLS();
-        //await storeManager.loadWithSSR();
-
-        // const response = await fetch(SERVER_HOST + '/api/journal/entries');
-        // $entries = [...await response.json()];
-        // console.log('Obtenidos ' + $entries.length + ' registros');
-        //
-        // const response2 = await fetch(SERVER_HOST + '/api/journal/tags');
-        // const tags = [...await response2.json()];
-        // $ztags = tags;
-        // console.log('Obtenidas ' + tags.length + ' tags');
-        //
-        // const response3 = await fetch(SERVER_HOST + '/api/journal/entities');
-        // const entities = [...await response3.json()];
-        // $zentities = entities;
-        // console.log('Obtenidas ' + entities.length + ' entidades');
-        //
-        // console.log(entries);
-
+        storeManager.loadFromLS();
     });
 
+    function handleGlobalKeyDown(e: KeyboardEvent) {
+        if (e.key === 'Control' && !e.repeat) {
+            appStore.ctrlKeyPressed = true;
+            console.debug('Tecla Ctrl pulsada');
+        }
+    }
+
+    function handleGlobalKeyUp(e: KeyboardEvent) {
+        if (e.key === 'Control') {
+            appStore.ctrlKeyPressed = false;
+            console.debug('Tecla Ctrl soltada');
+        }
+    }
+
+    function handleGlobalClick(e: MouseEvent) {
+        if (sbOpen && e.target instanceof HTMLElement && !e.target.closest('.x-sb-floating') && !e.target.closest('.x-sb-menu')) {
+            sbOpen = false;
+        }
+    }
+
+    function handleGlobalFocus(e: GenericInputEvent) {
+        if (e.target && appStore.focusedElement !== e.target) {
+            appStore.focusedElement = e.target;
+            console.debug(`Tiene el foco -> ${e.target.tagName.toLowerCase()}.${[...e.target.classList].join('.')}`/*, e*/);
+        }
+    }
+
+    async function handleGlobalBlur(e: GenericInputEvent) {
+        // Retrasamos el evento para procesarlo solo si el blur
+        // no se ha producido por el enfoque de otro elemento
+        setTimeout(() => {
+            if (appStore.focusedElement === e.target) {
+                appStore.focusedElement = null;
+                console.debug('Tiene el foco -> NULL');
+            }
+        }, 50);
+    }
+
     function add() {
-        //     $entries = [...$entries, {
-        //         createdAt: Utils.formatDateServer(DateTime.now())!,
-        //         createdAtShowsTime: true,
-        //         closedAtShowsTime: false,
-        //         priority: null,
-        //         topic: '',
-        //         updates: [],
-        //         entities: [],
-        //         tags: []
-        //     }];
+        console.log('Añadiendo nuevo registro...');
         journalStore.add({
             dateSince: DateTime.local().toFormat('yyyyMMddHHmm'),
-            subject: 'Nuevo ' + Math.random(),
+            subject: '',
+            entities: [],
             updates: [],
             tags: []
         });
-    }
-
-    function del(evt: CustomEvent) {
-        //     $entries = $entries.filter(e => e !== evt.detail.entry);
     }
 
     function toggleSb(sbId: string) {
@@ -113,62 +176,97 @@
     }
 
     function handleOrderByDateSince() {
-        orderAsc = order === 'dateSince' ? !orderAsc : true;
-        order = 'dateSince';
-    }
-
-    function handlePartitionChange(entry: EntrySchema, srcPartId: string) {
-        entry = $state.snapshot(entry);
-
-        console.log('Partition change', entry, srcPartId);
-        const dstPartId = entry.dateSince.substring(0, 6);
-
-        // Remove from old partition
-        journalStore.journal[srcPartId].entries = journalStore.journal[srcPartId].entries.filter(e => e.id !== entry.id);
-
-        // Add to new partition
-        if (!journalStore.journal[dstPartId]) {
-            journalStore.journal[dstPartId] = { id: dstPartId, entries: [] };
+        if (order === 'dateSince' && orderAsc) {
+            orderAsc = false;
+        } else if (order === 'dateSince' && !orderAsc) {
+            order = 'dateUpdated';
+            orderAsc = true;
+        } else if (order === 'dateUpdated' && orderAsc) {
+            orderAsc = false;
+        } else if (order === 'dateUpdated' && !orderAsc) {
+            order = 'dateSince';
+            orderAsc = true;
         }
-        journalStore.journal[dstPartId].entries.push(entry);
-        journalStore.journal[dstPartId].entries.sort((a, b) => a.dateSince.localeCompare(b.dateSince));
+        console.log(`Reordenando por "${order}" (${orderAsc ? 'asc' : 'desc'})...`);
     }
+
 </script>
+
+<svelte:window
+        onclick={handleGlobalClick}
+        onkeydown={handleGlobalKeyDown}
+        onkeyup={handleGlobalKeyUp}
+        onfocusin={handleGlobalFocus}
+        onfocusout={handleGlobalBlur}
+/>
 
 <div class="x-app">
     <header class="x-title-bar">
         <h1>K Gestor de tareas</h1>
     </header>
     <nav class="x-mainmenu-bar">
-        <!--        <button onclick={() => journalStore.serialize()}>Serialize</button>-->
-        <button onclick={() => storeManager.loadFromLS()}><i class="fas fa-fw fa-file-export"></i> Cargar (LS)</button>
-        <button onclick={() => storeManager.saveToLS()}><i class="fas fa-fw fa-file-import"></i> Guardar (LS)</button>
-        <!--        <button onclick={() => storeManager.saveWithSSR()}>Save (SSR)</button>-->
-        <!--        <button onclick={() => storeManager.loadWithSSR()}>Load (SSR)</button>-->
-        <button onclick={() => storeManager.saveToDownload()}><i class="fas fa-fw fa-download"></i> Descargar</button>
-        <button onclick={() => storeManager.loadFromFile()}><i class="fas fa-fw fa-folder-open"></i> Usar archivo local ({storeManager.isFileHandled ? '✔️' : ''})</button>
-        <button onclick={() => storeManager.saveToFileHandler()}><i class="fas fa-fw fa-save"></i> Guardar a local</button>
-        <br>
-        <button onclick={add}><i class="fas fa-fw fa-circle-plus"></i> Añadir</button>
+        <div class="flex">
+            <!--        <button onclick={() => journalStore.serialize()}>Serialize</button>-->
+            <Button icon="fas fa-arrow-down-from-arc" onclick={() => storeManager.loadFromLS()}>Cargar (LS)</Button>
+            <Button icon="fas fa-arrow-up-to-arc" onclick={() => storeManager.saveToLS()}>Guardar (LS)</Button>
+            <!--        <button onclick={() => storeManager.saveWithSSR()}>Save (SSR)</button>-->
+            <!--        <button onclick={() => storeManager.loadWithSSR()}>Load (SSR)</button>-->
+            <Button icon="fas fa-download" onclick={() => storeManager.saveToDownload()}>Descargar</Button>
+            <Button icon="fas fa-folder-open" onclick={() => storeManager.loadFromFile()}>
+                Usar archivo local
+                {#if storeManager.isFileHandled}&nbsp;&nbsp;<i class="fas fa-check"></i>{/if}
+            </Button>
+            <Button icon="fas fa-save" onclick={() => storeManager.saveToFileHandler()}>Guardar a local</Button>
+        </div>
+        <div class="flex">
+            <Button icon="fas fa-circle-plus" onclick={add}>Añadir</Button>
+        </div>
     </nav>
     <div class="x-container">
         <div class="x-main">
             <div class="x-table x-journal">
-                <div class="x-row x-header">
-                    <div>#</div>
-                    <div onclick={handleOrderByDateSince}>Fechas
-                        {#if order === 'dateSince'}
+                <div class="x-headers">
+                    <div class="x-row x-header">
+                        <div class="x-cell"><span class="x-label">#</span></div>
+                        <div class="x-cell flex items-center" onclick={handleOrderByDateSince}>
+                            <span class="x-label flex-1">Fechas</span>
+                            {#if order === 'dateSince'}
+                                <i class="fas fa-fw fa-xs fa-add" style="opacity: 0.5"></i>
+                            {/if}
+                            {#if order === 'dateUpdated'}
+                                <i class="far fa-fw fa-xs fa-pen" style="opacity: 0.5"></i>
+                            {/if}
                             <i class="fas fa-fw" class:fa-caret-up={orderAsc} class:fa-caret-down={!orderAsc}></i>
-                        {/if}
+                        </div>
+                        <div class="x-cell"><span class="x-label">Asunto</span></div>
+                        <div class="x-cell"><span class="x-label">Actualizaciones</span></div>
+                        <div class="x-cell"><span class="x-label">Entidades</span></div>
+                        <div class="x-cell"><span class="x-label">Tags</span></div>
+                        <div class="x-cell"><span class="x-label">Prioridad</span></div>
+                        <div class="x-cell"><span class="x-label">Estado</span></div>
+                        <div class="x-cell"><span class="x-label">*</span></div>
                     </div>
-                    <div>Asunto</div>
-                    <div>Actualizaciones</div>
-                    <div>Entidades</div>
-                    <div>Tags</div>
-                    <div>Prioridad</div>
-                    <div>Estado</div>
-                    <div>*</div>
+
+                    <div class="x-row x-header">
+                        <div class="x-cell"></div>
+                        <div class="x-cell"></div>
+                        <div class="x-cell flex items-center">
+                            <i class="fas fa-fw fa-xs fa-filter"></i>
+                            <input type="text" placeholder="Filtro rápido" bind:value={qFilterTopic} class="flex-1" class:x-rx={qFilterTopic.startsWith('/')}></div>
+                        <div class="x-cell"></div>
+                        <div class="x-cell flex items-center">
+                            <i class="fas fa-fw fa-xs fa-filter"></i>
+                            <input type="text" placeholder="Filtro rápido" class="flex-1" bind:value={qFilterEntities}></div>
+                        <div class="x-cell flex items-center">
+                            <i class="fas fa-fw fa-xs fa-filter"></i>
+                            <input type="text" placeholder="Filtro rápido" class="flex-1" bind:value={qFilterTags}></div>
+                        <div class="x-cell"></div>
+                        <div class="x-cell"></div>
+                        <div class="x-cell"></div>
+                    </div>
+
                 </div>
+
                 <!--{#each Object.keys(journal) as partId, partIdx (partId)}-->
                 <!--    <JEntriesWindow bind:entriesWindow={journal[partId]}-->
                 <!--                    onpartitionchange={handlePartitionChange}-->
@@ -215,31 +313,52 @@
             <ul>
                 <li>
                     <button onclick={()=>toggleSb('etypes')}
-                            title="Tipos de entidad"><i class="fas fa-cube"></i></button>
+                            aria-label="Tipos de entidad"
+                            use:tippyAction={{placement: 'left', content: 'Tipos de entidad'}}>
+                        <i class="fad fa-cube"></i>
+                    </button>
                 </li>
                 <li>
                     <button onclick={()=>toggleSb('entities')}
-                            title="Entidades"><i class="fas fa-cubes-stacked"></i></button>
+                            aria-label="Entidades"
+                            use:tippyAction={{placement: 'left', content: 'Entidades'}}>
+                        <i class="fad fa-cubes-stacked"></i>
+                    </button>
                 </li>
                 <li>
                     <button onclick={()=>toggleSb('tags')}
-                            title="Tags"><i class="fas fa-tag"></i></button>
+                            aria-label="Tags"
+                            use:tippyAction={{placement: 'left' , content: 'Tags'}}>
+                        <i class="fad fa-tag"></i>
+                    </button>
                 </li>
                 <li>
                     <button onclick={()=>toggleSb('statuses')}
-                            title="Estados"><i class="fas fa-percent"></i></button>
+                            aria-label="Estados"
+                            use:tippyAction={{placement: 'left', content: 'Estados'}}>
+                        <i class="fad fa-percent"></i>
+                    </button>
                 </li>
                 <li>
                     <button onclick={()=>toggleSb('priorities')}
-                            title="Prioridades"><i class="fas fa-fire"></i></button>
+                            aria-label="Prioridades"
+                            use:tippyAction={{placement: 'left', content: 'Prioridades'}}>
+                        <i class="fad fa-fire"></i>
+                    </button>
                 </li>
                 <li>
                     <button onclick={()=>toggleSb('filters')}
-                            title="Filtros básicos"><i class="fas fa-filters"></i></button>
+                            aria-label="Filtros básicos"
+                            use:tippyAction={{placement: 'left', content: 'Filtros básicos'}}>
+                        <i class="fad fa-filters"></i>
+                    </button>
                 </li>
                 <li>
                     <button onclick={()=>toggleSb('console')}
-                            title="Consola"><i class="fas fa-terminal"></i></button>
+                            aria-label="Consola"
+                            use:tippyAction={{placement: 'left', content: 'Consola'}}>
+                        <i class="fad fa-terminal"></i>
+                    </button>
                 </li>
             </ul>
         </div>
@@ -277,6 +396,10 @@
         border-bottom: 1px solid #aaa;
         padding: 4px 10px;
 
+        & > div {
+            gap: 4px;
+        }
+
         button {
             margin: 0;
             display: inline;
@@ -307,44 +430,6 @@
         box-sizing: border-box;
     }
 
-    .x-sb-menu {
-        flex: 0 0 40px;
-        background: #f7f7f7;
-        z-index: 100;
-        border-left: 1px solid #aaa;
-
-        ul, li {
-            margin: 0;
-            padding: 0;
-            list-style: none;
-        }
-
-        button {
-            width: 100%;
-            height: 40px;
-            color: #333;
-            margin-bottom: 1px;
-            border: 0;
-            font-size: 15px;
-            background-color: rgba(0, 0, 0, 0);
-            cursor: pointer;
-            transition: 0.08s linear 0s background-color;
-            &:hover {
-                background-color: rgba(0, 0, 0, 0.06);
-            }
-        }
-    }
-
-    .x-sb-floating {
-        background: #f7f7f7;
-        position: absolute;
-        right: 41px;
-        top: 0;
-        bottom: 0;
-        width: 400px;
-        z-index: 50;
-        box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
-    }
 
     .x-status-bar {
         flex: 0 0 0;
@@ -355,44 +440,9 @@
         color: #888;
     }
 
-
-
-    .x-sidebar {
-        //flex: 0 0 300px;
-        //height: 100%;
-        //min-width: 300px;
-        overflow: auto;
-        //display: flex;
-        //flex-direction: column;
+    .x-rx {
+        color: #00f;
     }
 
-    .x-sidebar :global(.x-sb-section) {
-        flex: 1 1;
-        min-height: 300px;
-        overflow: auto;
-    }
-
-
-    .x-sidebar :global(.x-sb-header) {
-        background: #333;
-        padding: 5px;
-        font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.85);
-    }
-
-    .x-sidebar :global(.x-no-selection) {
-        font-size: 0.85rem;
-        color: #666;
-        pointer-events: none;
-    }
-    .x-sidebar :global(.x-form) {
-        padding: 10px;
-    }
-    .x-sidebar :global(.x-form label) {
-        display: block;
-        font-size: 0.75rem;
-        font-weight: 600;
-        margin-top: 5px;
-    }
 
 </style>

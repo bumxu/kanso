@@ -4,11 +4,11 @@
     import { prioritiesStore } from '$lib/stores/priorities.store.j4.svelte';
     import { statusesStore } from '$lib/stores/statuses.store.j4.svelte';
     import { tagsStore } from '$lib/stores/tags.store.j4.svelte';
-    import SbEntities from './SBEntities.svelte';
-    import SBEntityTypes from './SBEntityTypes.svelte';
-    import SBPriorities from './SBPriorities.svelte';
-    import SBStatuses from './SBStatuses.svelte';
-    import SBTags from './SBTags.svelte';
+    import SbEntities from '../components/sidebar/SBEntities.svelte';
+    import SBEntityTypes from '../components/sidebar/SBEntityTypes.svelte';
+    import SBPriorities from '../components/sidebar/SBPriorities.svelte';
+    import SBStatuses from '../components/sidebar/SBStatuses.svelte';
+    import SBTags from '../components/sidebar/SBTags.svelte';
 
 </script>
 
