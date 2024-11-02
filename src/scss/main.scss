@@ -346,26 +346,26 @@ select {
     border-left: 1px solid #aaa;
 }
 
-//.x-sidebar :global(.x-sb-section) {
-//    flex: 1 1;
-//    min-height: 300px;
-//    overflow: auto;
-//}
-//
-//
+.x-sidebar .x-sb-section {
+    flex: 1 1;
+    min-height: 300px;
+    overflow: auto;
+}
 
-//
-//.x-sidebar :global(.x-no-selection) {
-//    font-size: 0.85rem;
-//    color: #666;
-//    pointer-events: none;
-//}
-//.x-sidebar :global(.x-form) {
-//    padding: 10px;
-//}
-//.x-sidebar :global(.x-form label) {
-//    display: block;
-//    font-size: 0.75rem;
-//    font-weight: 600;
-//    margin-top: 5px;
-//}
+
+
+
+.x-sidebar .x-no-selection {
+    font-size: 0.85rem;
+    color: #666;
+    pointer-events: none;
+}
+.x-sidebar .x-form {
+    padding: 10px;
+}
+.x-sidebar .x-form label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-top: 5px;
+}
