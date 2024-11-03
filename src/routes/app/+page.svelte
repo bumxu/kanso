@@ -35,6 +35,7 @@
     let orderAsc = $state(true);
 
     let qFilterTopic = $state('');
+    let qFilterUpdates = $state('');
     let qFilterEntities = $state('');
     let qFilterTags = $state('');
 
@@ -69,6 +70,12 @@
         if (qFilterTopic) {
             console.debug('Aplicando filtro rápido en "asunto"...');
             entries = entries.filter(entry => entry.subject.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(qFilterTopic.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')));
+        }
+        if (qFilterUpdates) {
+            console.debug('Aplicando filtro rápido en "actualizaciones"...');
+            entries = entries.filter(entry => {
+                return entry.updates.data.some(update => update.body.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(qFilterUpdates.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')));
+            });
         }
         if (qFilterEntities) {
             console.debug('Aplicando filtro rápido en "entidades"...');
@@ -133,7 +140,6 @@
     }
 
     function handleGlobalClick(e: MouseEvent) {
-        console.debug('Click global ->', e.target, e.target.closest('.x-sb-floating'));
         if (sbOpen && e.target instanceof HTMLElement && !e.target.closest('.x-sb-floating') && !e.target.closest('.x-sb-menu')) {
             sbOpen = false;
         }
@@ -256,7 +262,9 @@
                         <div class="x-cell flex items-center">
                             <i class="fas fa-fw fa-xs fa-filter"></i>
                             <input type="text" placeholder="Filtro rápido" bind:value={qFilterTopic} class="flex-1" class:x-rx={qFilterTopic.startsWith('/')}></div>
-                        <div class="x-cell"></div>
+                        <div class="x-cell flex items-center">
+                            <i class="fas fa-fw fa-xs fa-filter"></i>
+                            <input type="text" placeholder="Filtro rápido" bind:value={qFilterUpdates} class="flex-1" class:x-rx={qFilterUpdates.startsWith('/')}></div>
                         <div class="x-cell flex items-center">
                             <i class="fas fa-fw fa-xs fa-filter"></i>
                             <input type="text" placeholder="Filtro rápido" class="flex-1" bind:value={qFilterEntities}></div>
@@ -453,8 +461,6 @@
     .x-rx {
         color: #00f;
     }
-
-
 
 
 </style>

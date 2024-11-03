@@ -1,5 +1,6 @@
 <script lang="ts">
     import SimpleBar from '$lib/components/SimpleBar.svelte';
+    import { tick } from 'svelte';
 
     type Props = {
         entryId: string;
@@ -12,32 +13,43 @@
 
     let domTopicCe: HTMLDivElement;
 
+    // $effect(() => {
+    //     //inputValue = value;
+    // });
+
     function handleInputBlur() {
         hasFocus = false;
-        applyInputValue();
+        //applyInputValue();
+        //domTopicCe.innerHTML = domTopicCe.textContent;
     }
 
     function applyInputValue() {
-        if (inputValue !== value) {
-            value = inputValue;
-            // Remove html
-            inputValue = inputValue.replace(/<[^>]*>?/gm, '');
-            console.log(`Modificación del asunto de la entrada #${entryId} consolidada -> "` + value + '"');
-        }
+        //console.debug(inputValue);
+        // if (inputValue !== value) {
+        //     // Remove html
+        //     //inputValue = inputValue.replace(/<[^>]*>?/gm, '');
+        //     value = inputValue;
+        //     console.log(`Modificación del asunto de la entrada #${entryId} consolidada -> "` + value + '"');
+        // }
     }
 
     function handleInputKeydown(ev: KeyboardEvent) {
-        if (ev.key === 'Enter' && !ev.shiftKey) {
-            ev.preventDefault();
-            ev.stopPropagation();
-            domTopicCe.blur();
-        } else if (ev.key === 'Escape') {
-            if (inputValue !== value) {
-                inputValue = value;
-                domTopicCe.blur();
-                console.log(`Modificación del asunto de la entrada #${entryId} cancelada -> "` + value + '"');
-            }
-        }
+        //     if (ev.key === 'Enter' && !ev.shiftKey) {
+        //         ev.preventDefault();
+        //         ev.stopPropagation();
+        //         domTopicCe.blur();
+        //     } else if (ev.key === 'Escape') {
+        //         if (inputValue !== value) {
+        //             inputValue = value;
+        //             domTopicCe.blur();
+        //             console.log(`Modificación del asunto de la entrada #${entryId} cancelada -> "` + value + '"');
+        //         }
+        //     }
+    }
+
+    function handleInputPaste(ev: ClipboardEvent) {
+        ev.preventDefault();
+        document.execCommand('insertText', false, ev.clipboardData?.getData('text/plain'));
     }
 
 </script>
@@ -45,9 +57,9 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div class="x-cell-content" class:focused={hasFocus} role="none" onclick={()=>domTopicCe.focus()}>
     <SimpleBar tabindex="-1">
-        <div class="x-text-input" contenteditable="true" bind:textContent={inputValue}
+        <div class="x-text-input" contenteditable="true" bind:textContent={value}
              spellcheck="false" role="textbox" tabindex="0" bind:this={domTopicCe}
-             onfocus={() => hasFocus = true} onblur={handleInputBlur}
+             onfocus={() => hasFocus = true} onblur={handleInputBlur} onpaste={handleInputPaste}
              onkeydown={handleInputKeydown}></div>
     </SimpleBar>
 </div>

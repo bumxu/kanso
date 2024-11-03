@@ -59,7 +59,7 @@
         dateInputVisible = true;
         await tick();
         domDateInput.focus();
-        value.date = DateTime.now().toFormat('yyyy/MM/dd HH:mm');
+        value.date = DateTime.now().toFormat('dd/MM/yy HH:mm');
     }
 
     function handleTextInputFocus() {
@@ -73,6 +73,11 @@
                 if (onblur) onblur();
             }
         }, 1000);
+    }
+
+    function handleTextInputPaste(ev: ClipboardEvent) {
+        ev.preventDefault();
+        document.execCommand('insertText', false, ev.clipboardData?.getData('text/plain'));
     }
 
 </script>
@@ -101,7 +106,8 @@
              bind:this={domTextInput}
              spellcheck="false"
              onfocus={handleTextInputFocus}
-             onblur={handleTextInputBlur}></div>
+             onblur={handleTextInputBlur}
+             onpaste={handleTextInputPaste}></div>
     </div>
 
     <div style="flex: 0 auto; padding-right: 5px">
