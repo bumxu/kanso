@@ -1,9 +1,14 @@
 import { Utils } from '$lib/Utils';
 import { DateTime } from 'luxon';
+import type { Action } from 'svelte/action';
+import tippy from 'tippy.js';
+
+type Props = {}
 
 export class DateTimeHelper {
+    private static readonly required = false;
 
-    private parseDate(raw: string): { year: number, month: number, day: number } | null {
+    private static parseDate(raw: string): { year: number, month: number, day: number } | null {
         console.debug('parseDate', raw);
         let year, month, day;
         if (raw == null || raw === '') {
@@ -48,7 +53,7 @@ export class DateTimeHelper {
         }
     }
 
-    private parseTime(raw: string): { hour: number, minute: number } | null {
+    private static parseTime(raw: string): { hour: number, minute: number } | null {
         console.debug('parseTime', raw);
         let hour, minute;
         if (raw == null || raw === '') {
@@ -84,13 +89,13 @@ export class DateTimeHelper {
         }
     }
 
-    private parseUserDate(raw: string): string | null {
+    public static parseUserDate(raw: string): string | null {
         raw = raw != null ? raw.trim() : '';
         console.debug('parseTime', raw);
 
         const now = DateTime.local();
         if (raw === '') {
-            return required
+            return this.required
                 ? Utils.formatDateServer(now, true)
                 : null;
         }
@@ -105,24 +110,24 @@ export class DateTimeHelper {
                 time = raw.length === 1 ? null : { hour: now.hour, minute: now.minute };
             } else if (/^\d{12}$/.test(raw)) {
                 // yyyyMMddHHmm
-                date = parseDate(raw.substring(0, 8));
-                time = parseTime(raw.substring(8));
+                date = this.parseDate(raw.substring(0, 8));
+                time = this.parseTime(raw.substring(8));
             } else if (/^\d{10}$/.test(raw)) {
                 // yyMMddHHmm
-                date = parseDate(raw.substring(0, 6));
-                time = parseTime(raw.substring(6));
+                date = this.parseDate(raw.substring(0, 6));
+                time = this.parseTime(raw.substring(6));
             } else if (/^\d{3,4}|\d{1,2}[.:](\d{1,2})|[.:](\d{1,2})?$/.test(raw)) {
                 // HHmm, Hmm, (H)H.(m)m, (H)H:(m)m, (H)H., (H)H:, .(m)m, :(m)m
                 date = { year: now.year, month: now.month, day: now.day };
-                time = parseTime(raw);
+                time = this.parseTime(raw);
             } else /*if (/^\d{8}|\d{6}$/.test(raw))*/ {
                 // other (date only
-                date = parseDate(raw);
+                date = this.parseDate(raw);
                 time = null;
             }
         } else if (rawSplt.length === 2) {
-            date = parseDate(rawSplt[0]);
-            time = parseTime(rawSplt[1]);
+            date = this.parseDate(rawSplt[0]);
+            time = this.parseTime(rawSplt[1]);
         } else {
             throw new Error('Formato de fecha no válido: ' + raw + '.');
         }

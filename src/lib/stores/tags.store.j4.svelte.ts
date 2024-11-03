@@ -1,3 +1,4 @@
+import { indexOf } from '$lib/helpers/runtime.helper';
 import { journalStore } from '$lib/stores/journal.store.j4.svelte';
 import type { SuggestionsSchema, TagSchema, TagsSchema } from '$lib/types/j4_types';
 import type { RawTagSchema, RawTagsSchema } from '$lib/types/j4raw_types';
@@ -26,8 +27,7 @@ class TagsStore {
     public getSuggestions(input: string): SuggestionsSchema<TagSchema> {
         const matches: SuggestionsSchema<TagSchema> = [];
         for (let tag of Object.values(this.tags)) {
-            const iof = tag.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().indexOf(
-                input.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase());
+            const iof = indexOf(tag.name, input);
             if (iof === 0) {
                 matches.push({ item: tag, weight: 10 });
             } else if (iof > -1) {

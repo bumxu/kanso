@@ -6,9 +6,20 @@
   <component name="ChangeListManager">
     <list default="true" id="e9cf873a-9b04-43b2-83e6-08f1658a1220" name="Changes" comment="Snapshot">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/JEntryUpdate.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/JEntryUpdate.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/JEntryUpdate.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryUpdate.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/actions/tippy.action.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/actions/tippy.action.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/helpers/datetime.helper.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/helpers/datetime.helper.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/journal_table/JDateTime.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/components/JDateTime.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/journal_table/JDateTimeCell.svelte" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/journal_table/JEntriesWindow.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/obsolete/JEntriesWindow.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/journal_table/JPriorityCell.svelte" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/stores/entities.store.j4.svelte.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/stores/entities.store.j4.svelte.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/stores/tags.store.j4.svelte.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/stores/tags.store.j4.svelte.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/routes/app/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/+page.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryTopic.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryTopic.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/app/components/journal/JEntry.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/journal/JEntry.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryDateSince.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryDateSince.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryEntity.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryEntity.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryUpdates.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryUpdates.svelte" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,6 +31,7 @@
       <list>
         <option value="SimpleBar" />
         <option value="TypeScript File" />
+        <option value="JEntryUpdateDatetime" />
       </list>
     </option>
   </component>
@@ -67,7 +79,7 @@
     "npm.build.executor": "Run",
     "npm.dev.executor": "Run",
     "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "editor.preferences.gutterIcons",
+    "settings.editor.selected.configurable": "preferences.sourceCode.JSON",
     "ts.external.directory.path": "C:\\Users\\admin\\Desktop\\workspace\\kanso\\node_modules\\typescript\\lib"
   }
 }]]></component>
@@ -77,8 +89,9 @@
       <recent name="C:\Users\admin\Desktop\workspace\kanso\src\scss" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\admin\Desktop\workspace\kanso\src\routes\app\components\journal" />
       <recent name="C:\Users\admin\Desktop\workspace\kanso\obsolete" />
+      <recent name="C:\Users\admin\Desktop\workspace\kanso\src\lib\components" />
+      <recent name="C:\Users\admin\Desktop\workspace\kanso\src\routes\app\components\journal" />
     </key>
   </component>
   <component name="RunManager" selected="npm.dev">
@@ -197,7 +210,15 @@
       <option name="project" value="LOCAL" />
       <updated>1730637478765</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Snapshot">
+      <option name="closed" value="true" />
+      <created>1730657285030</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1730657285030</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

@@ -1,6 +1,6 @@
 <script lang="ts">
     import SimpleBar from '$lib/components/SimpleBar.svelte';
-    import JEntryUpdate from '$lib/JEntryUpdate.svelte';
+    import JEntryUpdate from './JEntryUpdate.svelte';
     import { journalStore } from '$lib/stores/journal.store.j4.svelte.js';
     import type { EntryUpdatesSchema } from '$lib/types/j4_types';
     import { type SvelteComponent, tick } from 'svelte';

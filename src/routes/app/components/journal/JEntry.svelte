@@ -1,6 +1,6 @@
 <script lang="ts">
     import JEntryUpdates from './JEntryUpdates.svelte';
-    import JDateTime from '$lib/journal_table/JDateTime.svelte';
+    import JDateTime from '$lib/components/JDateTime.svelte';
     import JEntryTags from './JEntryTags.svelte';
     import { journalStore } from '$lib/stores/journal.store.j4.svelte';
     import { prioritiesStore } from '$lib/stores/priorities.store.j4.svelte.js';
@@ -66,7 +66,7 @@
         const id = entry.status;
         if (id != null) {
             const status = statusesStore.get(id);
-            if (status != null && status.final) {
+            if (status != null && !entry.dateClosed && status.final) {
                 entry.dateClosed = DateTime.local().toFormat('yyyyMMddHHmm');
             }
         }

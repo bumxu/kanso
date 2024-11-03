@@ -127,41 +127,6 @@
         }
     }
 
-    function entityToStr(entityLnk: any) {
-        let str = '';
-        const lnkMetadata = JSON.parse(entityLnk.metadata);
-
-        if (lnkMetadata.prefix != null) {
-            str += lnkMetadata.prefix + ' ';
-        }
-
-        str += entityLnk.entity.extId;
-
-        if (lnkMetadata.suffix != null) {
-            str += ' ' + lnkMetadata.suffix;
-        }
-
-        return str;
-    }
-
-    function strToEntity(str: string) {
-        str = str.trim();
-
-        if (/^[TMC]\d{3,8}/.test(str)) {
-            // Egipto
-
-        } else if (/^R \d+/.test(str)) {
-            // Remedy
-
-        } else if (/^T \d+/.test(str)) {
-
-        } else if (/^O \d+/.test(str)) {
-
-        } else {
-            return { entity: str };
-        }
-    }
-
     function entityFromInput(input: string) {
         const splt = input.trim().split(/\s+/);
         if (splt.length == 1) {
@@ -180,12 +145,14 @@
 </script>
 
 <div class="x-entity" transition:slide={{duration: 120}}>
-    <div class="x-label" title="{entityDisplay} [#{entity.id}]">
+    <div class="x-label" title="{entityDisplay} [#{entity?.id}]">
         {#if entityType?.icon}
             <i class="fa-fw fa-xs {entityType?.icon}"></i>
         {/if}
         {entityDisplay ? entityDisplay : '?'}
     </div>
+    <div class="x-note" contenteditable="true" spellcheck="false"
+         bind:textContent={linkedEntity.note} onclick={ev=>ev.stopPropagation()}></div>
     {#if appStore.ctrlKeyPressed}
         <div class="x-side">
             <!--            <button class="fas fa-fw fa-sm fa-filter"-->
@@ -207,6 +174,7 @@
         padding: 0 4px;
         border-bottom: 1px dotted var(--table-sep-color);
         display: flex;
+        padding-right: 12px;
     }
     .x-label {
         flex: 1 0 0;
@@ -217,6 +185,32 @@
         i {
             //margin-right: 2px;
             opacity: 0.75;
+        }
+    }
+    .x-note {
+        flex: 0 0 auto;
+        border-right: 1px solid transparent;
+        border-left: 1px solid transparent;
+        border-radius: 1px;
+        outline: 0;
+        padding: 0 2px !important;
+        margin: 0;
+        font-size: 10px;
+        width: auto;
+        font-weight: 600;
+        color: #999;
+        min-width: 2px;
+        max-width: 50px;
+        &:not(:empty) {
+            background-color: rgba(0, 0, 0, 0.04);
+        }
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+        &:focus {
+            background-color: var(--color-focused);
+            border-left: 1px dotted var(--table-sep-color);
+            border-right: 1px dotted var(--table-sep-color);
         }
     }
     .x-side {

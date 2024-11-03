@@ -1,5 +1,5 @@
 <script lang="ts">
-    import JDateTime from '$lib/journal_table/JDateTime.svelte';
+    import JDateTime from '$lib/components/JDateTime.svelte';
     import { DateTime } from 'luxon';
     import type { SvelteComponent } from 'svelte';
     import { appStore } from '../../appstate.store.svelte';

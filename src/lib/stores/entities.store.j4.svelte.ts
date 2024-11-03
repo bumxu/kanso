@@ -58,14 +58,18 @@ class EntitiesStore {
 
         // NEW SUGGESTIONS (PARSE)
         for (let type of Object.values(entityTypesStore.entityTypes)) {
-            const parseFn = new Function('return ' + type.parseFn)();
-            const result = parseFn(input);
-            if (result != null) {
-                matches.push({
-                    item: { id: null, type: type.id, raw: result },
-                    displayName: entityTypesStore.getDisplayFn(type.id)('*', result) + ' (nueva)',
-                    weight: -1
-                });
+            try {
+                const parseFn = new Function('return ' + type.parseFn)();
+                const result = parseFn(input);
+                if (result != null) {
+                    matches.push({
+                        item: { id: null, type: type.id, raw: result },
+                        displayName: entityTypesStore.getDisplayFn(type.id)('*', result) + ' (nueva)',
+                        weight: -1
+                    });
+                }
+            } catch (e) {
+                console.error('Error al ejecutar la parseFn del tipo de entidad ' + type.id, e.toString());
             }
         }
 

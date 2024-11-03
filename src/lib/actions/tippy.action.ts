@@ -8,7 +8,7 @@ type Props = {
 }
 
 export const tippyAction: Action<HTMLElement, Props | undefined> = (node, param: Props = {}) => {
-    console.log('myAction', node, param);
+    //console.log('myAction', node, param);
     tippy(node, {
         content: param.content ?? ((reference) => reference.getAttribute('title')),
         placement: param.placement

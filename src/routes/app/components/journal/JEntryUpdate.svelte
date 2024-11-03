@@ -3,7 +3,8 @@
     import { DateTime } from 'luxon';
     import { tick } from 'svelte';
     import { fade } from 'svelte/transition';
-    import { appStore } from '../routes/app/appstate.store.svelte';
+    import { appStore } from '../../appstate.store.svelte.js';
+    import JEntryUpdateDatetime from './JEntryUpdateDatetime.svelte';
 
     type Props = { value: EntryUpdateSchema; ondelete?: (id: string) => any; onfocus?: () => any; onblur?: () => any; };
     let { value = $bindable(), ondelete, onfocus, onblur }: Props = $props();
@@ -18,7 +19,7 @@
 
     let dateInputValue = $state('');
     // let dateInputFocused = $state(false);
-    let dateInputVisible = $state(false); //$derived(value.date || appStore.focusedElement === domDateInput);
+    let dateInputVisible = $state(!!value.date); //$derived(value.date || appStore.focusedElement === domDateInput);
 
     let focused = $derived(appStore.focusedElement === domDateInput || appStore.focusedElement === domTextInput);
 
@@ -56,10 +57,10 @@
     }
     async function handleClickAddDate(ev: MouseEvent) {
         ev.stopPropagation();
+        value.date = DateTime.now().toFormat('yyyyMMddHHmm');
         dateInputVisible = true;
         await tick();
         domDateInput.focus();
-        value.date = DateTime.now().toFormat('dd/MM/yy HH:mm');
     }
 
     function handleTextInputFocus() {
@@ -86,14 +87,21 @@
 
     <div class="x-group-input" style="flex: 1">
 
-        <div class="x-date-input"
-             class:hidden={!dateInputVisible}
-             contenteditable="true"
-             spellcheck="false"
-             bind:this={domDateInput}
-             bind:textContent={value.date}
-             onfocus={handleDateInputFocus}
-             onblur={handleDateInputBlur}></div>
+        <!--        <div class="x-date-input"-->
+        <!--             class:hidden={!dateInputVisible}-->
+        <!--             contenteditable="true"-->
+        <!--             spellcheck="false"-->
+        <!--             bind:this={domDateInput}-->
+        <!--             bind:textContent={value.date}-->
+        <!--             onfocus={handleDateInputFocus}-->
+        <!--             onblur={handleDateInputBlur}></div>-->
+        {#if dateInputVisible}
+            <JEntryUpdateDatetime
+                    bind:value={value.date}
+                    bind:domInput={domDateInput}
+                    onfocus={handleDateInputFocus}
+                    onblur={handleDateInputBlur} />
+        {/if}
 
         <i class="fad fa-fw fa-xs fa-calendar-xmark"
            class:hidden={dateInputVisible}
@@ -110,8 +118,9 @@
              onpaste={handleTextInputPaste}></div>
     </div>
 
-    <div style="flex: 0 auto; padding-right: 5px">
-        <button onclick={handleClickDelete} title="Eliminar"><i class="fas fa-sm fa-fw fa-xmark"></i></button>
+    <div style="flex: 0 auto; padding-right: 3px">
+        <button onclick={handleClickDelete} title="Eliminar">
+            <i class="far fa-xs fa-fw fa-trash" class:hidden={!appStore.ctrlKeyPressed} style="color: #aaa"></i></button>
         <!--        <button title="Más opciones"><i class="fas fa-sm fa-fw fa-ellipsis-vertical"></i></button>-->
     </div>
 </div>
@@ -132,52 +141,8 @@
         }
 
         .x-group-input {
-            border-right: 1px dotted var(--table-sep-color);
             padding: 1px 4px;
             cursor: text;
-        }
-
-        .x-datetime-input {
-            font-size: 9px;
-            width: 94px;
-            padding: 1px 2px;
-            display: none;
-        }
-    }
-
-    .x-date-input {
-        display: inline-block;
-        font-size: 10px;
-        text-rendering: optimizeLegibility;
-        box-sizing: border-box;
-        padding: 0;
-        margin-right: 2px;
-        font-weight: 400;
-        border: 0;
-        min-width: 9px;
-        color: #aaa;
-        //background: #d59898;
-        position: relative;
-        outline: 0;
-        border-right: 1px dotted var(--table-sep-color);
-        padding-right: 6px;
-
-        &:hover, &:focus {
-            //background: rgba(0, 0, 0, 0.05);
-        }
-
-        &:not(:empty) {
-            display: inline;
-        }
-
-        &:not(:focus):empty:before {
-            content: '·';
-            cursor: text;
-            color: rgba(0, 0, 0, 0.3);
-            position: absolute;
-            //    //color: rgba(0, 0, 0, 0.3);
-            font-weight: 600;
-            pointer-events: none;
         }
     }
 
