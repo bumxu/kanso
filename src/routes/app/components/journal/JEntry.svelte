@@ -1,5 +1,5 @@
 <script lang="ts">
-    import JEntryUpdates from '$lib/JEntryUpdates.svelte';
+    import JEntryUpdates from './JEntryUpdates.svelte';
     import JDateTime from '$lib/journal_table/JDateTime.svelte';
     import JEntryTags from './JEntryTags.svelte';
     import { journalStore } from '$lib/stores/journal.store.j4.svelte';
@@ -12,13 +12,15 @@
     import JEntryDateSince from './JEntryDateSince.svelte';
     import JEntryEntities from './JEntryEntities.svelte';
     import JEntryTopic from './JEntryTopic.svelte';
+    //import { slide, crossfade } from 'svelte/transition';
+
+    //const [send, receive] = crossfade({ fallback: slide });
 
     type Props = {
         entry: EntrySchema,
         partitionId: string,
         onpartitionchange: (entry: EntrySchema, currPartId: string) => void
     };
-
     const { entry = $bindable(), partitionId, onpartitionchange }: Props = $props();
 
     // Estados
@@ -170,28 +172,30 @@
         <JEntryTags entryId={entry.id} bind:tagsIds={entry.tags} />
     </div>
     <div class="x-cell">
-        <select bind:value={entry.priority} style="width: 95%">
+        <select bind:value={entry.priority}>
             <option value={undefined}></option>
             {#each Object.values(prioritiesStore.priorities) as priority, i (priority.id)}
                 <option value={priority.id}>{priority.name}</option>
             {/each}
         </select>
 
-        <div class="x-dt-wrapper"><i class="fad fa-sm fa-fw fa-flag-checkered"></i>
+        <div class="x-dt-wrapper">
+            <i class="fad fa-xs fa-fw fa-flag-checkered"></i>
             <JDateTime bind:value={entry.dateDue} />
         </div>
         <!--        <input type="text" bind:value={entry.priority} style="border: 1px solid #333; width: 50px" />-->
         <!--        <JPriorityCell bind:value={entry.priority} />-->
     </div>
     <div class="x-cell">
-        <select bind:value={entry.status} onchange={()=>handleStatusChange()} style="width: 95%">
+        <select bind:value={entry.status} onchange={()=>handleStatusChange()}>
             <option value={undefined}></option>
             {#each Object.values(statusesStore.statuses) as status, i (status.id)}
                 <option value={status.id}>{status.name}</option>
             {/each}
         </select>
 
-        <div class="x-dt-wrapper"><i class="fad fa-sm fa-fw fa-check"></i>
+        <div class="x-dt-wrapper">
+            <i class="fad fa-xs fa-fw fa-check"></i>
             <JDateTime bind:value={entry.dateClosed} />
         </div>
         <!--        <input type="text" bind:value={entry.status} style="border: 1px solid #333; width: 50px" />-->
@@ -205,7 +209,7 @@
         <!--        <button class="btn btn-sm btn-ic" on:click={remove}>-->
         <!--            <i class="fas fa-xmark fa-fw fa-sm" />-->
         <!--        </button>-->
-        <i class="fas fa-trash fa-fw" style="cursor: pointer" onclick={()=>del(entry.id)}></i>
+        <i class="far fa-trash fa-fw" style="cursor: pointer" onclick={()=>del(entry.id)}></i>
     </div>
 </div>
 
@@ -213,13 +217,15 @@
 
     .x-dt-wrapper {
         text-wrap: nowrap;
-        height: 14px;
-        line-height: 14px;
+        height: 16px;
+        line-height: 16px;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px dotted var(--table-sep-color);
 
-        i.fas, i.fad {
-            color: #333;
-            font-size: 9px;
-            vertical-align: middle;
+        i {
+            margin: 0 0 0 2px;
+            color: #aaa;
         }
 
         input {
@@ -247,5 +253,23 @@
 
     .status.new {
         background: #e5c65e;
+    }
+
+    select {
+        font-size: 10.6px;
+        font-weight: 500;
+        padding: 0;
+        width: 100%;
+        display: block;
+        margin: 0;
+        border-radius: 0;
+        background-color: #f5f5f5;
+        outline: none;
+        border: none;
+        border-bottom: 1px dotted var(--table-sep-color);
+
+        //&:hover {
+        //    background-color: var(--color-hovered);
+        //}
     }
 </style>

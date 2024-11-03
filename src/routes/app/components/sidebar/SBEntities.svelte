@@ -12,9 +12,12 @@
 
     let view = $derived.by(() => {
         return Object.values(entities).sort((a, b) => {
-            const adisplayed = display(a);
-            const bdisplayed = display(b);
-            return adisplayed.localeCompare(bdisplayed);
+            if (a.type === b.type) {
+                const adp = display(a);
+                const bdp = display(b);
+                return adp.localeCompare(bdp);
+            }
+            return a.type != null ? a.type.localeCompare(b.type) : 1;
         });
     });
 
@@ -50,15 +53,16 @@
     }
 
     function display(entity: EntitySchema) {
-        const displayFn: ETypeDisplayFn | null = entityTypesStore.getDisplayFn(entity.type);
-        if (displayFn != null) {
-            return displayFn(entity.id, entity!.raw);
-        }
+        return entityTypesStore.getDisplayFn(entity.type)(entity.id, entity.raw);
     }
 
     function getIcon(typeId: string) {
         const entityType = entityTypesStore.get(typeId);
         return entityType?.icon;
+    }
+
+    function handleClickDelete(id: string) {
+        entitiesStore.delete(id);
     }
 </script>
 
@@ -77,6 +81,7 @@
             <li class="x-list-item">
                 <i class="fa-fw fa-2xs {getIcon(entity.type)}"></i>
                 <button class="x-item" onclick={() => handleSelectItem(entity)}>{display(entity)}</button>
+                <i class="far fa-fw fa-xs fa-trash" onclick={(ev)=>{ev.stopPropagation();handleClickDelete(entity.id)}} style="cursor:pointer;"></i>
             </li>
         {/each}
     </ul>

@@ -118,21 +118,20 @@
         return type?.icon;
     }
 
-    function handleCellClick(e: MouseEvent) {
+    function handleCellClick(ev: MouseEvent) {
         domInput.focus();
     }
 
 </script>
 
-<div class="x-cell-content">
+<div class="x-cell-content" role="none" onclick={handleCellClick}>
 
-    <SimpleBar tabindex="-1">
-        <div class="x-entities" onclick={handleCellClick}>
+    <SimpleBar>
+        <div class="x-entities">
             {#each entities as entity}
                 <JEntryEntity entryId={entryId} linkedEntity={entity} onUnlinkEntity={()=>handleUnlink(entity)} />
             {/each}
             <input type="text" class="x-entity x-new"
-                   placeholder="· ·"
                    bind:value={entityInput}
                    bind:this={domInput}
                    oninput={handleInput}
@@ -158,11 +157,12 @@
 
 <style lang="scss">
     .x-cell-content {
-        width: 100%;
-        height: 100%;
-        position: relative;
+        cursor: text;
         display: flex;
         flex-direction: column;
+        height: 100%;
+        position: relative;
+        width: 100%;
 
         &:hover {
             background-color: var(--color-hovered);
@@ -178,13 +178,16 @@
         padding: 0 4px;
         outline: none;
         width: 100%;
+        border-bottom: 1px dotted var(--table-sep-color);
+        transition: background-color 0.2s;
 
-        &:hover, &:focus {
+        &:focus {
             background-color: var(--color-focused);
         }
 
         &:empty:not(:focus) {
-            font-size: 6px;
+            height: 0;
+            border: 0;
         }
     }
 

@@ -1,6 +1,5 @@
 import type { EntrySchema, EntryUpdateSchema } from '$lib/types/j4_types';
 import type { RawEntriesSchema } from '$lib/types/j4raw_types';
-import { nanoid } from 'nanoid';
 
 class JournalStore {
     private _nid: bigint = 0n;
@@ -34,9 +33,16 @@ class JournalStore {
         return entry?.updates.data.find(u => u.id === updateId) ?? null;
     }
 
-    public addUpdate(entryId: string, update: Omit<EntryUpdateSchema, 'id'>, position: number = 0): void {
+    public addUpdate(entryId: string, update: Omit<EntryUpdateSchema, 'id'>, position: number = 0): EntryUpdateSchema {
         const entry = this._entryIndex[entryId];
-        entry.updates.data.splice(position, 0, { id: nanoid(10), body: '' });
+        const id = BigInt('0x' + entry.updates.nid);
+        entry.updates.data.splice(position, 0, {
+            ...update,
+            id: id.toString(16)
+        });
+
+        entry.updates.nid = (id + 1n).toString(16);
+        return entry.updates.data[position];
     }
 
     public delUpdate(entryId: string, updateId: string): void {

@@ -1,20 +1,12 @@
 <script lang="ts">
-    import { SERVER_HOST } from '$lib/constants';
-    import JEntryDateTime from '$lib/journal_table/JDateTime.svelte';
     import type { EntryUpdateSchema } from '$lib/types/j4_types';
     import { DateTime } from 'luxon';
-    //import autosize from 'autosize';
-    import { onMount, tick } from 'svelte';
+    import { tick } from 'svelte';
+    import { fade } from 'svelte/transition';
+    import { appStore } from '../routes/app/appstate.store.svelte';
 
-    //const dispatch = createEventDispatcher();
-
-    //export let entry: number | null = null;
-    // export let value: { id?: number, date: string | null, body: string } = {
-    //     date: null,
-    //     body: ''
-    // };
-    let { value = $bindable(), ondelete }:
-        { value: EntryUpdateSchema, ondelete: (id: string) => any } = $props();
+    type Props = { value: EntryUpdateSchema; ondelete?: (id: string) => any; onfocus?: () => any; onblur?: () => any; };
+    let { value = $bindable(), ondelete, onfocus, onblur }: Props = $props();
 
     // Estados
     /** Indica que el registro es nuevo (valor automático si no tiene id asignado). */
@@ -24,66 +16,97 @@
     /** Indica que los cambios en el registro se están guardando. */
     let isSaving = false;
 
-    let focused = $state(false);
+    let dateInputValue = $state('');
+    // let dateInputFocused = $state(false);
+    let dateInputVisible = $state(false); //$derived(value.date || appStore.focusedElement === domDateInput);
+
+    let focused = $derived(appStore.focusedElement === domDateInput || appStore.focusedElement === domTextInput);
 
     // DOM
-    let domBodyTextarea: HTMLTextAreaElement;
     let domDateInput: HTMLDivElement;
+    let domTextInput: HTMLDivElement;
+    let blurTimeout: number;
 
-    // Hooks
-    onMount(async () => {
-        //autosize(domBodyTextarea);
-    });
+    export function focus() {
+        if (!focused) {
+            domTextInput.focus();
+        }
+    }
 
     /** Elimina el registro de la base de datos. */
-    async function remove() {
-        ondelete(value.id);
+    async function handleClickDelete(ev: MouseEvent) {
+        ev.stopPropagation();
+        if (ondelete) ondelete(value.id);
     }
 
-    function handleFocusDateInput() { dateInputFocused = true; }
-    function handleBlurDateInput() { dateInputFocused = false; }
-    async function handleClickAddDate(ev: GenericInputEvent) {
+    function handleDateInputFocus() {
+        if (onfocus && !focused) onfocus();
+    }
+    function handleDateInputBlur() {
+        if (!value.date) {
+            dateInputVisible = false;
+        }
+        clearTimeout(blurTimeout);
+        blurTimeout = window.setTimeout(() => {
+            if (!focused) {
+                console.debug(`Emitiendo evento blur para entry update #${value.id}`);
+                if (onblur) onblur();
+            }
+        }, 1000);
+    }
+    async function handleClickAddDate(ev: MouseEvent) {
         ev.stopPropagation();
-        dateInputFocused = true;
+        dateInputVisible = true;
         await tick();
         domDateInput.focus();
-        dateInputValue = DateTime.now().toFormat('yyyy/MM/dd HH:mm');
+        value.date = DateTime.now().toFormat('yyyy/MM/dd HH:mm');
     }
 
-    let dateInputValue = $state('');
-    let dateInputFocused = $state(false);
-    let dateInputVisible = $derived(dateInputValue || dateInputFocused);
+    function handleTextInputFocus() {
+        if (onfocus && !focused) onfocus();
+    }
+    function handleTextInputBlur() {
+        clearTimeout(blurTimeout);
+        blurTimeout = window.setTimeout(() => {
+            if (!focused) {
+                console.debug(`Emitiendo evento blur para entry update #${value.id}`);
+                if (onblur) onblur();
+            }
+        }, 1000);
+    }
+
 </script>
 
-<div class="x-entry-update" class:focused={focused}>
-    <!--    <JEntryDateTime bind:value={value.date}-->
-    <!--                    placeholder="Fecha" />-->
+<div class="x-entry-update" class:focused={focused} out:fade={{duration: 120}}>
 
     <div class="x-group-input" style="flex: 1">
 
-        <div class="x-date-ce"
+        <div class="x-date-input"
              class:hidden={!dateInputVisible}
              contenteditable="true"
              spellcheck="false"
              bind:this={domDateInput}
-             bind:textContent={dateInputValue}
-             onfocus={() => {handleFocusDateInput(); focused=true;} }
-             onblur={() => {handleBlurDateInput(); focused=false;} }></div>
+             bind:textContent={value.date}
+             onfocus={handleDateInputFocus}
+             onblur={handleDateInputBlur}></div>
 
         <i class="fad fa-fw fa-xs fa-calendar-xmark"
            class:hidden={dateInputVisible}
            style="color: #666; cursor: pointer"
            onclick={handleClickAddDate}></i>
 
-        <div class="x-body-ce" contenteditable="true" bind:textContent={value.body}
+        <div class="x-text-input"
+             contenteditable="true"
+             bind:textContent={value.body}
+             bind:this={domTextInput}
              spellcheck="false"
-             onfocus={() => focused=true}
-             onblur={() => focused=false}></div>
+             onfocus={handleTextInputFocus}
+             onblur={handleTextInputBlur}></div>
     </div>
 
     <div style="flex: 0 auto; padding-right: 5px">
-        <button onclick={remove} title="Eliminar"><i class="fas fa-sm fa-fw fa-xmark"></i></button>
-        <button title="Más opciones"><i class="fas fa-sm fa-fw fa-ellipsis-vertical"></i></button>
+        <button onclick={handleClickDelete} title="Eliminar"><i class="fas fa-sm fa-fw fa-xmark"></i></button>
+        <!--        <button title="Más opciones"><i class="fas fa-sm fa-fw fa-ellipsis-vertical"></i></button>-->
     </div>
 </div>
 
@@ -114,11 +137,9 @@
             padding: 1px 2px;
             display: none;
         }
-
     }
 
-
-    .x-date-ce {
+    .x-date-input {
         display: inline-block;
         font-size: 10px;
         text-rendering: optimizeLegibility;
@@ -154,7 +175,7 @@
         }
     }
 
-    .x-body-ce {
+    .x-text-input {
         display: inline-block;
         font-size: 10.6px;
         text-rendering: optimizeLegibility;
@@ -195,26 +216,6 @@
             vertical-align: middle;
         }
     }
-
-    //.x-body-ce:not(:focus):empty:before {
-    //    content: "\f246";
-    //    font-family: "Font Awesome 6 Pro";
-    //    font-weight: 700;
-    //    pointer-events: none;
-    //}
-
-    //.x-body-ce:not(:focus):empty {
-    //    cursor: text;
-    //    width: 14px;
-    //    background: rgba(0, 0, 0, 0.1);
-    //    border-radius: 2px;
-    //    display: inline-block;
-    //}
-
-    //.x-body-ce:focus:before {
-    //    content: '';
-    //    display: none;
-    //}
 
     .hidden {
         display: none !important;

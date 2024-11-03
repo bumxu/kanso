@@ -3,6 +3,7 @@
     import { tagsStore } from '$lib/stores/tags.store.j4.svelte.js';
     import type { SuggestionsSchema, TagSchema } from '$lib/types/j4_types';
     import { tick } from 'svelte';
+    import { fade, slide } from 'svelte/transition';
 
     type Props = { entryId: string, tagsIds: string[] };
 
@@ -100,14 +101,15 @@
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="x-cell-wrapper"
-     role="none"
-     onclick={handleClickCell}>
+<div class="x-cell-wrapper" role="none" onclick={handleClickCell}>
 
     <SimpleBar>
         <div class="x-tags">
             {#each tags as tag}
-            <span class="x-tag" style:background-color={tag.bgColor} style:color={tag.color}>
+            <span class="x-tag"
+                  style:background-color={tag.bgColor}
+                  style:color={tag.color}
+                  transition:slide={{axis: 'x', duration: 120}}>
                 {tag ? tag.name : '?'}
                 <i class="fas fa-fw fa-sm fa-times" style="cursor: pointer"
                    aria-label="Quitar" title="Quitar"
@@ -115,11 +117,12 @@
             </span>
             {/each}
 
+            {#if focused || tagInput.length > 0}
             <span class="x-tag x-new"
                   role="textbox"
                   contenteditable="true"
                   tabindex="0"
-                  class:hidden={!focused && tagInput.length === 0}
+                  transition:fade={{duration: 120}}
                   bind:this={domInput}
                   bind:textContent={tagInput}
                   oninput={handleInput}
@@ -127,6 +130,7 @@
                   onblur={handleBlur}
                   onkeydown={handleKeyDown}
             ></span>
+            {/if}
         </div>
     </SimpleBar>
 
@@ -180,6 +184,7 @@
         margin-right: 3px;
         margin-bottom: 3px;
         font-size: 10px;
+        white-space: nowrap;
         line-height: 1.45;
         font-weight: 500;
         text-rendering: optimizeLegibility;
@@ -191,6 +196,7 @@
             outline: none;
             white-space: nowrap;
             min-width: 10px;
+            height: calc(10px * 1.45);
         }
 
         &.hidden {

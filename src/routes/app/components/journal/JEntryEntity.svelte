@@ -1,10 +1,10 @@
 <script lang="ts">
-
     import { entitiesStore } from '$lib/stores/entities.store.j4.svelte.js';
     import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte.js';
     import type { EntitySchema, EntryEntitySchema } from '$lib/types/j4_types';
     import { onMount } from 'svelte';
     import type { EventHandler } from 'svelte/elements';
+    import { slide } from 'svelte/transition';
     import { appStore } from '../../appstate.store.svelte';
 
     let {
@@ -179,8 +179,8 @@
 
 </script>
 
-<div class="x-entity">
-    <div class="x-label" title="{entityDisplay}">
+<div class="x-entity" transition:slide={{duration: 120}}>
+    <div class="x-label" title="{entityDisplay} [#{entity.id}]">
         {#if entityType?.icon}
             <i class="fa-fw fa-xs {entityType?.icon}"></i>
         {/if}
@@ -188,15 +188,15 @@
     </div>
     {#if appStore.ctrlKeyPressed}
         <div class="x-side">
-<!--            <button class="fas fa-fw fa-sm fa-filter"-->
-<!--                    aria-label="Filtrar" title="Filtrar"-->
-<!--                    onclick={handleClickEdit}></button>-->
-<!--            <button class="fas fa-fw fa-sm fa-pen"-->
-<!--                    aria-label="Editar" title="Editar"-->
-<!--                    onclick={handleClickEdit}></button>-->
+            <!--            <button class="fas fa-fw fa-sm fa-filter"-->
+            <!--                    aria-label="Filtrar" title="Filtrar"-->
+            <!--                    onclick={handleClickEdit}></button>-->
+            <!--            <button class="fas fa-fw fa-sm fa-pen"-->
+            <!--                    aria-label="Editar" title="Editar"-->
+            <!--                    onclick={handleClickEdit}></button>-->
             <button class="far fa-fw fa-sm fa-trash" style="color: #aaa"
                     aria-label="Quitar" title="Quitar"
-                    onclick={(ev) => {ev.stopPropagation();onUnlinkEntity();}}></button>
+                    onclick={(ev) => {ev.stopPropagation();ev.preventDefault();onUnlinkEntity();}}></button>
         </div>
     {/if}
 </div>

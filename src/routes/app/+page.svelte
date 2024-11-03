@@ -1,7 +1,6 @@
 <script lang="ts">
+    import { tippyAction } from '$lib/actions/tippy.action';
     import Button from '$lib/components/Button.svelte';
-    import { appStore } from './appstate.store.svelte';
-    import JEntry from './components/journal/JEntry.svelte';
     import { entitiesStore } from '$lib/stores/entities.store.j4.svelte';
     import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
     import { filtersStore } from '$lib/stores/filters.store.j4.svelte';
@@ -12,7 +11,10 @@
     import { tagsStore } from '$lib/stores/tags.store.j4.svelte';
     import type { EntrySchema } from '$lib/types/j4_types';
     import { DateTime } from 'luxon';
-    import { onMount, tick } from 'svelte';
+    import { onMount } from 'svelte';
+    import { flip } from 'svelte/animate';
+    import { appStore } from './appstate.store.svelte';
+    import JEntry from './components/journal/JEntry.svelte';
     import SBConsole from './components/sidebar/SBConsole.svelte';
     import SbEntities from './components/sidebar/SBEntities.svelte';
     import SBEntityTypes from './components/sidebar/SBEntityTypes.svelte';
@@ -20,7 +22,6 @@
     import SBPriorities from './components/sidebar/SBPriorities.svelte';
     import SBStatuses from './components/sidebar/SBStatuses.svelte';
     import SBTags from './components/sidebar/SBTags.svelte';
-    import { tippyAction } from '$lib/actions/tippy.action';
 
     import '../../scss/main.scss';
 
@@ -132,6 +133,7 @@
     }
 
     function handleGlobalClick(e: MouseEvent) {
+        console.debug('Click global ->', e.target, e.target.closest('.x-sb-floating'));
         if (sbOpen && e.target instanceof HTMLElement && !e.target.closest('.x-sb-floating') && !e.target.closest('.x-sb-menu')) {
             sbOpen = false;
         }
@@ -268,21 +270,15 @@
 
                 </div>
 
-                <!--{#each Object.keys(journal) as partId, partIdx (partId)}-->
-                <!--    <JEntriesWindow bind:entriesWindow={journal[partId]}-->
-                <!--                    onpartitionchange={handlePartitionChange}-->
-                <!--    />-->
-                <!--{/each}-->
                 {#each view as entry, i (entry.id)}
-                    <JEntry entry={view[i]}
-                    />
+                    <div style="display: block" animate:flip={{duration: 300}}>
+                        <JEntry entry={view[i]} />
+                    </div>
                 {/each}
             </div>
 
             <br><br>
         </div>
-
-        <!--        <SideBar />-->
 
         {#if sbOpen}
             <div class="x-sidebar x-sb-floating">
@@ -457,6 +453,8 @@
     .x-rx {
         color: #00f;
     }
+
+
 
 
 </style>

@@ -1,4 +1,5 @@
 import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
+import { journalStore } from '$lib/stores/journal.store.j4.svelte';
 import type { EntitiesSchema, EntitySchema, SuggestionsSchema } from '$lib/types/j4_types';
 import type { RawEntitiesSchema, RawEntitySchema } from '$lib/types/j4raw_types';
 
@@ -77,6 +78,29 @@ class EntitiesStore {
 
         this._nid += 1n;
         return this._data[id];
+    }
+
+    public delete(id: string): void {
+        // Count
+        let count = 0;
+        Object.values(journalStore.entries).forEach((entry) => {
+            entry.entities.forEach((entryEntity) => {
+                if (entryEntity.entityId === id) {
+                    count++;
+                }
+            });
+        });
+
+        if (count > 0) {
+            if (confirm('La entidad se usa en ' + count + ' lugares, si continua se quitará de estos. ¿Desea continuar?')) {
+                Object.values(journalStore.entries).forEach((entry) => {
+                    entry.entities = entry.entities.filter((entryEntity) => entryEntity.entityId !== id);
+                });
+                delete this._data[id];
+            }
+        } else {
+            delete this._data[id];
+        }
     }
 
     public load(raw: RawEntitiesSchema): void {
