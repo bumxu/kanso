@@ -1,6 +1,10 @@
 import { browser } from '$app/environment';
+import type { Nil } from '$lib/types/j4_types';
 
-export function includes(a: string, b: string): boolean {
+export function includes(a: Nil<string>, b: Nil<string>): boolean {
+    if (a == null || b == null) {
+        return false;
+    }
     return a.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(
         b.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     );

@@ -1,7 +1,7 @@
 <script lang="ts">
     import { tippyAction } from '$lib/actions/tippy.action';
     import Button from '$lib/components/Button.svelte';
-    import { buildJournalView } from '$lib/helpers/journal.helper';
+    import { buildFilteredView, buildSortedView } from '$lib/helpers/journal.helper.svelte';
     import { entitiesStore } from '$lib/stores/entities.store.j4.svelte';
     import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
     import { filtersStore } from '$lib/stores/filters.store.j4.svelte';
@@ -12,7 +12,7 @@
     import { tagsStore } from '$lib/stores/tags.store.j4.svelte';
     import type { EntrySchema } from '$lib/types/j4_types';
     import { DateTime } from 'luxon';
-    import { onMount } from 'svelte';
+    import { onMount, tick } from 'svelte';
     import { flip } from 'svelte/animate';
     import { appStore } from './appstate.store.svelte';
     import JEntry from './components/journal/JEntry.svelte';
@@ -36,17 +36,33 @@
     let qFilterUpdates = $state('');
     let qFilterEntities = $state('');
     let qFilterTags = $state('');
+    let qFilterPriority = $state('');
 
-    let view: EntrySchema[] = $derived(buildJournalView(order, orderAsc,
-        qFilterTopic, qFilterUpdates, qFilterEntities, qFilterTags,
-        filtersStore.filters
-    ));
+    let focusEntryNextTick = null;
+
+    // let view: EntrySchema[] = $derived(buildJournalView(order, orderAsc,
+    //     qFilterTopic, qFilterUpdates, qFilterEntities, qFilterTags, qFilterPriority,
+    //     filtersStore.filters
+    // ));
+
+    let filteredView: EntrySchema[] = $state([]);
+    $effect(() => {
+        applyFilters();
+    });
+    let sortedView: EntrySchema[] = $derived(buildSortedView(filteredView, order, orderAsc));
+
 
     onMount(async () => {
         console.log('Iniciando Kanso...');
 
         storeManager.loadFromLS();
     });
+
+    function applyFilters() {
+        filteredView = buildFilteredView(
+            qFilterTopic, qFilterUpdates, qFilterEntities, qFilterTags, qFilterPriority,
+            filtersStore.filters);
+    }
 
     function handleGlobalKeyDown(e: KeyboardEvent) {
         if (e.key === 'Control' && !e.repeat) {
@@ -88,13 +104,27 @@
 
     function add() {
         console.log('Añadiendo nuevo registro...');
-        journalStore.add({
+        const entry = journalStore.add({
             dateSince: DateTime.local().toFormat('yyyyMMddHHmm'),
             subject: '',
             entities: [],
             updates: { nid: '0', data: [] },
             tags: []
         });
+        filteredView.push(entry);
+
+        // Enfocar el nuevo registro
+        focusEntryNextTick = entry.id;
+        tick().then(() => {
+            focusEntryNextTick = null;
+        });
+    }
+
+    function del(entryId: string) {
+        console.log('Borrando registro...');
+        journalStore.del(entryId);
+        // Quitar de la vista
+        filteredView = filteredView.filter(e => e.id !== entryId);
     }
 
     function toggleSb(sbId: string) {
@@ -121,6 +151,26 @@
         console.log(`Reordenando por "${order}" (${orderAsc ? 'asc' : 'desc'})...`);
     }
 
+    function loadFromLS() {
+        applyFilters();
+        storeManager.loadFromLS();
+    }
+    function saveToLS() {
+        storeManager.saveToLS();
+    }
+
+    function saveToDownload() {
+        storeManager.saveToDownload();
+    }
+
+    function loadFromFileHandler() {
+        applyFilters();
+        storeManager.loadFromFile();
+    }
+    function saveToFileHandler() {
+        storeManager.saveToFileHandler();
+    }
+
 </script>
 
 <svelte:window
@@ -139,16 +189,16 @@
     <nav class="x-mainmenu-bar">
         <div class="flex">
             <!--        <button onclick={() => journalStore.serialize()}>Serialize</button>-->
-            <Button icon="fas fa-arrow-down-from-arc" onclick={() => storeManager.loadFromLS()}>Cargar (LS)</Button>
-            <Button icon="fas fa-arrow-up-to-arc" onclick={() => storeManager.saveToLS()}>Guardar (LS)</Button>
+            <Button icon="fas fa-arrow-down-from-arc" onclick={loadFromLS}>Cargar (LS)</Button>
+            <Button icon="fas fa-arrow-up-to-arc" onclick={saveToLS}>Guardar (LS)</Button>
             <!--        <button onclick={() => storeManager.saveWithSSR()}>Save (SSR)</button>-->
             <!--        <button onclick={() => storeManager.loadWithSSR()}>Load (SSR)</button>-->
-            <Button icon="fas fa-download" onclick={() => storeManager.saveToDownload()}>Descargar</Button>
-            <Button icon="fas fa-folder-open" onclick={() => storeManager.loadFromFile()}>
+            <Button icon="fas fa-download" onclick={saveToDownload}>Descargar</Button>
+            <Button icon="fas fa-folder-open" onclick={loadFromFileHandler}>
                 Usar archivo local
                 {#if storeManager.isFileHandled}&nbsp;&nbsp;<i class="fas fa-check"></i>{/if}
             </Button>
-            <Button icon="fas fa-save" onclick={() => storeManager.saveToFileHandler()}>Guardar a local</Button>
+            <Button icon="fas fa-save" onclick={saveToFileHandler}>Guardar a local</Button>
         </div>
         <div class="flex">
             <Button icon="fas fa-circle-plus" onclick={add}>Añadir</Button>
@@ -194,16 +244,18 @@
                         <div class="x-cell flex items-center">
                             <i class="fas fa-fw fa-xs fa-filter"></i>
                             <input type="text" placeholder="Filtro rápido" class="flex-1" bind:value={qFilterTags}></div>
-                        <div class="x-cell"></div>
+                        <div class="x-cell flex items-center">
+                            <i class="fas fa-fw fa-xs fa-filter"></i>
+                            <input type="text" placeholder="Filtro rápido" class="flex-1" bind:value={qFilterPriority}></div>
                         <div class="x-cell"></div>
                         <div class="x-cell"></div>
                     </div>
 
                 </div>
 
-                {#each view as entry, i (entry.id)}
+                {#each sortedView as entry, i (entry.id)}
                     <div style="display: block" animate:flip={{duration: 300}}>
-                        <JEntry entry={view[i]} />
+                        <JEntry entry={sortedView[i]} autofocus={focusEntryNextTick === sortedView[i].id} ondelete={()=>del(sortedView[i].id)} />
                     </div>
                 {/each}
             </div>

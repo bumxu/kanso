@@ -12,6 +12,10 @@ class PrioritiesStore {
         return this._data;
     }
 
+    public get(id: string): PrioritySchema | null {
+        return this._data[id];
+    }
+
     public add(status: Omit<PrioritySchema, 'id'>): PrioritySchema {
         const id = this._nid.toString(16);
         this._data[id] = { ...status, id };

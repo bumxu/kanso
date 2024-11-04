@@ -3,8 +3,10 @@ import { entitiesStore } from '$lib/stores/entities.store.j4.svelte';
 import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
 import { filtersStore } from '$lib/stores/filters.store.j4.svelte';
 import { journalStore } from '$lib/stores/journal.store.j4.svelte';
+import { prioritiesStore } from '$lib/stores/priorities.store.j4.svelte';
 import { tagsStore } from '$lib/stores/tags.store.j4.svelte';
 import type { EntrySchema } from '$lib/types/j4_types';
+import { untrack } from 'svelte';
 
 function getDateUpdated(entry: EntrySchema) {
     if (entry.dateClosed != null) {
@@ -13,26 +15,12 @@ function getDateUpdated(entry: EntrySchema) {
     return entry.dateUpdated ?? entry.dateSince;
 }
 
-export function buildJournalView(order: string, orderAsc: boolean, qFilterTopic: string, qFilterUpdates: string, qFilterEntities: string, qFilterTags: string, filters: any) {
-    let entries = journalStore.entries;
+export function buildFilteredView( qFilterTopic: string, qFilterUpdates: string, qFilterEntities: string, qFilterTags: string, qFilterPriority: string, filters: any) {
+    let entries = untrack(() => journalStore.entries);
 
-    // Orden
-    if (order === 'dateSince' && orderAsc) {
-        console.debug('Aplicando orden por "fecha de inicio" ascendente...');
-        entries.sort((a, b) => a.dateSince.localeCompare(b.dateSince));
-    } else if (order === 'dateSince' && !orderAsc) {
-        console.debug('Aplicando orden por "fecha de inicio" descendente...');
-        entries.sort((a, b) => b.dateSince.localeCompare(a.dateSince));
-    } else if (order === 'dateUpdated' && orderAsc) {
-        console.debug('Aplicando orden por "fecha de actualización" ascendente...');
-        entries.sort((a, b) => getDateUpdated(a).localeCompare(getDateUpdated(b)));
-    } else if (order === 'dateUpdated' && !orderAsc) {
-        console.debug('Aplicando orden por "fecha de actualización" descendente...');
-        entries.sort((a, b) => getDateUpdated(b).localeCompare(getDateUpdated(a)));
-    }
-    //     return journalStore.journal;
-    // }
+    console.log('Aplicando filtros y ordenamiento...');
 
+    untrack(() => {
     // Aplicar filtros rápidos
     if (qFilterTopic) {
         console.debug('Aplicando filtro rápido en "asunto"...');
@@ -68,6 +56,13 @@ export function buildJournalView(order: string, orderAsc: boolean, qFilterTopic:
             });
         });
     }
+    if (qFilterPriority) {
+        console.debug('Aplicando filtro rápido en "prioridad"...');
+        entries = entries.filter(entry => {
+            const priority = entry.priority != null ? prioritiesStore.get(entry.priority) : null;
+            return includes(priority?.name, qFilterPriority);
+        });
+    }
 
     // Aplicar filtros personalizados
     entries = entries.filter(entry => {
@@ -82,6 +77,29 @@ export function buildJournalView(order: string, orderAsc: boolean, qFilterTopic:
         }
         return true;
     });
+    });
+
+    return entries;
+}
+
+export function buildSortedView(entries: EntrySchema[], order: string, orderAsc: boolean) {
+    console.log('Aplicando ordenamiento...');
+    entries = [...entries];
+
+    // Orden
+    if (order === 'dateSince' && orderAsc) {
+        console.debug('Aplicando orden por "fecha de inicio" ascendente...');
+        entries.sort((a, b) => a.dateSince.localeCompare(b.dateSince));
+    } else if (order === 'dateSince' && !orderAsc) {
+        console.debug('Aplicando orden por "fecha de inicio" descendente...');
+        entries.sort((a, b) => b.dateSince.localeCompare(a.dateSince));
+    } else if (order === 'dateUpdated' && orderAsc) {
+        console.debug('Aplicando orden por "fecha de actualización" ascendente...');
+        entries.sort((a, b) => getDateUpdated(a).localeCompare(getDateUpdated(b)));
+    } else if (order === 'dateUpdated' && !orderAsc) {
+        console.debug('Aplicando orden por "fecha de actualización" descendente...');
+        entries.sort((a, b) => getDateUpdated(b).localeCompare(getDateUpdated(a)));
+    }
 
     return entries;
 }

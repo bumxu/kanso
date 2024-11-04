@@ -4,9 +4,27 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e9cf873a-9b04-43b2-83e6-08f1658a1220" name="Changes" comment="Snapshot">
+    <list default="true" id="e9cf873a-9b04-43b2-83e6-08f1658a1220" name="Changes" comment="Tasks">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/components/JDateTime.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/components/JDateTime.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/kanso.kanso.json" beforeDir="false" afterPath="$PROJECT_DIR$/misc/kanso.kanso.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/obsolete/JEntriesWindow.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/misc/obsolete/JEntriesWindow.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/obsolete/SideBar.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/misc/obsolete/SideBar.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/obsolete/api/load/+server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/misc/obsolete/api/load/+server.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/obsolete/api/save/+server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/misc/obsolete/api/save/+server.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/helpers/journal.helper.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/helpers/journal.helper.svelte.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/helpers/runtime.helper.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/helpers/runtime.helper.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/stores/priorities.store.j4.svelte.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/stores/priorities.store.j4.svelte.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/app/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/+page.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/app/components/journal/JEntry.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/journal/JEntry.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryEntities.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryEntities.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryEntity.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryEntity.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryTags.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryTags.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryTopic.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryTopic.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBEntities.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBEntities.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBEntityTypes.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBEntityTypes.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBStatuses.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBStatuses.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBTags.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBTags.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scss/main.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/scss/main.scss" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,30 +70,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/admin/Desktop/workspace/kanso/src/routes",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "npm.build.executor": "Run",
-    "npm.dev.executor": "Run",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "preferences.sourceCode.JSON",
-    "ts.external.directory.path": "C:\\Users\\admin\\Desktop\\workspace\\kanso\\node_modules\\typescript\\lib"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/admin/Desktop/workspace/kanso/src/routes&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;npm.build.executor&quot;: &quot;Run&quot;,
+    &quot;npm.dev.executor&quot;: &quot;Run&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.JSON&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\admin\\Desktop\\workspace\\kanso\\node_modules\\typescript\\lib&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\admin\Desktop\workspace\kanso\src\routes" />
       <recent name="C:\Users\admin\Desktop\workspace\kanso\src\scss" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\admin\Desktop\workspace\kanso\misc" />
       <recent name="C:\Users\admin\Desktop\workspace\kanso\obsolete" />
       <recent name="C:\Users\admin\Desktop\workspace\kanso\src\lib\components" />
       <recent name="C:\Users\admin\Desktop\workspace\kanso\src\routes\app\components\journal" />
@@ -213,7 +232,15 @@
       <option name="project" value="LOCAL" />
       <updated>1730678377833</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Tasks">
+      <option name="closed" value="true" />
+      <created>1730742560973</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1730742560973</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -234,6 +261,7 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <MESSAGE value="Snapshot" />
-    <option name="LAST_COMMIT_MESSAGE" value="Snapshot" />
+    <MESSAGE value="Tasks" />
+    <option name="LAST_COMMIT_MESSAGE" value="Tasks" />
   </component>
 </project>

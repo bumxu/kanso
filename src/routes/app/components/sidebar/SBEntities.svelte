@@ -81,7 +81,9 @@
             <li class="x-list-item">
                 <i class="fa-fw fa-2xs {getIcon(entity.type)}"></i>
                 <button class="x-item" onclick={() => handleSelectItem(entity)}>{display(entity)}</button>
-                <i class="far fa-fw fa-xs fa-trash" onclick={(ev)=>{ev.stopPropagation();handleClickDelete(entity.id)}} style="cursor:pointer;"></i>
+                <i class="far fa-fw fa-xs fa-trash cursor-pointer"
+                   title="Eliminar"
+                   onclick={(ev)=>{ev.stopPropagation();handleClickDelete(entity.id)}}></i>
             </li>
         {/each}
     </ul>
@@ -158,6 +160,7 @@
             width: 100%;
             height: 60px;
             font-size: 10px;
+            resize: none;
         }
     }
 

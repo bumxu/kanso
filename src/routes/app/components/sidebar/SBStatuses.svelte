@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Button from '$lib/components/Button.svelte';
     import { statusesStore } from '$lib/stores/statuses.store.j4.svelte.js';
     import type { StatusSchema, StatusesSchema, EntitySchema } from '$lib/types/j4_types';
     import { nanoid } from 'nanoid';
@@ -36,11 +37,17 @@
         Estados
     </div>
 
-    <button onclick={add}>+</button>
-    <ul class="x-item-list">
+    <div class="x-bar">
+        <Button icon="fas fa-fw fa-plus" onclick={add}>Nuevo</Button>
+    </div>
+
+    <ul class="x-list">
         {#each orderedStatuses as status, i (status.id)}
-            <li>
-                <button class="x-item" onclick={() => handleSelectItem(status)}>{status.name}</button>
+            <li class="x-list-item">
+                <i class="fas fa-fw fa-2xs fa-percent"></i>
+                <button class="x-item cursor-pointer"
+                        title="Eliminar"
+                        onclick={() => handleSelectItem(status)}>{status.name}</button>
                 <!--                <i class="fas fa-sm fa-fw fa-trash" onclick={() => statusesStore.delete(status.id)}></i>-->
             </li>
         {/each}
@@ -65,25 +72,41 @@
 </div>
 
 <style lang="scss">
+    .x-bar {
+        border-bottom: 1px solid rgba(#000, 0.2);
+        padding: 2px;
+        display: flex;
+    }
 
-    .x-item-list {
+    .x-list {
         background: #fff;
         height: 120px;
         overflow: auto;
         padding: 0;
         margin: 0;
-
-        li {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+        border-bottom: 1px solid rgba(#000, 0.2);
     }
+    .x-list-item {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        align-items: center;
 
-    .x-item {
-        cursor: pointer;
-        border: none;
-        background-color: transparent;
+        i {
+            margin: 0 4px;
+            opacity: 0.75;
+            display: inline-block;
+            flex: 0 0 auto;
+        }
+        button {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            text-align: left;
+            flex: 1 0 0;
+        }
     }
 
     .x-id {

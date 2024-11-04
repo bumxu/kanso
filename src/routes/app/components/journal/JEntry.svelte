@@ -7,7 +7,7 @@
     import { statusesStore } from '$lib/stores/statuses.store.j4.svelte.js';
     import type { EntrySchema } from '$lib/types/j4_types';
     import { DateTime } from 'luxon';
-    import { onMount } from 'svelte';
+    import { type Component, onMount, type SvelteComponent, tick } from 'svelte';
     import tippy from 'tippy.js';
     import JEntryDateSince from './JEntryDateSince.svelte';
     import JEntryEntities from './JEntryEntities.svelte';
@@ -19,9 +19,11 @@
     type Props = {
         entry: EntrySchema,
         partitionId: string,
-        onpartitionchange: (entry: EntrySchema, currPartId: string) => void
+        autofocus?: boolean,
+        onpartitionchange: (entry: EntrySchema, currPartId: string) => void,
+        ondelete: () => void,
     };
-    const { entry = $bindable(), partitionId, onpartitionchange }: Props = $props();
+    const { entry = $bindable(), partitionId, onpartitionchange, ondelete, autofocus }: Props = $props();
 
     // Estados
     /** Indica que el registro es nuevo (valor automático si no tiene id asignado). */
@@ -38,9 +40,13 @@
     // // DOM
     // let domTopicTextarea: HTMLTextAreaElement;
     let domIdIcon: HTMLElement;
+    let svTopic: SvelteComponent;
 
     // Hooks
     onMount(() => {
+        if (autofocus) {
+            tick().then(() => svTopic.focus());
+        }
         // if (entry.dateUpdated == null) {
         //     entry.dateUpdated = entry.dateClosed ?? entry.dateSince;
         // }
@@ -56,10 +62,13 @@
         tippy(domIdIcon);
     });
 
-    $effect(() => {
-        // if (entry.dateClosed != null) {
-        //     entry.dateUpdated = entry.dateClosed;
-        // }
+    let hasFinalStatus = $derived.by(() => {
+        const id = entry.status;
+        if (id != null) {
+            const status = statusesStore.get(id);
+            return status != null && status.final;
+        }
+        return false;
     });
 
     function handleStatusChange() {
@@ -139,14 +148,9 @@
     //     }
     // }
 
-    function del(entryId: string) {
-        console.log('Borrando registro...');
-        journalStore.del(entryId);
-    }
-
 </script>
 
-<div class="x-row">
+<div class="x-row" class:faded={hasFinalStatus}>
     <div class="x-cell text-center">
         <span id="fld-id">
             <i class="fas fa-hashtag fa-fw fa-sm"
@@ -160,7 +164,7 @@
         <JEntryDateSince entry={entry} />
     </div>
     <div class="x-cell">
-        <JEntryTopic entryId={entry.id} bind:value={entry.subject} />
+        <JEntryTopic entryId={entry.id} bind:value={entry.subject} bind:this={svTopic} />
     </div>
     <div class="x-cell">
         <JEntryUpdates entryId={entry.id} bind:updates={entry.updates} />
@@ -209,11 +213,25 @@
         <!--        <button class="btn btn-sm btn-ic" on:click={remove}>-->
         <!--            <i class="fas fa-xmark fa-fw fa-sm" />-->
         <!--        </button>-->
-        <i class="far fa-trash fa-fw" style="cursor: pointer" onclick={()=>del(entry.id)}></i>
+        <i class="far fa-trash fa-fw fa-sm x-btn-delete"
+           title="Eliminar"
+           style="cursor: pointer" onclick={ondelete}></i>
     </div>
 </div>
 
 <style lang="scss">
+    .x-row {
+        //&.faded:not(:hover) {
+        //    pointer-events: none;
+        //}
+        &.faded:not(:hover) :global(.x-cell > *) {
+            filter: blur(1px);
+            opacity: 0.15;
+        }
+        &.faded:hover :global(.x-cell > *) {
+            opacity: 0.5;
+        }
+    }
 
     .x-dt-wrapper {
         text-wrap: nowrap;
@@ -266,10 +284,23 @@
         background-color: #f5f5f5;
         outline: none;
         border: none;
+        color: #555;
         border-bottom: 1px dotted var(--table-sep-color);
 
-        //&:hover {
-        //    background-color: var(--color-hovered);
-        //}
+        &:hover, &:focus {
+            background-color: #ddd;
+            color: #333;
+        }
+        &:focus {
+            box-shadow: inset 0 0 0 1px rgba(47, 56, 66, 0.25);
+        }
+    }
+
+    .x-btn-delete {
+        color: #aaa
+    }
+    .x-btn-delete:hover {
+        color: var(--color-icon-hover);
+        cursor: pointer;
     }
 </style>

@@ -28,11 +28,14 @@
         Etiquetas
     </div>
 
-    <ul class="x-item-list">
+    <ul class="x-list">
         {#each orderedTags as tag, i (tag.id)}
-            <li>
-                <button class="x-item" onclick={() => handleSelectItem(tag)}>{tag.name}</button>
-                <i class="fas fa-sm fa-fw fa-trash" onclick={() => tagsStore.delete(tag.id)}></i>
+            <li class="x-list-item">
+                <i class="fad fa-fw fa-2xs fa-tag"></i>
+                <button onclick={() => handleSelectItem(tag)}>{tag.name}</button>
+                <i class="far fa-xs fa-fw fa-trash cursor-pointer"
+                   title="Eliminar"
+                   onclick={() => tagsStore.delete(tag.id)}></i>
             </li>
         {/each}
     </ul>
@@ -62,24 +65,35 @@
 
 <style lang="scss">
 
-    .x-item-list {
+    .x-list {
         background: #fff;
         height: 120px;
         overflow: auto;
         padding: 0;
         margin: 0;
-
-        li {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+        border-bottom: 1px solid rgba(#000, 0.2);
     }
+    .x-list-item {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        align-items: center;
 
-    .x-item {
-        cursor: pointer;
-        border: none;
-        background-color: transparent;
+        i {
+            margin: 0 4px;
+            opacity: 0.75;
+            display: inline-block;
+            flex: 0 0 auto;
+        }
+        button {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            text-align: left;
+            flex: 1 0 0;
+        }
     }
 
 

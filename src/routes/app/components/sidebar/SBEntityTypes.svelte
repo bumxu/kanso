@@ -81,11 +81,11 @@
                 <textarea id="et_lookupfn" class="ff-mono" wrap="off" bind:value={selected.lookupFn}></textarea>
             </div>
 
-            <label for="et_color">Color</label>
-            <input type="text" id="et_color" bind:value={selected.color}>
+            <!--            <label for="et_color">Color</label>-->
+            <!--            <input type="text" id="et_color" bind:value={selected.color}>-->
 
-            <label for="et_bgcolor">Color de fondo</label>
-            <input type="text" id="et_bgcolor" bind:value={selected.bgColor}>
+            <!--            <label for="et_bgcolor">Color de fondo</label>-->
+            <!--            <input type="text" id="et_bgcolor" bind:value={selected.bgColor}>-->
 
             <label for="et_icon">Icono</label>
             <input type="text" id="et_icon" placeholder="fax fa-xxx" bind:value={selected.icon}>
@@ -140,8 +140,9 @@
         textarea {
             box-sizing: border-box;
             width: 100%;
-            height: 50px;
+            height: 80px;
             font-size: 10px;
+            resize: none;
         }
     }
 

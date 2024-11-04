@@ -5,6 +5,7 @@
     import type { EntitySchema, EntryEntitySchema, SuggestionsSchema } from '$lib/types/j4_types';
     import type { Nil } from '$lib/types/j4_types.js';
     import { nanoid } from 'nanoid';
+    import { tick } from 'svelte';
     import JEntryEntity from './JEntryEntity.svelte';
 
     type Props = {
@@ -23,6 +24,8 @@
     let entitiesRaw = $state(JSON.stringify(entities));
 
     let entityMatchesVisible = $derived.by(() => focused && entityMatches.length > 0);
+
+    let itemToFocusOnMount: string | null = null;
 
     function handleFocus() {
         focused = true;
@@ -64,6 +67,25 @@
                 entityMatches = [];
                 entityInput = '';
             }
+        } else if (e.key === 'Tab') {
+            e.preventDefault();
+            if (entityInput.length > 0) {
+                let entity: EntitySchema;
+                const entityMatchesSelected = entityMatches[entityMatchesSelectedIndex];
+                if (entityMatchesSelected.weight < 0) {
+                    const entitySkel = entityMatchesSelected.item;
+                    entity = entitiesStore.add(entitySkel);
+                } else {
+                    entity = entityMatchesSelected.item;
+                    console.debug('eh', entityMatches, entityMatchesSelectedIndex, entity);
+                }
+                const entryEntityId = link(entity);
+                entityMatches = [];
+                entityInput = '';
+                // Focus note
+                itemToFocusOnMount = entryEntityId;
+                tick().then(() => itemToFocusOnMount = null);
+            }
         } else if (e.key === 'ArrowDown') {
             e.preventDefault();
             entityMatchesSelectedIndex = Math.min(entityMatchesSelectedIndex + 1, entityMatches.length - 1);
@@ -84,13 +106,16 @@
         // if (!tagsIds.includes(tag.id)) {
         console.debug(`Entity ${entity.id} "${name}" añadida al registro`);
         //     tagsIds.push(tag.id);
+
+        const id = nanoid(10);
         entities.push({
-            id: nanoid(10),
+            id: id,
             entityId: entity.id,
             metadata: {}
         });
         //     tagMatchesVisible = true;
         // }
+        return id;
     }
 
     function applyRaw() {
@@ -129,7 +154,7 @@
     <SimpleBar>
         <div class="x-entities">
             {#each entities as entity}
-                <JEntryEntity entryId={entryId} linkedEntity={entity} onUnlinkEntity={()=>handleUnlink(entity)} />
+                <JEntryEntity entryId={entryId} linkedEntity={entity} onUnlinkEntity={()=>handleUnlink(entity)} focusNoteOnMount={itemToFocusOnMount === entity.id} />
             {/each}
             <input type="text" class="x-entity x-new"
                    bind:value={entityInput}
@@ -200,6 +225,8 @@
         top: 100%;
         min-width: calc(100% - 2px);
         max-width: 120%;
+        max-height: 125px;
+        overflow: auto;
 
         .x-match {
             display: flex;

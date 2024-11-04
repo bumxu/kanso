@@ -69,6 +69,17 @@
                 link(tag);
                 tagInput = '';
             }
+        } else if (e.key === 'Tab') {
+            if (tagInput.length > 0) {
+                let tag;
+                if (tagMatchesSelectedIndex === -1) {
+                    tag = tagsStore.add({ name: tagInput });
+                } else {
+                    tag = tagMatches[tagMatchesSelectedIndex].item;
+                }
+                link(tag);
+                tagInput = '';
+            }
         } else if (e.key === 'ArrowDown') {
             e.preventDefault();
             tagMatchesSelectedIndex = tagMatchesSelectedIndex + 1;
@@ -82,7 +93,10 @@
                 tagMatchesSelectedIndex = tagMatches.length - 1;
             }
         } else if (e.key === 'Escape') {
-            domInput.blur();
+            tagMatches = [];
+            tagMatchesSelectedIndex = -1;
+            tagInput = '';
+            //domInput.blur();
         }
     }
 
@@ -211,6 +225,8 @@
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
         z-index: 100;
         min-width: calc(100% - 4px);
+        max-height: 125px;
+        overflow: auto;
 
         .x-tag-match {
             display: block;

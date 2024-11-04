@@ -2,18 +2,21 @@
     import { entitiesStore } from '$lib/stores/entities.store.j4.svelte.js';
     import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte.js';
     import type { EntitySchema, EntryEntitySchema } from '$lib/types/j4_types';
-    import { onMount } from 'svelte';
+    import { onMount, tick } from 'svelte';
     import type { EventHandler } from 'svelte/elements';
     import { slide } from 'svelte/transition';
     import { appStore } from '../../appstate.store.svelte';
 
+    type Props = {
+        linkedEntity: EntryEntitySchema,
+        focusNoteOnMount: boolean,
+        onUnlinkEntity: EventHandler
+    };
     let {
         linkedEntity,
+        focusNoteOnMount,
         onUnlinkEntity
-    }: {
-        linkedEntity: EntryEntitySchema,
-        onUnlinkEntity: EventHandler
-    } = $props();
+    }: Props = $props();
 
     //export let entryId: number;
     //export let linkedEntity: any;
@@ -49,98 +52,16 @@
         return displayFn(entity.id, entity.raw);
     });
 
-    let domInput: HTMLSpanElement;
+    let domNoteInput: HTMLSpanElement;
     let focused = $state(false);
-
-    // Texto introducido por el usuario
-    let userInput = $state('');
-    // Entidades que coinciden con la entidad introducida por el usuario
-    let matches: any[] = $state([]);
-    // Si se muestra el dropdown con las entidades sugeridas
-    let matchesVisible = $state(false);
-    // Índice de la entidad seleccionada en el dropdown
-    let matchesSelectedIndex = $state(-1);
-
-    let userInputEntity = '';
-    //entityFromInput(userInput);
 
     onMount(() => {
         // dirty = linkedEntity.entity == null;
         // userInput = linkedEntity.entity != null ? entityToStr(linkedEntity) : '';
+        if (focusNoteOnMount) {
+            tick().then(() => domNoteInput.focus());
+        }
     });
-
-    export function focus() {
-        domInput.focus();
-    }
-
-    function handleFocus() {
-        focused = true;
-        if (userInput.length > 0) {
-            matchesVisible = true;
-        }
-    }
-
-    function handleBlur() {
-        focused = false;
-        matchesVisible = false;
-    }
-
-    async function handleInput(event: any) {
-        if (userInput.length > 0 && userInputEntity != null) {
-            console.debug('handleInput -> "' + userInput + '"');
-            const inputEntity = entityFromInput(userInput);
-            matches = entitiesStore.getSuggestions(userInput);
-            if (matches.length > 0) {
-                matchesSelectedIndex = 0;
-            } else {
-                matchesSelectedIndex = -1;
-            }
-            matchesVisible = true;
-        } else {
-            matchesVisible = false;
-        }
-    }
-
-    async function handleKeyDown(e: KeyboardEvent) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            // if (tagInput.length > 0) {
-            //     if (matchesSelectedIndex === -1) {
-            //         const tag = await create(tagInput);
-            //         if (tag)
-            //             await link(tag);
-            //     } else {
-            //         const tag = tagMatches[matchesSelectedIndex];
-            //         await link(tag);
-            //     }
-            //     tagInput = '';
-            //     domInput.blur();
-            // }
-        } else if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            matchesSelectedIndex = Math.min(matchesSelectedIndex + 1, matches.length - 1);
-        } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            matchesSelectedIndex = Math.max(matchesSelectedIndex - 1, -1);
-        } else if (e.key === 'Escape') {
-            domInput.blur();
-        }
-    }
-
-    function entityFromInput(input: string) {
-        const splt = input.trim().split(/\s+/);
-        if (splt.length == 1) {
-            return splt[0];
-        } else if (splt.length >= 2) {
-            return splt[1];
-        } else {
-            return null;
-        }
-    }
-
-    function handleClickEdit() {
-        console.debug('handleClickEdit');
-    }
 
 </script>
 
@@ -151,8 +72,14 @@
         {/if}
         {entityDisplay ? entityDisplay : '?'}
     </div>
-    <div class="x-note" contenteditable="true" spellcheck="false"
-         bind:textContent={linkedEntity.note} onclick={ev=>ev.stopPropagation()}></div>
+    <div class="x-note"
+         role="textbox"
+         tabindex="0"
+         contenteditable="true"
+         spellcheck="false"
+         bind:this={domNoteInput}
+         bind:textContent={linkedEntity.note}
+         onclick={ev=>{ev.stopPropagation();ev.preventDefault()}}></div>
     {#if appStore.ctrlKeyPressed}
         <div class="x-side">
             <!--            <button class="fas fa-fw fa-sm fa-filter"-->
@@ -161,7 +88,7 @@
             <!--            <button class="fas fa-fw fa-sm fa-pen"-->
             <!--                    aria-label="Editar" title="Editar"-->
             <!--                    onclick={handleClickEdit}></button>-->
-            <button class="far fa-fw fa-sm fa-trash" style="color: #aaa"
+            <button class="far fa-fw fa-sm fa-trash x-btn-delete"
                     aria-label="Quitar" title="Quitar"
                     onclick={(ev) => {ev.stopPropagation();ev.preventDefault();onUnlinkEntity();}}></button>
         </div>
@@ -221,6 +148,14 @@
         background: none;
         border: none;
         padding: 0;
+        cursor: pointer;
+    }
+
+    .x-btn-delete {
+        color: #aaa
+    }
+    .x-btn-delete:hover {
+        color: var(--color-icon-hover);
         cursor: pointer;
     }
 </style>

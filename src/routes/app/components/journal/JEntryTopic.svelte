@@ -17,6 +17,10 @@
     //     //inputValue = value;
     // });
 
+    export function focus() {
+        domTopicCe.focus();
+    }
+
     function handleInputBlur() {
         hasFocus = false;
         //applyInputValue();

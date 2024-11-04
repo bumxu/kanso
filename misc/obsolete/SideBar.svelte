@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { entitiesStore } from '$lib/stores/entities.store.j4.svelte';
-    import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
-    import { prioritiesStore } from '$lib/stores/priorities.store.j4.svelte';
-    import { statusesStore } from '$lib/stores/statuses.store.j4.svelte';
-    import { tagsStore } from '$lib/stores/tags.store.j4.svelte';
+    import { entitiesStore } from '$lib/stores/entities.store.j4.svelte.js';
+    import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte.js';
+    import { prioritiesStore } from '$lib/stores/priorities.store.j4.svelte.js';
+    import { statusesStore } from '$lib/stores/statuses.store.j4.svelte.js';
+    import { tagsStore } from '$lib/stores/tags.store.j4.svelte.js';
     import SbEntities from '../components/sidebar/SBEntities.svelte';
     import SBEntityTypes from '../components/sidebar/SBEntityTypes.svelte';
     import SBPriorities from '../components/sidebar/SBPriorities.svelte';
