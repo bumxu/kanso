@@ -270,9 +270,12 @@
         const dt = value.length === 8
             ? DateTime.fromFormat(value, 'yyyyMMdd')
             : DateTime.fromFormat(value, 'yyyyMMddHHmm');
-        return value.length === 8
+        const str = value.length === 8
             ? dt.toFormat('dd/MM/yy')
             : dt.toFormat('dd/MM/yy HH:mm');
+        const today = DateTime.now().toFormat('dd/MM/yy');
+        const yesterday = DateTime.now().minus({ days: 1 }).toFormat('dd/MM/yy');
+        return str.replace(today, 'Hoy').replace(yesterday, 'Ayer');
     }
 </script>
 
