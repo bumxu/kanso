@@ -1,5 +1,6 @@
+import { isEmpty } from '$lib/helpers/runtime.helper';
 import type { EntrySchema, EntryUpdateSchema } from '$lib/types/j4_types';
-import type { RawEntriesSchema } from '$lib/types/j4raw_types';
+import type { RawEntriesSchema, RawEntrySchema } from '$lib/types/j4raw_types';
 
 class JournalStore {
     private _nid: bigint = 0n;
@@ -60,19 +61,8 @@ class JournalStore {
             // Campos array/objeto que pueden venir a null
             entry.entities = entry.entities || [];
             entry.tags = entry.tags || [];
-
-            // migration
-            if (Array.isArray(entry.updates)) {
-                console.log(`Migrating updates from old format for entry ${entry.id}...`);
-                let tmpNid = 0n;
-                const tmpData = [];
-                for (const update of entry.updates) {
-                    tmpData.push({ id: tmpNid.toString(16), date: update.date, body: update.body });
-                    tmpNid += 1n;
-                }
-                entry.updates = { nid: tmpNid.toString(16), data: tmpData };
-            }
             entry.updates = entry.updates || { nid: '0', data: [] };
+            if (entry.updates.data == null) entry.updates.data = [];
 
             // Index
             entryIndex[entry.id] = entry;
@@ -83,7 +73,22 @@ class JournalStore {
     public save(): RawEntriesSchema {
         return {
             nid: this._nid.toString(16),
-            data: Object.values(this._entryIndex).sort((a, b) => a.dateSince.localeCompare(b.dateSince))
+            data: Object.values($state.snapshot(this._entryIndex)).map((entry: RawEntrySchema) => {
+                // Optimizaciones
+                return {
+                    id: entry.id,
+                    dateSince: entry.dateSince,
+                    ...(!isEmpty(entry.dateUpdated) ? { dateUpdated: entry.dateUpdated } : {}),
+                    ...(!isEmpty(entry.subject) ? { subject: entry.subject } : {}),
+                    ...(entry.updates?.data == null || entry.updates.data.length === 0 ? { updates: { nid: entry.updates.nid ?? 0 } } : { updates: entry.updates }),
+                    ...(entry.entities != null && entry.entities.length > 0 ? { entities: entry.entities } : {}),
+                    ...(!isEmpty(entry.dateDue) ? { dateDue: entry.dateDue } : {}),
+                    ...(entry.tags != null && entry.tags.length > 0 ? { tags: entry.tags } : {}),
+                    ...(!isEmpty(entry.priority) ? { priority: entry.priority } : {}),
+                    ...(!isEmpty(entry.status) ? { status: entry.status } : {}),
+                    ...(!isEmpty(entry.dateClosed) ? { dateClosed: entry.dateClosed } : {})
+                };
+            }).sort((a, b) => a.dateSince.localeCompare(b.dateSince))
         };
     }
 

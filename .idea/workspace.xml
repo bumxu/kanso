@@ -7,24 +7,9 @@
     <list default="true" id="e9cf873a-9b04-43b2-83e6-08f1658a1220" name="Changes" comment="Tasks">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/misc/kanso.kanso.json" beforeDir="false" afterPath="$PROJECT_DIR$/misc/kanso.kanso.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/obsolete/JEntriesWindow.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/misc/obsolete/JEntriesWindow.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/obsolete/SideBar.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/misc/obsolete/SideBar.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/obsolete/api/load/+server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/misc/obsolete/api/load/+server.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/obsolete/api/save/+server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/misc/obsolete/api/save/+server.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/helpers/journal.helper.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/helpers/journal.helper.svelte.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/helpers/runtime.helper.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/helpers/runtime.helper.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/stores/priorities.store.j4.svelte.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/stores/priorities.store.j4.svelte.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/app/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/+page.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/app/components/journal/JEntry.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/journal/JEntry.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryEntities.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryEntities.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryEntity.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryEntity.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryTags.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryTags.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryTopic.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryTopic.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBEntities.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBEntities.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBEntityTypes.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBEntityTypes.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBStatuses.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBStatuses.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBTags.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBTags.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/scss/main.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/scss/main.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/stores/journal.store.j4.svelte.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/stores/journal.store.j4.svelte.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/types/j4raw_types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/types/j4raw_types.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -240,7 +225,31 @@
       <option name="project" value="LOCAL" />
       <updated>1730742560973</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Snapshot">
+      <option name="closed" value="true" />
+      <created>1730762902078</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1730762902078</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Tasks">
+      <option name="closed" value="true" />
+      <created>1730762909469</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1730762909469</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Tasks">
+      <option name="closed" value="true" />
+      <created>1730766614103</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1730766614103</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

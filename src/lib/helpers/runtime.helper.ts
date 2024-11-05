@@ -29,6 +29,14 @@ export function match(a: string, regexp: string | RegExp): boolean {
     return regexp instanceof RegExp ? regexp.test(norm) : new RegExp(regexp, '').test(norm);
 }
 
+export function isEmpty(a: Nil<string>): boolean {
+    return a == null || a === '';
+}
+
+export function isBlank(a: Nil<string>): boolean {
+    return a == null || a.trim() === '';
+}
+
 if (browser && !window['kx']) {
     window['kx'] = { includes, indexOf, compare, equals, match };
 }
