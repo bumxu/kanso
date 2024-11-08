@@ -110,8 +110,7 @@
         const id = nanoid(10);
         entities.push({
             id: id,
-            entityId: entity.id,
-            metadata: {}
+            entityId: entity.id
         });
         //     tagMatchesVisible = true;
         // }

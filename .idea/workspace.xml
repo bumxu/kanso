@@ -4,12 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e9cf873a-9b04-43b2-83e6-08f1658a1220" name="Changes" comment="Tasks">
+    <list default="true" id="e9cf873a-9b04-43b2-83e6-08f1658a1220" name="Changes" comment="Snapshot">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/misc/kanso.kanso.json" beforeDir="false" afterPath="$PROJECT_DIR$/misc/kanso.kanso.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/helpers/runtime.helper.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/helpers/runtime.helper.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/helpers/journal.helper.svelte.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/helpers/journal.helper.svelte.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/stores/journal.store.j4.svelte.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/stores/journal.store.j4.svelte.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/types/j4raw_types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/types/j4raw_types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/app/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/+page.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/app/components/journal/JEntry.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/journal/JEntry.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryEntities.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/journal/JEntryEntities.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBEntities.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBEntities.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBEntityTypes.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBEntityTypes.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBFilters.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/app/components/sidebar/SBFilters.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scss/_tailwindbase.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/scss/_tailwindbase.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scss/main.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/scss/main.scss" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,7 +45,7 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/bumxu/kanso.git&quot;,
+    &quot;url&quot;: &quot;https://github.com/bumxu/bcc-lapse.git&quot;,
     &quot;accountId&quot;: &quot;ca46fff6-ac44-4492-a90e-c6ed001223de&quot;
   }
 }</component>
@@ -60,7 +69,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/admin/Desktop/workspace/kanso/src/routes&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/admin/Desktop/workspace/kanso/src/lib/components&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -75,6 +84,7 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\admin\Desktop\workspace\kanso\src\lib\components" />
       <recent name="C:\Users\admin\Desktop\workspace\kanso\src\routes" />
       <recent name="C:\Users\admin\Desktop\workspace\kanso\src\scss" />
     </key>
@@ -106,6 +116,10 @@
       <envs />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="npm.build" />
+      <item itemvalue="npm.dev" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="npm.dev" />
@@ -116,7 +130,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-WS-242.23726.96" />
+        <option value="bundled-js-predefined-d6986cc7102b-410509235cf1-JavaScript-WS-242.20224.342" />
       </set>
     </attachedChunks>
   </component>
@@ -269,8 +283,8 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Snapshot" />
     <MESSAGE value="Tasks" />
-    <option name="LAST_COMMIT_MESSAGE" value="Tasks" />
+    <MESSAGE value="Snapshot" />
+    <option name="LAST_COMMIT_MESSAGE" value="Snapshot" />
   </component>
 </project>

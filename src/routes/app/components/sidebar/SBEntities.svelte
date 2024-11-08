@@ -1,5 +1,6 @@
 <script lang="ts">
     import Button from '$lib/components/Button.svelte';
+    import Codemirror from '$lib/components/Codemirror.svelte';
     import { entitiesStore } from '$lib/stores/entities.store.j4.svelte.js';
     import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte.js';
     import type { EntitiesSchema, EntitySchema, EntityTypeSchema, ETypeDisplayFn } from '$lib/types/j4_types';
@@ -106,7 +107,8 @@
 
             <label for="tag_data">Raw data</label>
             <div class="x-tx-wrapper">
-                <textarea id="tag_data" class="ff-mono" bind:value={selectedRawJSON} oninput={handleRawChange}></textarea>
+<!--                <textarea id="tag_data" class="ff-mono" bind:value={selectedRawJSON} oninput={handleRawChange}></textarea>-->
+                <Codemirror bind:value={selectedRawJSON} oninput={handleRawChange} />
             </div>
         {:else}
             <div class="x-no-selection">
@@ -155,13 +157,17 @@
     }
 
     .x-tx-wrapper {
-        textarea {
-            box-sizing: border-box;
-            width: 100%;
-            height: 60px;
-            font-size: 10px;
-            resize: none;
-        }
+        border: 1px solid rgba(#000, 0.2);
+        border-radius: 1px;
+        overflow: hidden;
+
+        //textarea {
+        //    box-sizing: border-box;
+        //    width: 100%;
+        //    height: 60px;
+        //    font-size: 10px;
+        //    resize: none;
+        //}
     }
 
 </style>

@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Codemirror from '$lib/components/Codemirror.svelte';
     import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte.js';
     import type { EntityTypeSchema, EntityTypesSchema } from '$lib/types/j4_types';
     import Button from '$lib/components/Button.svelte';
@@ -16,6 +17,34 @@
     });
 
     let selected: EntityTypeSchema | undefined = $state();
+
+    let displayFnValid = $derived.by(() => {
+        try {
+            new Function(selected.displayFn);
+            return true;
+        } catch (e) {
+            console.warn('Invalid display function', e);
+            return false;
+        }
+    });
+    let parseFnValid = $derived.by(() => {
+        try {
+            new Function(selected.parseFn);
+            return true;
+        } catch (e) {
+            console.warn('Invalid parse function', e);
+            return false;
+        }
+    });
+    let lookupFnValid = $derived.by(() => {
+        try {
+            new Function(selected.lookupFn);
+            return true;
+        } catch (e) {
+            console.warn('Invalid lookup function', e);
+            return false;
+        }
+    });
 
     function handleSelectItem(entityType: EntityTypeSchema) {
         selected = entityType;
@@ -67,18 +96,21 @@
             <input type="text" id="et_name" bind:value={selected.name}>
 
             <label for="et_displayfn">Display Function</label>
-            <div class="x-tx-wrapper">
-                <textarea id="et_displayfn" class="ff-mono" wrap="off" bind:value={selected.displayFn}></textarea>
+            <div class="x-tx-wrapper" class:invalid={!displayFnValid}>
+                <!--                <textarea id="et_displayfn" class="ff-mono" wrap="off" bind:value={selected.displayFn}></textarea>-->
+                <Codemirror bind:value={selected.displayFn} height="80px" />
             </div>
 
             <label for="et_parsefn">Parse Function</label>
-            <div class="x-tx-wrapper">
-                <textarea id="et_parsefn" class="ff-mono" wrap="off" bind:value={selected.parseFn}></textarea>
+            <div class="x-tx-wrapper" class:invalid={!parseFnValid}>
+                <!--                <textarea id="et_parsefn" class="ff-mono" wrap="off" bind:value={selected.parseFn}></textarea>-->
+                <Codemirror bind:value={selected.parseFn} height="120px" />
             </div>
 
             <label for="et_lookupfn">Lookup Function</label>
-            <div class="x-tx-wrapper">
-                <textarea id="et_lookupfn" class="ff-mono" wrap="off" bind:value={selected.lookupFn}></textarea>
+            <div class="x-tx-wrapper" class:invalid={!lookupFnValid}>
+                <!--                <textarea id="et_lookupfn" class="ff-mono" wrap="off" bind:value={selected.lookupFn}></textarea>-->
+                <Codemirror bind:value={selected.lookupFn} height="120px" />
             </div>
 
             <!--            <label for="et_color">Color</label>-->
@@ -137,12 +169,13 @@
     }
 
     .x-tx-wrapper {
-        textarea {
-            box-sizing: border-box;
-            width: 100%;
-            height: 80px;
-            font-size: 10px;
-            resize: none;
+        border: 1px solid rgba(#000, 0.2);
+        border-radius: 1px;
+        overflow: hidden;
+
+        &.invalid {
+            box-shadow: 0 0 1px 2px #a00;
+            border-color: transparent;
         }
     }
 

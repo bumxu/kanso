@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { appStore } from '../../appstate.store.svelte';
     import JEntryUpdates from './JEntryUpdates.svelte';
     import JDateTime from '$lib/components/JDateTime.svelte';
     import JEntryTags from './JEntryTags.svelte';
@@ -22,8 +23,9 @@
         autofocus?: boolean,
         onpartitionchange: (entry: EntrySchema, currPartId: string) => void,
         ondelete: () => void,
+        onshowctxmenu: (ev: MouseEvent, entry: EntrySchema) => void
     };
-    const { entry = $bindable(), partitionId, onpartitionchange, ondelete, autofocus }: Props = $props();
+    const { entry = $bindable(), partitionId, onpartitionchange, ondelete, autofocus, onshowctxmenu }: Props = $props();
 
     // Estados
     /** Indica que el registro es nuevo (valor automático si no tiene id asignado). */
@@ -151,15 +153,6 @@
 </script>
 
 <div class="x-row" class:faded={hasFinalStatus}>
-    <div class="x-cell text-center">
-        <span id="fld-id">
-            <i class="fas fa-hashtag fa-fw fa-sm"
-               bind:this={domIdIcon}
-               data-tippy-placement="right"
-               data-tippy-content={entry.id != null ? entry.id : '*'} />
-        </span>
-    </div>
-
     <div class="x-cell">
         <JEntryDateSince entry={entry} />
     </div>
@@ -209,13 +202,16 @@
         <!--            {/each}-->
         <!--        </select>-->
     </div>
-    <div class="x-cell">
-        <!--        <button class="btn btn-sm btn-ic" on:click={remove}>-->
-        <!--            <i class="fas fa-xmark fa-fw fa-sm" />-->
-        <!--        </button>-->
-        <i class="far fa-trash fa-fw fa-sm x-btn-delete"
-           title="Eliminar"
-           style="cursor: pointer" onclick={ondelete}></i>
+    <div class="x-cell text-center">
+        {#if appStore.ctrlKeyPressed}
+            <i class="far fa-trash fa-fw fa-sm x-btn-delete"
+               title="Eliminar"
+               style="cursor: pointer" onclick={ondelete}></i>
+        {:else}
+            <i class="far fa-ellipsis fa-fw fa-sm"
+               title="Acciones"
+               style="cursor: pointer" onclick={(ev)=>{onshowctxmenu(ev,entry)}}></i>
+        {/if}
     </div>
 </div>
 

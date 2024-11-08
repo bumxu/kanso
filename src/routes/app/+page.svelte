@@ -29,6 +29,11 @@
     let sbOpen = $state(false);
     let sbTool: string | null = $state(null);
 
+    let domEntryCtxMenu: HTMLElement | null = null;
+    let entryCtxMenuVisible = $state(false);
+    let entryCtxMenuPos = $state({ x: 0, y: 0 });
+    let entryCtxMenuEntry: EntrySchema | null = $state(null);
+
     let order = $state('dateSince');
     let orderAsc = $state(true);
 
@@ -37,6 +42,7 @@
     let qFilterEntities = $state('');
     let qFilterTags = $state('');
     let qFilterPriority = $state('');
+    let qFilterStatus = $state('');
 
     let focusEntryNextTick = null;
 
@@ -47,6 +53,7 @@
 
     let filteredView: EntrySchema[] = $state([]);
     $effect(() => {
+        // console.log('Aplicando filtros...', filtersStore.filters);
         applyFilters();
     });
     let sortedView: EntrySchema[] = $derived(buildSortedView(filteredView, order, orderAsc));
@@ -54,13 +61,12 @@
 
     onMount(async () => {
         console.log('Iniciando Kanso...');
-
-        storeManager.loadFromLS();
+        // storeManager.loadFromLS();
     });
 
     function applyFilters() {
         filteredView = buildFilteredView(
-            qFilterTopic, qFilterUpdates, qFilterEntities, qFilterTags, qFilterPriority,
+            qFilterTopic, qFilterUpdates, qFilterEntities, qFilterTags, qFilterPriority, qFilterStatus,
             filtersStore.filters);
     }
 
@@ -81,6 +87,9 @@
     function handleGlobalClick(e: MouseEvent) {
         if (sbOpen && e.target instanceof HTMLElement && !e.target.closest('.x-sb-floating') && !e.target.closest('.x-sb-menu')) {
             sbOpen = false;
+        }
+        if (entryCtxMenuVisible && domEntryCtxMenu && !domEntryCtxMenu.contains(e.target as Node)) {
+            entryCtxMenuVisible = false;
         }
     }
 
@@ -171,6 +180,17 @@
         storeManager.saveToFileHandler();
     }
 
+    function handleShowEntryContextMenu(ev: MouseEvent, entry: EntrySchema) {
+        ev.preventDefault();
+        ev.stopPropagation()
+        entryCtxMenuVisible = true;
+        entryCtxMenuEntry = entry;
+        // Position where mouse, but bot outside the window
+        entryCtxMenuPos = { x: ev.clientX, y: ev.clientY };
+        entryCtxMenuPos.x = Math.min(entryCtxMenuPos.x, window.innerWidth - domEntryCtxMenu.offsetWidth);
+        entryCtxMenuPos.y = Math.min(entryCtxMenuPos.y, window.innerHeight - domEntryCtxMenu.offsetHeight);
+    }
+
 </script>
 
 <svelte:window
@@ -209,7 +229,6 @@
             <div class="x-table x-journal">
                 <div class="x-headers">
                     <div class="x-row x-header">
-                        <div class="x-cell"><span class="x-label">#</span></div>
                         <div class="x-cell flex items-center" onclick={handleOrderByDateSince}>
                             <span class="x-label flex-1">Fechas</span>
                             {#if order === 'dateSince'}
@@ -226,36 +245,41 @@
                         <div class="x-cell"><span class="x-label">Tags</span></div>
                         <div class="x-cell"><span class="x-label">Prioridad</span></div>
                         <div class="x-cell"><span class="x-label">Estado</span></div>
-                        <div class="x-cell"><span class="x-label">*</span></div>
+                        <div class="x-cell"><span class="x-label"><i class="fas fa-fw fa-sm fa-ellipsis"></i></span></div>
                     </div>
 
-                    <div class="x-row x-header">
+                    <div class="x-row x-header x-header-quickfilters">
                         <div class="x-cell"></div>
-                        <div class="x-cell"></div>
                         <div class="x-cell flex items-center">
                             <i class="fas fa-fw fa-xs fa-filter"></i>
-                            <input type="text" placeholder="Filtro rápido" bind:value={qFilterTopic} class="flex-1" class:x-rx={qFilterTopic.startsWith('/')}></div>
+                            <input type="text" placeholder="Filtro rápido" bind:value={qFilterTopic} class="flex-1 min-w-0" class:x-rx={qFilterTopic.startsWith('/')}></div>
                         <div class="x-cell flex items-center">
                             <i class="fas fa-fw fa-xs fa-filter"></i>
-                            <input type="text" placeholder="Filtro rápido" bind:value={qFilterUpdates} class="flex-1" class:x-rx={qFilterUpdates.startsWith('/')}></div>
+                            <input type="text" placeholder="Filtro rápido" bind:value={qFilterUpdates} class="flex-1 min-w-0" class:x-rx={qFilterUpdates.startsWith('/')}></div>
                         <div class="x-cell flex items-center">
                             <i class="fas fa-fw fa-xs fa-filter"></i>
-                            <input type="text" placeholder="Filtro rápido" class="flex-1" bind:value={qFilterEntities}></div>
+                            <input type="text" placeholder="Filtro rápido" class="flex-1 min-w-0" bind:value={qFilterEntities}></div>
                         <div class="x-cell flex items-center">
                             <i class="fas fa-fw fa-xs fa-filter"></i>
-                            <input type="text" placeholder="Filtro rápido" class="flex-1" bind:value={qFilterTags}></div>
+                            <input type="text" placeholder="Filtro rápido" class="flex-1 min-w-0" bind:value={qFilterTags}></div>
                         <div class="x-cell flex items-center">
                             <i class="fas fa-fw fa-xs fa-filter"></i>
-                            <input type="text" placeholder="Filtro rápido" class="flex-1" bind:value={qFilterPriority}></div>
-                        <div class="x-cell"></div>
+                            <input type="text" placeholder="Filtro rápido" class="flex-1 min-w-0" bind:value={qFilterPriority}></div>
+                        <div class="x-cell flex items-center">
+                            <i class="fas fa-fw fa-xs fa-filter"></i>
+                            <input type="text" placeholder="Filtro rápido" bind:value={qFilterStatus} class="flex-1 min-w-0" class:x-rx={qFilterStatus.startsWith('/')}></div>
                         <div class="x-cell"></div>
                     </div>
 
                 </div>
 
                 {#each sortedView as entry, i (entry.id)}
-                    <div style="display: block" animate:flip={{duration: 300}}>
-                        <JEntry entry={sortedView[i]} autofocus={focusEntryNextTick === sortedView[i].id} ondelete={()=>del(sortedView[i].id)} />
+                    <div style="display: block" animate:flip={{duration: 200}}>
+                        <JEntry entry={sortedView[i]}
+                                autofocus={focusEntryNextTick === sortedView[i].id}
+                                ondelete={()=>del(sortedView[i].id)}
+                                onshowctxmenu={handleShowEntryContextMenu}
+                        />
                     </div>
                 {/each}
             </div>
@@ -347,6 +371,23 @@
     <footer class="x-status-bar">
         Kanso es una aplicación estática y no almacena ni envía datos fuera del equipo del usuario.
     </footer>
+
+    <div class="x-ctxmenu text-center" class:visible={entryCtxMenuVisible} bind:this={domEntryCtxMenu}
+         style:top={entryCtxMenuPos.y + 'px'} style:left={entryCtxMenuPos.x + 'px'}
+    >
+        <ul>
+            <li>
+                <i class="fas fa-hashtag fa-fw fa-sm"></i>
+                {entryCtxMenuEntry?.id}
+            </li>
+            <li>
+                <button>Tocar</button>
+            </li>
+            <li>
+                <button>Eliminar</button>
+            </li>
+        </ul>
+    </div>
 </div>
 
 <style lang="scss">
@@ -423,7 +464,6 @@
         box-sizing: border-box;
     }
 
-
     .x-status-bar {
         flex: 0 0 0;
         box-sizing: border-box;
@@ -437,5 +477,38 @@
         color: #00f;
     }
 
+    .x-ctxmenu {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: none;
+        background: #fff;
+        border: 1px solid #aaa;
+        border-radius: 2px;
+        box-shadow: 0 0 2px 1px rgba(#000, 0.2);
+        z-index: 1000;
+
+        &.visible {
+            display: block;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+
+            li {
+                button {
+                    display: block;
+                    width: 100%;
+                    padding: 4px 8px;
+                    border: none;
+                    background: none;
+                    cursor: pointer;
+                    text-align: left;
+                }
+            }
+        }
+    }
 
 </style>

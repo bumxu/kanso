@@ -73,22 +73,26 @@ class JournalStore {
     public save(): RawEntriesSchema {
         return {
             nid: this._nid.toString(16),
-            data: Object.values($state.snapshot(this._entryIndex)).map((entry: RawEntrySchema) => {
+            data: Object.values($state.snapshot(this._entryIndex)).map((entry: RawEntrySchema) => ({
                 // Optimizaciones
-                return {
-                    id: entry.id,
-                    dateSince: entry.dateSince,
-                    ...(!isEmpty(entry.dateUpdated) ? { dateUpdated: entry.dateUpdated } : {}),
-                    ...(!isEmpty(entry.subject) ? { subject: entry.subject } : {}),
-                    ...(entry.updates?.data == null || entry.updates.data.length === 0 ? { updates: { nid: entry.updates.nid ?? 0 } } : { updates: entry.updates }),
-                    ...(entry.entities != null && entry.entities.length > 0 ? { entities: entry.entities } : {}),
-                    ...(!isEmpty(entry.dateDue) ? { dateDue: entry.dateDue } : {}),
-                    ...(entry.tags != null && entry.tags.length > 0 ? { tags: entry.tags } : {}),
-                    ...(!isEmpty(entry.priority) ? { priority: entry.priority } : {}),
-                    ...(!isEmpty(entry.status) ? { status: entry.status } : {}),
-                    ...(!isEmpty(entry.dateClosed) ? { dateClosed: entry.dateClosed } : {})
-                };
-            }).sort((a, b) => a.dateSince.localeCompare(b.dateSince))
+                id: entry.id,
+                dateSince: entry.dateSince,
+                ...(!isEmpty(entry.dateUpdated) ? { dateUpdated: entry.dateUpdated } : {}),
+                ...(!isEmpty(entry.subject) ? { subject: entry.subject } : {}),
+                ...(entry.updates?.data == null || entry.updates.data.length === 0 ? { updates: { nid: entry.updates.nid ?? 0 } } : { updates: entry.updates }),
+                ...(entry.entities != null && entry.entities.length > 0 ? {
+                    entities: entry.entities.map((entryEntity) => ({
+                        id: entryEntity.id,
+                        entityId: entryEntity.entityId,
+                        ...(!isEmpty(entryEntity.note) ? { note: entryEntity.note } : {})
+                    }))
+                } : {}),
+                ...(!isEmpty(entry.dateDue) ? { dateDue: entry.dateDue } : {}),
+                ...(entry.tags != null && entry.tags.length > 0 ? { tags: entry.tags } : {}),
+                ...(!isEmpty(entry.priority) ? { priority: entry.priority } : {}),
+                ...(!isEmpty(entry.status) ? { status: entry.status } : {}),
+                ...(!isEmpty(entry.dateClosed) ? { dateClosed: entry.dateClosed } : {})
+            })).sort((a, b) => a.dateSince.localeCompare(b.dateSince))
         };
     }
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Codemirror from '$lib/components/Codemirror.svelte';
     import { filtersStore } from '$lib/stores/filters.store.j4.svelte.js';
     import type { BasicFilterSchema, BasicFiltersSchema } from '$lib/types/j4_types';
 
@@ -9,6 +10,16 @@
     let { basicFilters = $bindable() }: Props = $props();
 
     let selected: BasicFilterSchema | undefined = $state();
+
+    let filterFnValid = $derived.by(() => {
+        try {
+            new Function(selected.filterFn);
+            return true;
+        } catch (e) {
+            console.warn('Invalid filter function', e);
+            return false;
+        }
+    });
 
     function handleSelectItem(basicFilter: BasicFilterSchema) {
         selected = basicFilter;
@@ -51,7 +62,11 @@
             <input type="text" id="et_filter" bind:value={selected.desc}>
 
             <label for="et_filterfn">Filter Function</label>
-            <textarea id="et_filterfn" wrap="off" bind:value={selected.filterFn}></textarea>
+            <!--            <textarea id="et_filterfn" wrap="off" bind:value={selected.filterFn}></textarea>-->
+
+            <div class="x-tx-wrapper" class:invalid={!filterFnValid}>
+                <Codemirror bind:value={selected.filterFn} height="150px" />
+            </div>
 
             <label for="et_active">Activado</label>
             <input type="checkbox" id="et_active" bind:checked={selected.active}>
@@ -79,15 +94,27 @@
         }
     }
 
-    textarea {
-        overflow: auto;
-    }
+    //textarea {
+    //    overflow: auto;
+    //}
 
     .x-item {
         cursor: pointer;
         display: block;
         border: none;
         background-color: transparent;
+    }
+
+    .x-tx-wrapper {
+        border: 1px solid rgba(#000, 0.2);
+        border-radius: 1px;
+        box-sizing: border-box;
+        overflow: hidden;
+
+        &.invalid {
+            box-shadow: 0 0 1px 2px #a00;
+            border-color: transparent;
+        }
     }
 
 </style>
