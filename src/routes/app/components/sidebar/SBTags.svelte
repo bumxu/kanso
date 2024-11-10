@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Ic from '$lib/components/Ic.svelte';
     import { tagsStore } from '$lib/stores/tags.store.j4.svelte.js';
     import type { TagSchema, TagsSchema } from '$lib/types/j4_types';
     import { onMount } from 'svelte';
@@ -31,19 +32,19 @@
     <ul class="x-list">
         {#each orderedTags as tag, i (tag.id)}
             <li class="x-list-item">
-                <i class="fad fa-fw fa-2xs fa-tag"></i>
-                <button onclick={() => handleSelectItem(tag)}>{tag.name}</button>
-                <i class="far fa-xs fa-fw fa-trash cursor-pointer"
-                   title="Eliminar"
-                   onclick={() => tagsStore.delete(tag.id)}></i>
+                <button onclick={() => handleSelectItem(tag)}>
+                    <i class="fad fa-fw fa-2xs fa-tag"></i>{tag.name}
+                </button>
+                <Ic iconclass="far fa-fw fa-sm fa-trash"
+                    label="Eliminar"
+                    onclick={() => tagsStore.delete(tag.id)} />
             </li>
         {/each}
     </ul>
 
     <div class="x-form">
         {#if selected != null}
-            <label for="tag_id">#</label>
-            <input type="text" id="tag_id" bind:value={selected.id} readonly disabled>
+            <div class="x-id ff-mono">#{selected.id}</div>
 
             <label for="tag_name">Nombre</label>
             <input type="text" id="tag_name" bind:value={selected.name}>
@@ -64,37 +65,9 @@
 </div>
 
 <style lang="scss">
-
-    .x-list {
-        background: #fff;
-        height: 120px;
-        overflow: auto;
-        padding: 0;
-        margin: 0;
+    .x-bar {
         border-bottom: 1px solid rgba(#000, 0.2);
-    }
-    .x-list-item {
-        list-style: none;
-        padding: 0;
-        margin: 0;
+        padding: 2px;
         display: flex;
-        align-items: center;
-
-        i {
-            margin: 0 4px;
-            opacity: 0.75;
-            display: inline-block;
-            flex: 0 0 auto;
-        }
-        button {
-            background: none;
-            border: none;
-            padding: 0;
-            cursor: pointer;
-            text-align: left;
-            flex: 1 0 0;
-        }
     }
-
-
 </style>

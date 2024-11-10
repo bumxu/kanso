@@ -11,6 +11,7 @@ $table-sep-color: #dcdcdc;
     --color-hovered: #f6f6f6;
     --table-sep-color: #{$table-sep-color};
     --color-icon-hover: rgb(41, 128, 185);
+    --color-regexp: #0048ff;
 }
 
 html {
@@ -30,6 +31,7 @@ body {
 input, button, select, textarea {
     font-family: inherit;
     font-weight: inherit;
+    font-size: inherit;
 }
 
 select {
@@ -222,23 +224,33 @@ select {
         position: sticky;
         top: 0;
         z-index: 10;
-        backdrop-filter: blur(3px);
-        background-color: rgba(220, 220, 220, 0.8);
+
+        .x-header-main {
+            backdrop-filter: blur(3px);
+            background-color: rgba(#ccc, 0.8);
+            & > * {
+                border-color: rgba(#000, 0.12);
+            }
+        }
+        .x-header-quickfilters {
+            backdrop-filter: blur(3px);
+            background-color: rgba(#DCDCDC, 0.8);
+            & > * {
+                border-color: rgba(#000, 0.12);
+            }
+        }
     }
 
     & .x-row.x-header {
-        border-bottom: 1px solid #c5c5c5;
-        background-color: transparent;
+        border-bottom: 1px solid rgba(#000, 0.12);
 
         & > * {
-            font-weight: 600;
             color: #333;
             vertical-align: top;
             border-top: 0;
-            border-color: #999;
         }
         & > div:not(:last-child) {
-            border-right: 1px solid #c5c5c5;
+            border-right: 1px solid inherit;
         }
 
         .x-label {
@@ -247,15 +259,22 @@ select {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            font-weight: 600;
             width: 100%;
             box-sizing: border-box;
         }
     }
 
+    // Celdas de filtros
+    .x-cell-filter .x-cell-wrapper {
+        display: flex;
+        column-gap: 2px;
+        align-items: center;
+        padding: 0 4px;
+        box-sizing: border-box;
+    }
+
 }
-
-
-
 
 
 
@@ -345,7 +364,6 @@ select {
 
 
 
-
 .x-sidebar .x-no-selection {
     font-size: 0.85rem;
     color: #666;
@@ -359,4 +377,55 @@ select {
     font-size: 0.75rem;
     font-weight: 600;
     margin-top: 5px;
+}
+
+.x-sidebar {
+
+    .x-list {
+        background: #fff;
+        height: 120px;
+        overflow: auto;
+        font-weight: 400;
+        font-size: 12.5px;
+        padding: 0;
+        margin: 0;
+        border-bottom: 1px solid rgba(#000, 0.2);
+
+        .x-list-item {
+            list-style: none;
+            padding: 0 4px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            &:hover {
+                background: #eaf3f7;
+            }
+
+            button:not(.x-ic) {
+                background: none;
+                border: none;
+                padding: 0;
+                cursor: pointer;
+                text-align: left;
+                flex: 1 0 0;
+                i {
+                    margin-right: 4px;
+                    color: var(--color-icon-hover);
+                    display: inline-block;
+                    flex: 0 0 auto;
+                }
+            }
+        }
+    }
+
+    .x-form {
+
+        .x-id {
+            color: #888;
+            font-weight: 500;
+            font-size: 15px;
+        }
+    }
+
+
 }

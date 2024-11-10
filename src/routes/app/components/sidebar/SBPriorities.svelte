@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Button from '$lib/components/Button.svelte';
     import { prioritiesStore } from '$lib/stores/priorities.store.j4.svelte.js';
     import type { PrioritiesSchema, PrioritySchema } from '$lib/types/j4_types';
 
@@ -35,11 +36,16 @@
         Prioridades
     </div>
 
-    <button onclick={add}>+</button>
-    <ul class="x-item-list">
+    <div class="x-bar">
+        <Button icon="fas fa-fw fa-plus" onclick={add}>Nuevo</Button>
+    </div>
+
+    <ul class="x-list">
         {#each orderedPriorities as priority, i (priority.id)}
-            <li>
-                <button class="x-item" onclick={() => handleSelectItem(priority)}>{priority.name}</button>
+            <li class="x-list-item">
+                <button onclick={() => handleSelectItem(priority)}>
+                    <i class="fas fa-fw fa-2xs fa-fire"></i>{priority.name}
+                </button>
                 <!--                <i class="fas fa-sm fa-fw fa-trash" onclick={() => prioritiesStore.delete(priority.id)}></i>-->
             </li>
         {/each}
@@ -47,8 +53,7 @@
 
     <div class="x-form">
         {#if selected != null}
-            <label for="priority_id">#</label>
-            <input type="text" id="priority_id" bind:value={selected.id} readonly disabled>
+            <div class="x-id ff-mono">#{selected.id}</div>
 
             <label for="priority_name">Nombre</label>
             <input type="text" id="priority_name" bind:value={selected.name}>
@@ -61,26 +66,9 @@
 </div>
 
 <style lang="scss">
-
-    .x-item-list {
-        background: #fff;
-        height: 120px;
-        overflow: auto;
-        padding: 0;
-        margin: 0;
-
-        li {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+    .x-bar {
+        border-bottom: 1px solid rgba(#000, 0.2);
+        padding: 2px;
+        display: flex;
     }
-
-    .x-item {
-        cursor: pointer;
-        border: none;
-        background-color: transparent;
-    }
-
-
 </style>

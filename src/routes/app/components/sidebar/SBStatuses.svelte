@@ -44,10 +44,11 @@
     <ul class="x-list">
         {#each orderedStatuses as status, i (status.id)}
             <li class="x-list-item">
-                <i class="fas fa-fw fa-2xs fa-percent"></i>
                 <button class="x-item cursor-pointer"
                         title="Eliminar"
-                        onclick={() => handleSelectItem(status)}>{status.name}</button>
+                        onclick={() => handleSelectItem(status)}>
+                    <i class="fas fa-fw fa-2xs fa-percent"></i>{status.name}
+                </button>
                 <!--                <i class="fas fa-sm fa-fw fa-trash" onclick={() => statusesStore.delete(status.id)}></i>-->
             </li>
         {/each}
@@ -76,43 +77,6 @@
         border-bottom: 1px solid rgba(#000, 0.2);
         padding: 2px;
         display: flex;
-    }
-
-    .x-list {
-        background: #fff;
-        height: 120px;
-        overflow: auto;
-        padding: 0;
-        margin: 0;
-        border-bottom: 1px solid rgba(#000, 0.2);
-    }
-    .x-list-item {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        align-items: center;
-
-        i {
-            margin: 0 4px;
-            opacity: 0.75;
-            display: inline-block;
-            flex: 0 0 auto;
-        }
-        button {
-            background: none;
-            border: none;
-            padding: 0;
-            cursor: pointer;
-            text-align: left;
-            flex: 1 0 0;
-        }
-    }
-
-    .x-id {
-        color: #888;
-        font-weight: 500;
-        font-size: 15px;
     }
 
 </style>

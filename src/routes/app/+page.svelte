@@ -1,6 +1,7 @@
 <script lang="ts">
     import { tippyAction } from '$lib/actions/tippy.action';
     import Button from '$lib/components/Button.svelte';
+    import Ic from '$lib/components/Ic.svelte';
     import { buildFilteredView, buildSortedView } from '$lib/helpers/journal.helper.svelte';
     import { entitiesStore } from '$lib/stores/entities.store.j4.svelte';
     import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte';
@@ -16,6 +17,7 @@
     import { flip } from 'svelte/animate';
     import { appStore } from './appstate.store.svelte';
     import JEntry from './components/journal/JEntry.svelte';
+    import JQuickFilter from './components/journal/JQuickFilter.svelte';
     import SBConsole from './components/sidebar/SBConsole.svelte';
     import SbEntities from './components/sidebar/SBEntities.svelte';
     import SBEntityTypes from './components/sidebar/SBEntityTypes.svelte';
@@ -36,13 +38,6 @@
 
     let order = $state('dateSince');
     let orderAsc = $state(true);
-
-    let qFilterTopic = $state('');
-    let qFilterUpdates = $state('');
-    let qFilterEntities = $state('');
-    let qFilterTags = $state('');
-    let qFilterPriority = $state('');
-    let qFilterStatus = $state('');
 
     let focusEntryNextTick = null;
 
@@ -66,7 +61,12 @@
 
     function applyFilters() {
         filteredView = buildFilteredView(
-            qFilterTopic, qFilterUpdates, qFilterEntities, qFilterTags, qFilterPriority, qFilterStatus,
+            appStore.persistent.qFilterTopicActive ? appStore.persistent.qFilterTopic : '',
+            appStore.persistent.qFilterUpdatesActive ? appStore.persistent.qFilterUpdates : '',
+            appStore.persistent.qFilterEntitiesActive ? appStore.persistent.qFilterEntities : '',
+            appStore.persistent.qFilterTagsActive ? appStore.persistent.qFilterTags : '',
+            appStore.persistent.qFilterPriorityActive ? appStore.persistent.qFilterPriority : '',
+            appStore.persistent.qFilterStatusActive ? appStore.persistent.qFilterStatus : '',
             filtersStore.filters);
     }
 
@@ -182,7 +182,7 @@
 
     function handleShowEntryContextMenu(ev: MouseEvent, entry: EntrySchema) {
         ev.preventDefault();
-        ev.stopPropagation()
+        ev.stopPropagation();
         entryCtxMenuVisible = true;
         entryCtxMenuEntry = entry;
         // Position where mouse, but bot outside the window
@@ -228,7 +228,9 @@
         <div class="x-main">
             <div class="x-table x-journal">
                 <div class="x-headers">
-                    <div class="x-row x-header">
+
+                    <!-- Cabecera de la tabla -->
+                    <div class="x-row x-header x-header-main">
                         <div class="x-cell flex items-center" onclick={handleOrderByDateSince}>
                             <span class="x-label flex-1">Fechas</span>
                             {#if order === 'dateSince'}
@@ -245,29 +247,36 @@
                         <div class="x-cell"><span class="x-label">Tags</span></div>
                         <div class="x-cell"><span class="x-label">Prioridad</span></div>
                         <div class="x-cell"><span class="x-label">Estado</span></div>
-                        <div class="x-cell"><span class="x-label"><i class="fas fa-fw fa-sm fa-ellipsis"></i></span></div>
+                        <div class="x-cell"><span class="x-label"><Ic iconclass="fas fa-fw fa-sm fa-ellipsis" /></span></div>
                     </div>
 
+                    <!-- Filtros rápidos -->
                     <div class="x-row x-header x-header-quickfilters">
                         <div class="x-cell"></div>
-                        <div class="x-cell flex items-center">
-                            <i class="fas fa-fw fa-xs fa-filter"></i>
-                            <input type="text" placeholder="Filtro rápido" bind:value={qFilterTopic} class="flex-1 min-w-0" class:x-rx={qFilterTopic.startsWith('/')}></div>
-                        <div class="x-cell flex items-center">
-                            <i class="fas fa-fw fa-xs fa-filter"></i>
-                            <input type="text" placeholder="Filtro rápido" bind:value={qFilterUpdates} class="flex-1 min-w-0" class:x-rx={qFilterUpdates.startsWith('/')}></div>
-                        <div class="x-cell flex items-center">
-                            <i class="fas fa-fw fa-xs fa-filter"></i>
-                            <input type="text" placeholder="Filtro rápido" class="flex-1 min-w-0" bind:value={qFilterEntities}></div>
-                        <div class="x-cell flex items-center">
-                            <i class="fas fa-fw fa-xs fa-filter"></i>
-                            <input type="text" placeholder="Filtro rápido" class="flex-1 min-w-0" bind:value={qFilterTags}></div>
-                        <div class="x-cell flex items-center">
-                            <i class="fas fa-fw fa-xs fa-filter"></i>
-                            <input type="text" placeholder="Filtro rápido" class="flex-1 min-w-0" bind:value={qFilterPriority}></div>
-                        <div class="x-cell flex items-center">
-                            <i class="fas fa-fw fa-xs fa-filter"></i>
-                            <input type="text" placeholder="Filtro rápido" bind:value={qFilterStatus} class="flex-1 min-w-0" class:x-rx={qFilterStatus.startsWith('/')}></div>
+                        <div class="x-cell flex">
+                            <JQuickFilter bind:value={appStore.persistent.qFilterTopic}
+                                          bind:active={appStore.persistent.qFilterTopicActive} />
+                        </div>
+                        <div class="x-cell flex">
+                            <JQuickFilter bind:value={appStore.persistent.qFilterUpdates}
+                                          bind:active={appStore.persistent.qFilterUpdatesActive} />
+                        </div>
+                        <div class="x-cell flex">
+                            <JQuickFilter bind:value={appStore.persistent.qFilterEntities}
+                                          bind:active={appStore.persistent.qFilterEntitiesActive} />
+                        </div>
+                        <div class="x-cell flex">
+                            <JQuickFilter bind:value={appStore.persistent.qFilterTags}
+                                          bind:active={appStore.persistent.qFilterTagsActive} />
+                        </div>
+                        <div class="x-cell flex">
+                            <JQuickFilter bind:value={appStore.persistent.qFilterPriority}
+                                          bind:active={appStore.persistent.qFilterPriorityActive} />
+                        </div>
+                        <div class="x-cell flex">
+                            <JQuickFilter bind:value={appStore.persistent.qFilterStatus}
+                                          bind:active={appStore.persistent.qFilterStatusActive} />
+                        </div>
                         <div class="x-cell"></div>
                     </div>
 
@@ -471,10 +480,6 @@
         padding: 3px 6px;
         border-top: 1px solid #aaa;
         color: #888;
-    }
-
-    .x-rx {
-        color: #00f;
     }
 
     .x-ctxmenu {

@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Button from '$lib/components/Button.svelte';
     import Codemirror from '$lib/components/Codemirror.svelte';
     import { filtersStore } from '$lib/stores/filters.store.j4.svelte.js';
     import type { BasicFilterSchema, BasicFiltersSchema } from '$lib/types/j4_types';
@@ -43,20 +44,22 @@
         Filtros básicos
     </div>
 
-    <button onclick={add}>+</button>
-    <ul class="x-item-list">
+    <div class="x-bar">
+        <Button icon="fas fa-fw fa-plus" onclick={add}>Nuevo</Button>
+    </div>
+
+    <ul class="x-list">
         {#each Object.values(basicFilters) as basicFilter, i (basicFilter.id)}
-            <div style="display: flex">
+            <li class="x-list-item">
                 <input type="checkbox" id="basicFilter_{basicFilter.id}" bind:checked={basicFilter.active}>
                 <button class="x-item" onclick={() => handleSelectItem(basicFilter)}>{basicFilter.desc}</button>
-            </div>
+            </li>
         {/each}
     </ul>
 
     <div class="x-form">
         {#if selected != null}
-            <label for="et_id">#</label>
-            <input type="text" id="et_id" bind:value={selected.id} readonly disabled>
+            <div class="x-id ff-mono">#{selected.id}</div>
 
             <label for="et_filter">Descripción</label>
             <input type="text" id="et_filter" bind:value={selected.desc}>
@@ -79,30 +82,10 @@
 </div>
 
 <style lang="scss">
-
-    .x-item-list {
-        background: #fff;
-        height: 120px;
-        overflow: auto;
-        padding: 0;
-        margin: 0;
-
-        li {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-    }
-
-    //textarea {
-    //    overflow: auto;
-    //}
-
-    .x-item {
-        cursor: pointer;
-        display: block;
-        border: none;
-        background-color: transparent;
+    .x-bar {
+        border-bottom: 1px solid rgba(#000, 0.2);
+        padding: 2px;
+        display: flex;
     }
 
     .x-tx-wrapper {
