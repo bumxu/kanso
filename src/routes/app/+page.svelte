@@ -181,14 +181,35 @@
     }
 
     function handleShowEntryContextMenu(ev: MouseEvent, entry: EntrySchema) {
-        ev.preventDefault();
         ev.stopPropagation();
         entryCtxMenuVisible = true;
         entryCtxMenuEntry = entry;
         // Position where mouse, but bot outside the window
         entryCtxMenuPos = { x: ev.clientX, y: ev.clientY };
-        entryCtxMenuPos.x = Math.min(entryCtxMenuPos.x, window.innerWidth - domEntryCtxMenu.offsetWidth);
-        entryCtxMenuPos.y = Math.min(entryCtxMenuPos.y, window.innerHeight - domEntryCtxMenu.offsetHeight);
+        tick().then(() => {
+            entryCtxMenuPos.x = Math.min(entryCtxMenuPos.x, document.body.clientWidth - domEntryCtxMenu.offsetWidth);
+            entryCtxMenuPos.y = Math.min(entryCtxMenuPos.y, document.body.clientHeight - domEntryCtxMenu.offsetHeight);
+            //console.log(window.innerWidth, domEntryCtxMenu.offsetWidth);
+        });
+    }
+
+    function handleDuplicateEntry(entry: EntrySchema) {
+        console.log('Duplicando registro...');
+        const newEntry = journalStore.add({
+            dateSince: DateTime.local().toFormat('yyyyMMddHHmm'),
+            subject: entry.subject,
+            // entities: entry.entities,
+            // updates: entry.updates,
+            // tags: entry.tags,
+            priority: entry.priority,
+        });
+        filteredView.push(newEntry);
+
+        // Enfocar el nuevo registro
+        focusEntryNextTick = newEntry.id;
+        tick().then(() => {
+            focusEntryNextTick = null;
+        });
     }
 
 </script>
@@ -390,10 +411,13 @@
                 {entryCtxMenuEntry?.id}
             </li>
             <li>
-                <button>Tocar</button>
+                <button><i class="fad fa-fw fa-hand-back-point-left"></i> Tocar</button>
             </li>
             <li>
-                <button>Eliminar</button>
+                <button><i class="fad fa-fw fa-copy"></i> Duplicar</button>
+            </li>
+            <li>
+                <button><i class="fad fa-fw fa-trash"></i> Eliminar</button>
             </li>
         </ul>
     </div>
@@ -504,13 +528,15 @@
 
             li {
                 button {
-                    display: block;
                     width: 100%;
                     padding: 4px 8px;
                     border: none;
                     background: none;
+                    align-items: center;
                     cursor: pointer;
                     text-align: left;
+                    display: flex;
+                    flex-wrap: nowrap;
                 }
             }
         }

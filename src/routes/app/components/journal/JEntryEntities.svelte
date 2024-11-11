@@ -68,8 +68,8 @@
                 entityInput = '';
             }
         } else if (e.key === 'Tab') {
-            e.preventDefault();
             if (entityInput.length > 0) {
+                e.preventDefault();
                 let entity: EntitySchema;
                 const entityMatchesSelected = entityMatches[entityMatchesSelectedIndex];
                 if (entityMatchesSelected.weight < 0) {

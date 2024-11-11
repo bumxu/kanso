@@ -199,6 +199,9 @@ select {
         display: flex;
         max-height: 70px;
         flex-flow: row nowrap;
+        &:hover {
+            background-color: #fafafa;
+        }
     }
 
     // Celdas
