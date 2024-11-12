@@ -89,6 +89,22 @@
             day = Number.parseInt(raw);
             month = new Date().getMonth() + 1;
             year = new Date().getFullYear();
+        } else if (/^(hoy|ayer|mañana)$/i.test(raw)) {
+            // hoy, ayer, mañana
+            const now = DateTime.local();
+            if (/^hoy$/i.test(raw)) {
+                year = now.year;
+                month = now.month;
+                day = now.day;
+            } else if (/^ayer$/i.test(raw)) {
+                year = now.minus({ days: 1 }).year;
+                month = now.minus({ days: 1 }).month;
+                day = now.minus({ days: 1 }).day;
+            } else if (/^mañana$/i.test(raw)) {
+                year = now.plus({ days: 1 }).year;
+                month = now.plus({ days: 1 }).month;
+                day = now.plus({ days: 1 }).day;
+            }
         }
 
         if (year != null && month != null && day != null) {
