@@ -8,7 +8,7 @@ $table-sep-color: #dcdcdc;
 
 :root {
     --color-focused: #ffffdf;
-    --color-hovered: #f6f6f6;
+    --color-hovered: #f4f4f4;
     --table-sep-color: #{$table-sep-color};
     --color-icon-hover: rgb(41, 128, 185);
     --color-regexp: #0048ff;
@@ -199,8 +199,10 @@ select {
         display: flex;
         max-height: 70px;
         flex-flow: row nowrap;
+        transition: background-color 0.2s;
+
         &:hover {
-            background-color: #fafafa;
+            background-color: #f9f9f9;
         }
     }
 

@@ -171,6 +171,7 @@
         position: relative;
         box-sizing: border-box;
         cursor: text;
+        transition: background-color 0.2s;
 
         &:hover {
             background-color: var(--color-hovered);

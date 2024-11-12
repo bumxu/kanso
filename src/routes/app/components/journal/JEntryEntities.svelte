@@ -187,6 +187,7 @@
         height: 100%;
         position: relative;
         width: 100%;
+        transition: background-color 0.2s;
 
         &:hover {
             background-color: var(--color-hovered);

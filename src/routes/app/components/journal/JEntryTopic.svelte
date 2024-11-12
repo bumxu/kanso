@@ -74,7 +74,7 @@
         height: 100%;
         position: relative;
         cursor: text;
-        transition: background-color 0.15s;
+        transition: background-color 0.2s;
 
         &:hover {
             background-color: var(--color-hovered);
