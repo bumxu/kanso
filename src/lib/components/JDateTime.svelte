@@ -186,7 +186,7 @@
                 date = { year: now.year, month: now.month, day: now.day };
                 time = parseTime(raw);
             } else /*if (/^\d{8}|\d{6}$/.test(raw))*/ {
-                // other (date only
+                // other (date only)
                 date = parseDate(raw);
                 time = null;
             }
@@ -307,18 +307,18 @@
 
 <style lang="scss">
 
-.x-datetime-input {
-    font-weight: 500;
-    font-size: 0.625rem;
-    width: 90px;
-    //temp
-    display: inline-block !important;
-    color: inherit;
+    .x-datetime-input {
+        font-weight: 500;
+        font-size: 0.625rem;
+        width: 90px;
+        //temp
+        display: inline-block !important;
+        color: inherit;
 
-    &:not(.valid) {
-        background: #fdd;
-        color: #a00;
+        &:not(.valid) {
+            background: #fdd;
+            color: #a00;
+        }
     }
-}
 
 </style>
