@@ -291,7 +291,8 @@
             : dt.toFormat('dd/MM/yy HH:mm');
         const today = DateTime.now().toFormat('dd/MM/yy');
         const yesterday = DateTime.now().minus({ days: 1 }).toFormat('dd/MM/yy');
-        return str.replace(today, 'Hoy').replace(yesterday, 'Ayer');
+        const tomorrow = DateTime.now().plus({ days: 1 }).toFormat('dd/MM/yy');
+        return str.replace(today, 'Hoy').replace(yesterday, 'Ayer').replace(tomorrow, 'Mañana');
     }
 </script>
 
