@@ -72,14 +72,14 @@
             year = Number.parseInt(raw.substring(0, 2));
             month = Number.parseInt(raw.substring(2, 4));
             day = Number.parseInt(raw.substring(4, 6));
-        } else if (/^\d{1,2}\/\d{1,2}\/\d{2}(\d{2})?$/.test(raw)) {
-            // d(d)/m(m)/yy(yy)
+        } else if (/^\d{1,2}[/-]\d{1,2}[/-]\d{2}(\d{2})?$/.test(raw)) {
+            // d(d)/m(m)/yy(yy), d(d)-m(m)-yy(yy)
             const dateSpl = raw.split(/[/.,-]/);
             day = Number.parseInt(dateSpl[0]);
             month = Number.parseInt(dateSpl[1]);
             year = dateSpl[2].length === 4 ? Number.parseInt(dateSpl[2]) : 2000 + Number.parseInt(dateSpl[2]);
-        } else if (/^\d{1,2}\/\d{1,2}$/.test(raw)) {
-            // d(d)/m(m)
+        } else if (/^\d{1,2}[/-]\d{1,2}$/.test(raw)) {
+            // d(d)/m(m), d(d)-m(m)
             const dateSpl = raw.split(/[/.,-]/);
             day = Number.parseInt(dateSpl[0]);
             month = Number.parseInt(dateSpl[1]);
