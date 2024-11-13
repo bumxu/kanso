@@ -10,12 +10,14 @@
     type Props = {
         linkedEntity: EntryEntitySchema,
         focusNoteOnMount: boolean,
-        onUnlinkEntity: EventHandler
+        onunlinkentity: EventHandler,
+        onchange?: () => void
     };
     let {
         linkedEntity,
         focusNoteOnMount,
-        onUnlinkEntity
+        onunlinkentity,
+        onchange
     }: Props = $props();
 
     //export let entryId: number;
@@ -63,6 +65,10 @@
         }
     });
 
+    function handleChangeNote() {
+        if (onchange) onchange();
+    }
+
 </script>
 
 <div class="x-entity" transition:slide={{duration: 120}}>
@@ -79,6 +85,7 @@
          spellcheck="false"
          bind:this={domNoteInput}
          bind:textContent={linkedEntity.note}
+         oninput={handleChangeNote}
          onclick={ev=>{ev.stopPropagation();ev.preventDefault()}}></div>
     {#if appStore.ctrlKeyPressed}
         <div class="x-side">
@@ -90,7 +97,7 @@
             <!--                    onclick={handleClickEdit}></button>-->
             <button class="far fa-fw fa-sm fa-trash x-btn-delete"
                     aria-label="Quitar" title="Quitar"
-                    onclick={(ev) => {ev.stopPropagation();ev.preventDefault();onUnlinkEntity();}}></button>
+                    onclick={(ev) => {ev.stopPropagation();ev.preventDefault();onunlinkentity();}}></button>
         </div>
     {/if}
 </div>

@@ -150,17 +150,21 @@
     //     }
     // }
 
+    function handleChange() {
+        console.log('Entry changed');
+    }
+
 </script>
 
 <div class="x-row" class:faded={hasFinalStatus}>
     <div class="x-cell">
-        <JEntryDateSince entry={entry} />
+        <JEntryDateSince {entry} onchange={handleChange} />
     </div>
     <div class="x-cell">
-        <JEntryTopic entryId={entry.id} bind:value={entry.subject} bind:this={svTopic} />
+        <JEntryTopic {entry} onchange={handleChange} bind:this={svTopic} />
     </div>
     <div class="x-cell">
-        <JEntryUpdates entryId={entry.id} bind:updates={entry.updates} />
+        <JEntryUpdates {entry} onchange={handleChange} />
     </div>
     <div class="x-cell">
         <JEntryEntities entryId={entry.id} bind:entities={entry.entities} />

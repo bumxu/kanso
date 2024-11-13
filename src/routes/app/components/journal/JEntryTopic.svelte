@@ -1,57 +1,35 @@
 <script lang="ts">
     import SimpleBar from '$lib/components/SimpleBar.svelte';
-    import { tick } from 'svelte';
+    import type { EntrySchema } from '$lib/types/j4_types';
 
     type Props = {
-        entryId: string;
-        value: string;
+        /** La entrada del diario. */
+        entry: EntrySchema,
+        /** Un listener que se ejecutará cuando se modifique el campo. Opcional. */
+        onchange?: () => void,
     }
-    let { value = $bindable(), entryId }: Props = $props();
+    let { entry, onchange }: Props = $props();
 
-    let inputValue: string = $state(value);
+    /** Indica si el campo de entrada tiene el foco. */
     let hasFocus: boolean = $state(false);
-
+    /** DOM del campo de entrada. */
     let domTopicCe: HTMLDivElement;
 
+    // Edición diferida (desactivado)
+    //let inputValue: string = $state(entry.subject);
     // $effect(() => {
     //     //inputValue = value;
     // });
 
-    export function focus() {
-        domTopicCe.focus();
-    }
+    export function focus() { domTopicCe.focus(); }
 
-    function handleInputBlur() {
-        hasFocus = false;
-        //applyInputValue();
-        //domTopicCe.innerHTML = domTopicCe.textContent;
-    }
+    function handleFocusInput() { hasFocus = true; }
+    function handleBlurInput() { hasFocus = false; }
 
-    function applyInputValue() {
-        //console.debug(inputValue);
-        // if (inputValue !== value) {
-        //     // Remove html
-        //     //inputValue = inputValue.replace(/<[^>]*>?/gm, '');
-        //     value = inputValue;
-        //     console.log(`Modificación del asunto de la entrada #${entryId} consolidada -> "` + value + '"');
-        // }
-    }
+    function handleChange() { if (onchange) onchange(); }
 
-    function handleInputKeydown(ev: KeyboardEvent) {
-        //     if (ev.key === 'Enter' && !ev.shiftKey) {
-        //         ev.preventDefault();
-        //         ev.stopPropagation();
-        //         domTopicCe.blur();
-        //     } else if (ev.key === 'Escape') {
-        //         if (inputValue !== value) {
-        //             inputValue = value;
-        //             domTopicCe.blur();
-        //             console.log(`Modificación del asunto de la entrada #${entryId} cancelada -> "` + value + '"');
-        //         }
-        //     }
-    }
-
-    function handleInputPaste(ev: ClipboardEvent) {
+    /** Limpia el formato cuando se pega texto en la entrada. */
+    function handlePasteInput(ev: ClipboardEvent) {
         ev.preventDefault();
         document.execCommand('insertText', false, ev.clipboardData?.getData('text/plain'));
     }
@@ -61,10 +39,13 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div class="x-cell-content" class:focused={hasFocus} role="none" onclick={()=>domTopicCe.focus()}>
     <SimpleBar tabindex="-1">
-        <div class="x-text-input" contenteditable="true" bind:textContent={value}
-             spellcheck="false" role="textbox" tabindex="0" bind:this={domTopicCe}
-             onfocus={() => hasFocus = true} onblur={handleInputBlur} onpaste={handleInputPaste}
-             onkeydown={handleInputKeydown}></div>
+        <div class="x-text-input" contenteditable="true" bind:textContent={entry.subject}
+             spellcheck="false" role="textbox" tabindex="0"
+             bind:this={domTopicCe}
+             onfocus={handleFocusInput}
+             onblur={handleBlurInput}
+             onpaste={handlePasteInput}
+             oninput={handleChange}></div>
     </SimpleBar>
 </div>
 

@@ -11,8 +11,9 @@
     type Props = {
         entryId: number;
         entities: EntryEntitySchema[];
+        onchange?: () => void;
     }
-    let { entryId, entities = $bindable() }: Props = $props();
+    let { entryId, entities = $bindable(), onchange }: Props = $props();
 
     let domInput: HTMLSpanElement;
     let focused = $state(false);
@@ -114,6 +115,11 @@
         });
         //     tagMatchesVisible = true;
         // }
+
+        tick().then(() => {
+            if (onchange) onchange();
+        });
+
         return id;
     }
 
@@ -130,6 +136,7 @@
     function handleUnlink(entity: EntitySchema) {
         console.log('Unlinking entity -> ', entity);
         entities = entities.filter(e => e.id !== entity.id);
+        if (onchange) onchange();
     }
 
     function display(item: EntitySchema): string {
@@ -153,7 +160,7 @@
     <SimpleBar>
         <div class="x-entities">
             {#each entities as entity}
-                <JEntryEntity entryId={entryId} linkedEntity={entity} onUnlinkEntity={()=>handleUnlink(entity)} focusNoteOnMount={itemToFocusOnMount === entity.id} />
+                <JEntryEntity entryId={entryId} linkedEntity={entity} onunlinkentity={()=>handleUnlink(entity)} focusNoteOnMount={itemToFocusOnMount === entity.id} />
             {/each}
             <input type="text" class="x-entity x-new"
                    bind:value={entityInput}

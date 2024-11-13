@@ -1,29 +1,34 @@
 <script lang="ts">
     import SimpleBar from '$lib/components/SimpleBar.svelte';
-    import JEntryUpdate from './JEntryUpdate.svelte';
     import { journalStore } from '$lib/stores/journal.store.j4.svelte.js';
-    import type { EntryUpdatesSchema } from '$lib/types/j4_types';
+    import type { EntrySchema, EntryUpdatesSchema } from '$lib/types/j4_types';
     import { type SvelteComponent, tick } from 'svelte';
+    import JEntryUpdate from './JEntryUpdate.svelte';
 
-    type Props = { entryId: string, updates: EntryUpdatesSchema };
-    let { entryId, updates = $bindable() }: Props = $props();
+    type Props = {
+        entry: EntrySchema,
+        onchange?: () => void
+    };
+    let { entry, onchange }: Props = $props();
 
     // DOM
     let domItems: SvelteComponent[] = $state([]);
     $effect(() => {domItems = [];});
 
     async function add(position: number) {
-        journalStore.addUpdate(entryId, {}, position);
+        journalStore.addUpdate(entry.id, {}, position);
         await tick();
         domItems[position].focus();
     }
 
     function del(id: string) {
-        journalStore.delUpdate(entryId, id);
+        journalStore.delUpdate(entry.id, id);
     }
 
-    function handleCellClick(ev: MouseEvent) {
-        if (updates.data.length === 0) {
+    function handleChange() { if (onchange) onchange(); }
+
+    function handleClickCell(ev: MouseEvent) {
+        if (entry.updates.data.length === 0) {
             add(0);
         } else if (domItems.length > 0) {
             domItems[domItems.length - 1].focus();
@@ -31,20 +36,21 @@
     }
 
     function handleItemBlur() {
-        if (updates.data.length === 1 && !updates.data[0].body && !updates.data[0].date) {
-            del(updates.data[0].id);
+        if (entry.updates.data.length === 1 && !entry.updates.data[0].body && !entry.updates.data[0].date) {
+            del(entry.updates.data[0].id);
         }
     }
 </script>
 
-<div class="x-cell-content" role="none" onclick={handleCellClick}>
+<div class="x-cell-content" role="none" onclick={handleClickCell}>
     <SimpleBar tabindex="-1">
         <div class="x-inlay" onclick={() => add(0)}></div>
         <div class="x-updates">
-            {#each updates.data as update, i (update.id)}
-                <JEntryUpdate bind:value={updates.data[i]} ondelete={del}
+            {#each entry.updates.data as update, i (update.id)}
+                <JEntryUpdate bind:value={entry.updates.data[i]} ondelete={del}
                               bind:this={domItems[i]}
-                              onblur={handleItemBlur} />
+                              onblur={handleItemBlur}
+                              onchange={handleChange} />
                 <div class="x-inlay" onclick={() => add(i+1)}></div>
             {/each}
         </div>

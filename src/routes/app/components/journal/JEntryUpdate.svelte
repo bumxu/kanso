@@ -6,8 +6,14 @@
     import { appStore } from '../../appstate.store.svelte.js';
     import JEntryUpdateDatetime from './JEntryUpdateDatetime.svelte';
 
-    type Props = { value: EntryUpdateSchema; ondelete?: (id: string) => any; onfocus?: () => any; onblur?: () => any; };
-    let { value = $bindable(), ondelete, onfocus, onblur }: Props = $props();
+    type Props = {
+        value: EntryUpdateSchema;
+        ondelete?: (id: string) => any;
+        onchange?: () => any;
+        onfocus?: () => any;
+        onblur?: () => any;
+    };
+    let { value = $bindable(), onchange, ondelete, onfocus, onblur }: Props = $props();
 
     // Estados
     /** Indica que el registro es nuevo (valor automático si no tiene id asignado). */
@@ -99,6 +105,7 @@
             <JEntryUpdateDatetime
                     bind:value={value.date}
                     bind:domInput={domDateInput}
+                    {onchange}
                     onfocus={handleDateInputFocus}
                     onblur={handleDateInputBlur} />
         {/if}
@@ -113,6 +120,7 @@
              bind:textContent={value.body}
              bind:this={domTextInput}
              spellcheck="false"
+             oninput={onchange}
              onfocus={handleTextInputFocus}
              onblur={handleTextInputBlur}
              onpaste={handleTextInputPaste}></div>
