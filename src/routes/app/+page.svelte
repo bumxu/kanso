@@ -153,8 +153,23 @@
             orderAsc = true;
         } else if (order === 'dateUpdated' && orderAsc) {
             orderAsc = false;
-        } else if (order === 'dateUpdated' && !orderAsc) {
+        } else {
             order = 'dateSince';
+            orderAsc = true;
+        }
+        console.log(`Reordenando por "${order}" (${orderAsc ? 'asc' : 'desc'})...`);
+    }
+
+    function handleOrderByPriority() {
+        if (order === 'priority' && orderAsc) {
+            orderAsc = false;
+        } else if (order === 'priority' && !orderAsc) {
+            order = 'dateDue';
+            orderAsc = true;
+        } else if (order === 'dateDue' && orderAsc) {
+            orderAsc = false;
+        } else {
+            order = 'priority';
             orderAsc = true;
         }
         console.log(`Reordenando por "${order}" (${orderAsc ? 'asc' : 'desc'})...`);
@@ -193,6 +208,21 @@
         });
     }
 
+    function handleClearAllFilters() {
+        appStore.persistent.qFilterTopic = '';
+        appStore.persistent.qFilterTopicActive = true;
+        appStore.persistent.qFilterUpdates = '';
+        appStore.persistent.qFilterUpdatesActive = true;
+        appStore.persistent.qFilterEntities = '';
+        appStore.persistent.qFilterEntitiesActive = true;
+        appStore.persistent.qFilterTags = '';
+        appStore.persistent.qFilterTagsActive = true;
+        appStore.persistent.qFilterPriority = '';
+        appStore.persistent.qFilterPriorityActive = true;
+        appStore.persistent.qFilterStatus = '';
+        appStore.persistent.qFilterStatusActive = true;
+    }
+
     function handleDuplicateEntry(entry: EntrySchema) {
         console.log('Duplicando registro...');
         const newEntry = journalStore.add({
@@ -201,7 +231,7 @@
             // entities: entry.entities,
             // updates: entry.updates,
             // tags: entry.tags,
-            priority: entry.priority,
+            priority: entry.priority
         });
         filteredView.push(newEntry);
 
@@ -260,13 +290,30 @@
                             {#if order === 'dateUpdated'}
                                 <i class="far fa-fw fa-xs fa-pen" style="opacity: 0.5"></i>
                             {/if}
-                            <i class="fas fa-fw" class:fa-caret-up={orderAsc} class:fa-caret-down={!orderAsc}></i>
+                            {#if order === 'dateSince' || order === 'dateUpdated'}
+                                <i class="fas fa-fw" class:fa-sort-up={orderAsc} class:fa-sort-down={!orderAsc}></i>
+                            {:else}
+                                <i class="fas fa-fw fa-sort opacity-30"></i>
+                            {/if}
                         </div>
                         <div class="x-cell"><span class="x-label">Asunto</span></div>
                         <div class="x-cell"><span class="x-label">Actualizaciones</span></div>
                         <div class="x-cell"><span class="x-label">Entidades</span></div>
                         <div class="x-cell"><span class="x-label">Tags</span></div>
-                        <div class="x-cell"><span class="x-label">Prioridad</span></div>
+                        <div class="x-cell flex items-center" onclick={handleOrderByPriority}>
+                            <span class="x-label flex-1">Prioridad</span>
+                            {#if order === 'priority'}
+                                <i class="fad fa-fw fa-xs fa-fire" style="opacity: 0.5"></i>
+                            {/if}
+                            {#if order === 'dateDue'}
+                                <i class="fad fa-fw fa-xs fa-flag-checkered" style="opacity: 0.5"></i>
+                            {/if}
+                            {#if order === 'priority' || order === 'dateDue'}
+                                <i class="fas fa-fw" class:fa-sort-up={orderAsc} class:fa-sort-down={!orderAsc}></i>
+                            {:else}
+                                <i class="fas fa-fw fa-sort opacity-30"></i>
+                            {/if}
+                        </div>
                         <div class="x-cell"><span class="x-label">Estado</span></div>
                         <div class="x-cell"><span class="x-label"><Ic iconclass="fas fa-fw fa-sm fa-ellipsis" /></span></div>
                     </div>
@@ -298,7 +345,11 @@
                             <JQuickFilter bind:value={appStore.persistent.qFilterStatus}
                                           bind:active={appStore.persistent.qFilterStatusActive} />
                         </div>
-                        <div class="x-cell"></div>
+                        <div class="x-cell flex">
+                            <Ic iconclass="fas fa-sm fa-delete-left" class="flex-1"
+                                label="Limpiar todos los filtros rápidos"
+                                onclick={handleClearAllFilters} />
+                        </div>
                     </div>
 
                 </div>

@@ -107,6 +107,26 @@ export function buildSortedView(entries: EntrySchema[], order: string, orderAsc:
     } else if (order === 'dateUpdated' && !orderAsc) {
         console.debug('Aplicando orden por "fecha de actualización" descendente...');
         entries.sort((a, b) => getDateUpdated(b).localeCompare(getDateUpdated(a)));
+    } else if (order === 'priority' && orderAsc) {
+        console.debug('Aplicando orden por "prioridad" ascendente...');
+        entries.sort((a, b) => {
+            const pa = a.priority ? (prioritiesStore.get(a.priority)?.name ?? '') : '';
+            const pb = b.priority ? (prioritiesStore.get(b.priority)?.name ?? '') : '';
+            return pa.localeCompare(pb);
+        });
+    } else if (order === 'priority' && !orderAsc) {
+        console.debug('Aplicando orden por "prioridad" descendente...');
+        entries.sort((a, b) => {
+            const pa = a.priority ? (prioritiesStore.get(a.priority)?.name ?? '') : '';
+            const pb = b.priority ? (prioritiesStore.get(b.priority)?.name ?? '') : '';
+            return pb.localeCompare(pa);
+        });
+    } else if (order === 'dateDue' && orderAsc) {
+        console.debug('Aplicando orden por "fecha de vencimiento" ascendente...');
+        entries.sort((a, b) => (a.dateDue || '999999999999').localeCompare(b.dateDue || '999999999999'));
+    } else if (order === 'dateDue' && !orderAsc) {
+        console.debug('Aplicando orden por "fecha de vencimiento" descendente...');
+        entries.sort((a, b) => (b.dateDue || '999999999999').localeCompare(a.dateDue || '999999999999'));
     }
 
     return entries;

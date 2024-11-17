@@ -56,18 +56,20 @@
         tagsIds = tagsIds.filter((tagId) => tagId !== tag.id);
     }
 
+    function handleChooseMatch(matchIndex: number) {
+        console.debug('handleChooseMatch', matchIndex);
+        const tag = matchIndex === -1
+            ? tagsStore.add({ name: tagInput })
+            : tagMatches[matchIndex].item;
+        link(tag);
+        tagInput = '';
+    }
+
     function handleKeyDown(e: KeyboardEvent) {
         if (e.key === 'Enter') {
             e.preventDefault();
             if (tagInput.length > 0) {
-                let tag;
-                if (tagMatchesSelectedIndex === -1) {
-                    tag = tagsStore.add({ name: tagInput });
-                } else {
-                    tag = tagMatches[tagMatchesSelectedIndex].item;
-                }
-                link(tag);
-                tagInput = '';
+                handleChooseMatch(tagMatchesSelectedIndex);
             }
         } else if (e.key === 'Tab') {
             if (tagInput.length > 0) {
@@ -153,10 +155,13 @@
             {#each tagMatches as tagMatch, i}
                 <span class="x-tag-match"
                       class:selected={tagMatchesSelectedIndex === i}
-                >{tagMatch.item.name}</span>
+                      onclick={() => handleChooseMatch(i)}>
+                    {tagMatch.item.name}
+                </span>
             {/each}
             <span class="x-tag-match"
-                  class:selected={tagMatchesSelectedIndex === -1}>
+                  class:selected={tagMatchesSelectedIndex === -1}
+                  onclick={() => handleChooseMatch(-1)}>
                 {tagInput} (nueva)
             </span>
         </div>
