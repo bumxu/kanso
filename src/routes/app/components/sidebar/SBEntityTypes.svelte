@@ -107,7 +107,7 @@
             <div class="x-id ff-mono">#{selected.id}</div>
 
             <label for="et_name">Nombre</label>
-            <input type="text" id="et_name" bind:value={selected.name}>
+            <input type="text" id="et_name" class="txinp" bind:value={selected.name}>
 
             <label for="et_displayfn">Display Function</label>
             <div class="x-tx-wrapper" class:invalid={!displayFnValid}>
@@ -134,7 +134,7 @@
             <!--            <input type="text" id="et_bgcolor" bind:value={selected.bgColor}>-->
 
             <label for="et_icon">Icono</label>
-            <input type="text" id="et_icon" placeholder="fax fa-xxx" bind:value={selected.icon}>
+            <input type="text" id="et_icon" class="txinp" placeholder="fax fa-xxx" bind:value={selected.icon}>
 
             <hr>
 

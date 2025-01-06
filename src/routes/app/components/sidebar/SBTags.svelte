@@ -65,7 +65,7 @@
             <div class="x-id ff-mono">#{selected.id}</div>
 
             <label for="tag_name">Nombre</label>
-            <input type="text" id="tag_name" bind:value={selected.name}>
+            <input type="text" id="tag_name" class="txinp" bind:value={selected.name}>
 
             <label for="tag_bgColor">Color</label>
             <input type="color" id="tag_bgColor" bind:value={selected.bgColor}>

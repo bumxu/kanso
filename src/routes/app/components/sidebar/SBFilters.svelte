@@ -80,7 +80,7 @@
             <div class="x-id ff-mono">#{selected.id}</div>
 
             <label for="et_filter">Descripción</label>
-            <input type="text" id="et_filter" bind:value={selected.desc}>
+            <input type="text" id="et_filter" class="txinp" bind:value={selected.desc}>
 
             <label for="et_filterfn">Filter Function</label>
             <!--            <textarea id="et_filterfn" wrap="off" bind:value={selected.filterFn}></textarea>-->

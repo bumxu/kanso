@@ -69,7 +69,7 @@
             <div class="x-id ff-mono">#{selected.id}</div>
 
             <label for="priority_name">Nombre</label>
-            <input type="text" id="priority_name" bind:value={selected.name}>
+            <input type="text" id="priority_name" class="txinp" bind:value={selected.name}>
         {:else}
             <div class="x-no-selection">
                 <i class="fas fa-fw fa-hand-back-point-up"></i> Seleccione un elemento para editar

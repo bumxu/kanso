@@ -72,7 +72,7 @@
             <div class="x-id ff-mono">#{selected.id}</div>
 
             <label for="status_name">Nombre</label>
-            <input type="text" id="status_name" bind:value={selected.name}>
+            <input type="text" id="status_name" class="txinp" bind:value={selected.name}>
 
             <label for="status_final">Final</label>
             <input type="checkbox" id="status_final" bind:checked={selected.final}>
