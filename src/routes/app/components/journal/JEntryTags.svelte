@@ -113,7 +113,6 @@
         ev.stopPropagation();
         unlink(tag);
     }
-
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -133,11 +132,11 @@
             </span>
             {/each}
 
-            {#if focused || tagInput.length > 0}
             <span class="x-tag x-new"
                   role="textbox"
                   contenteditable="true"
                   tabindex="0"
+                  class:hidden={!focused && tagInput.length === 0}
                   transition:fade={{duration: 120}}
                   bind:this={domInput}
                   bind:textContent={tagInput}
@@ -146,7 +145,6 @@
                   onblur={handleBlur}
                   onkeydown={handleKeyDown}
             ></span>
-            {/if}
         </div>
     </SimpleBar>
 
@@ -220,7 +218,9 @@
         }
 
         &.hidden {
-            display: none;
+            opacity: 0;
+            width: 0;
+            height: 0;
         }
     }
 
