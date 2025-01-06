@@ -2,6 +2,7 @@
     import Button from '$lib/components/Button.svelte';
     import Codemirror from '$lib/components/Codemirror.svelte';
     import Ic from '$lib/components/Ic.svelte';
+    import { includes } from '$lib/helpers/runtime.helper.js';
     import { entitiesStore } from '$lib/stores/entities.store.j4.svelte.js';
     import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte.js';
     import type { EntitiesSchema, EntitySchema, EntityTypeSchema, ETypeDisplayFn } from '$lib/types/j4_types';
@@ -22,7 +23,7 @@
             }
             return a.type != null ? a.type.localeCompare(b.type) : 1;
         });
-        const filtered = sorted.filter((entity) => display(entity).toLowerCase().includes(filterValue.toLowerCase()));
+        const filtered = sorted.filter((entity) => includes(display(entity), filterValue));
         return filtered;
     });
 

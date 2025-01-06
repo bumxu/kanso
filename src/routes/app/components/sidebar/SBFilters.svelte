@@ -1,6 +1,8 @@
 <script lang="ts">
     import Button from '$lib/components/Button.svelte';
     import Codemirror from '$lib/components/Codemirror.svelte';
+    import Ic from '$lib/components/Ic.svelte';
+    import { includes } from '$lib/helpers/runtime.helper.js';
     import { filtersStore } from '$lib/stores/filters.store.j4.svelte.js';
     import type { BasicFilterSchema, BasicFiltersSchema } from '$lib/types/j4_types';
 
@@ -9,6 +11,13 @@
     }
 
     let { basicFilters = $bindable() }: Props = $props();
+
+    let filterValue = $state('');
+    let view = $derived.by(() => {
+        const sorted = Object.values(basicFilters).sort((a, b) => a.desc.localeCompare(b.desc));
+        const filtered = sorted.filter((basicFilter) => includes(basicFilter.desc, filterValue));
+        return filtered;
+    });
 
     let selected: BasicFilterSchema | undefined = $state();
 
@@ -36,6 +45,10 @@
         });
         selected = basicFilter;
     }
+
+    function handleClearFilter() {
+        filterValue = '';
+    }
 </script>
 
 <div class="x-sb-section">
@@ -46,10 +59,15 @@
 
     <div class="x-bar">
         <Button icon="fas fa-fw fa-plus" onclick={add}>Nuevo</Button>
+        <div class="flex-1"></div>
+        <input class="txinp x-search" type="text" placeholder="Filtrar..." bind:value={filterValue} />
+        <Ic iconclass="fad fa-sm fa-delete-left ms-4 me-2"
+            label="Limpiar"
+            onclick={handleClearFilter} />
     </div>
 
     <ul class="x-list">
-        {#each Object.values(basicFilters) as basicFilter, i (basicFilter.id)}
+        {#each Object.values(view) as basicFilter, i (basicFilter.id)}
             <li class="x-list-item">
                 <input type="checkbox" id="basicFilter_{basicFilter.id}" bind:checked={basicFilter.active}>
                 <button class="x-item" onclick={() => handleSelectItem(basicFilter)}>{basicFilter.desc}</button>

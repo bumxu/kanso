@@ -1,6 +1,7 @@
 <script lang="ts">
     import Codemirror from '$lib/components/Codemirror.svelte';
     import Ic from '$lib/components/Ic.svelte';
+    import { includes } from '$lib/helpers/runtime.helper';
     import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte.js';
     import type { EntityTypeSchema, EntityTypesSchema } from '$lib/types/j4_types';
     import Button from '$lib/components/Button.svelte';
@@ -16,7 +17,7 @@
         const sorted = Object.values(entityTypes).sort((a, b) => {
             return a.name.localeCompare(b.name);
         });
-        const filtered = sorted.filter((entityType) => entityType.name.toLowerCase().includes(filterValue.toLowerCase()));
+        const filtered = sorted.filter((entityType) => includes(entityType.name, filterValue));
         return filtered;
     });
 

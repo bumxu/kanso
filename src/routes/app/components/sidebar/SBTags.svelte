@@ -1,5 +1,6 @@
 <script lang="ts">
     import Ic from '$lib/components/Ic.svelte';
+    import { includes } from '$lib/helpers/runtime.helper.js';
     import { tagsStore } from '$lib/stores/tags.store.j4.svelte.js';
     import type { TagSchema, TagsSchema } from '$lib/types/j4_types';
     import { onMount } from 'svelte';
@@ -13,7 +14,7 @@
     let filterValue = $state('');
     let view: TagSchema[] = $derived.by(() => {
         const sorted = Object.values(tags).sort((a, b) => a.name.localeCompare(b.name));
-        const filtered = sorted.filter((tag) => tag.name.toLowerCase().includes(filterValue.toLowerCase()));
+        const filtered = sorted.filter((tag) => includes(tag.name, filterValue));
         return filtered;
     });
 

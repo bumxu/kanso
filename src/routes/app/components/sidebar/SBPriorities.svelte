@@ -1,5 +1,7 @@
 <script lang="ts">
     import Button from '$lib/components/Button.svelte';
+    import Ic from '$lib/components/Ic.svelte';
+    import { includes } from '$lib/helpers/runtime.helper.js';
     import { prioritiesStore } from '$lib/stores/priorities.store.j4.svelte.js';
     import type { PrioritiesSchema, PrioritySchema } from '$lib/types/j4_types';
 
@@ -9,8 +11,11 @@
 
     let { priorities = $bindable() }: Props = $props();
 
-    let orderedPriorities: PrioritySchema[] = $derived.by(() => {
-        return Object.values(priorities).sort((a, b) => a.name.localeCompare(b.name));
+    let filterValue = $state('');
+    let view: PrioritySchema[] = $derived.by(() => {
+        const sorted = Object.values(priorities).sort((a, b) => a.name.localeCompare(b.name));
+        const filtered = sorted.filter((priority) => includes(priority.name, filterValue));
+        return filtered;
     });
 
     let selected: PrioritySchema | undefined = $state();
@@ -28,6 +33,9 @@
         prioritiesStore.add(priority);
     }
 
+    function handleClearFilter() {
+        filterValue = '';
+    }
 </script>
 
 <div class="x-sb-section">
@@ -38,10 +46,15 @@
 
     <div class="x-bar">
         <Button icon="fas fa-fw fa-plus" onclick={add}>Nuevo</Button>
+        <div class="flex-1"></div>
+        <input class="txinp x-search" type="text" placeholder="Filtrar..." bind:value={filterValue} />
+        <Ic iconclass="fad fa-sm fa-delete-left ms-4 me-2"
+            label="Limpiar"
+            onclick={handleClearFilter} />
     </div>
 
     <ul class="x-list">
-        {#each orderedPriorities as priority, i (priority.id)}
+        {#each view as priority, i (priority.id)}
             <li class="x-list-item">
                 <button onclick={() => handleSelectItem(priority)}>
                     <i class="fas fa-fw fa-2xs fa-fire"></i>{priority.name}

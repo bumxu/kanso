@@ -1,5 +1,6 @@
 <script lang="ts">
     import Button from '$lib/components/Button.svelte';
+    import Ic from '$lib/components/Ic.svelte';
     import { statusesStore } from '$lib/stores/statuses.store.j4.svelte.js';
     import type { StatusSchema, StatusesSchema, EntitySchema } from '$lib/types/j4_types';
     import { nanoid } from 'nanoid';
@@ -11,8 +12,11 @@
 
     let { statuses = $bindable() }: Props = $props();
 
-    let orderedStatuses: StatusSchema[] = $derived.by(() => {
-        return Object.values(statuses).sort((a, b) => a.name.localeCompare(b.name));
+    let filterValue = $state('');
+    let view: StatusSchema[] = $derived.by(() => {
+        const sorted = Object.values(statuses).sort((a, b) => a.name.localeCompare(b.name));
+        const filtered = sorted.filter((status) => status.name.toLowerCase().includes(filterValue.toLowerCase()));
+        return filtered;
     });
 
     let selected: StatusSchema | undefined = $state();
@@ -29,6 +33,10 @@
         });
     }
 
+    function handleClearFilter() {
+        filterValue = '';
+    }
+
 </script>
 
 <div class="x-sb-section">
@@ -39,10 +47,15 @@
 
     <div class="x-bar">
         <Button icon="fas fa-fw fa-plus" onclick={add}>Nuevo</Button>
+        <div class="flex-1"></div>
+        <input class="txinp x-search" type="text" placeholder="Filtrar..." bind:value={filterValue} />
+        <Ic iconclass="fad fa-sm fa-delete-left ms-4 me-2"
+            label="Limpiar"
+            onclick={handleClearFilter} />
     </div>
 
     <ul class="x-list">
-        {#each orderedStatuses as status, i (status.id)}
+        {#each view as status, i (status.id)}
             <li class="x-list-item">
                 <button class="x-item cursor-pointer"
                         title="Eliminar"
