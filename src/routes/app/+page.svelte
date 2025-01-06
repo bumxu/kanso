@@ -13,7 +13,7 @@
     import { tagsStore } from '$lib/stores/tags.store.j4.svelte';
     import type { EntrySchema } from '$lib/types/j4_types';
     import { DateTime } from 'luxon';
-    import { onMount, tick } from 'svelte';
+    import { onDestroy, onMount, tick } from 'svelte';
     import { flip } from 'svelte/animate';
     import { appStore } from './appstate.store.svelte';
     import JEntry from './components/journal/JEntry.svelte';
@@ -57,6 +57,14 @@
     onMount(async () => {
         console.log('Iniciando Kanso...');
         // storeManager.loadFromLS();
+    });
+
+    onDestroy(() => {
+        console.log('Deteniendo Kanso...');
+        try {
+            clearInterval(autosaveInterval);
+        } catch (e) {
+        }
     });
 
     function applyFilters() {
@@ -195,6 +203,28 @@
         storeManager.saveToFileHandler();
     }
 
+    let autosaveEnabled = $state(false);
+    let autosaveInterval: number | null = null;
+    function toggleAutosave() {
+        if (!autosaveEnabled) {
+            if (!storeManager.isFileHandled) {
+                alert('No se ha abierto o seleccionado ningún archivo de datos local.');
+                return;
+            }
+            storeManager.saveToLS();
+            autosaveEnabled = true;
+            autosaveInterval = setInterval(() => {
+                storeManager.saveToFileHandler();
+            }, 60000) as unknown as number;
+        } else {
+            autosaveEnabled = false;
+            if (autosaveInterval) {
+                clearInterval(autosaveInterval);
+            }
+            autosaveInterval = null;
+        }
+    }
+
     function handleShowEntryContextMenu(ev: MouseEvent, entry: EntrySchema) {
         ev.stopPropagation();
         entryCtxMenuVisible = true;
@@ -267,9 +297,13 @@
             <Button icon="fas fa-download" onclick={saveToDownload}>Descargar</Button>
             <Button icon="fas fa-folder-open" onclick={loadFromFileHandler}>
                 Usar archivo local
-                {#if storeManager.isFileHandled}&nbsp;&nbsp;<i class="fas fa-check"></i>{/if}
+                {#if storeManager.isFileHandled}&nbsp;&nbsp;<i class="fas fa-check" style="color: #4ca67b"></i>{/if}
             </Button>
             <Button icon="fas fa-save" onclick={saveToFileHandler}>Guardar a local</Button>
+            <Button icon="fas fa-robot" onclick={toggleAutosave}>
+                Autoguardado
+                <i class="fas" class:fa-toggle-off={!autosaveEnabled} class:fa-toggle-on={autosaveEnabled} style:color={autosaveEnabled ? '#4ca67b' : null}></i>
+            </Button>
         </div>
         <div class="flex">
             <Button icon="fas fa-circle-plus" onclick={add}>Añadir</Button>

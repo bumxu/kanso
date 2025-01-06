@@ -139,6 +139,7 @@ class J4Store {
 
     public async saveToFileHandler() {
         if (this.fileHandle !== null) {
+            console.log('Guardando datos en archivo local...');
             const raw = this.save();
             const writable = await this.fileHandle.createWritable();
             await writable.write(JSON.stringify(raw));
