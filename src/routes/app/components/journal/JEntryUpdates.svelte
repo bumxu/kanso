@@ -12,8 +12,8 @@
     let { entry, onchange }: Props = $props();
 
     // DOM
-    let domItems: SvelteComponent[] = $state([]);
-    $effect(() => {domItems = [];});
+    let domItems: SvelteComponent[] = [];
+    let domUpdates: HTMLDivElement;
 
     async function add(position: number) {
         journalStore.addUpdate(entry.id, {}, position);
@@ -28,9 +28,10 @@
     function handleChange() { if (onchange) onchange(); }
 
     function handleClickCell(ev: MouseEvent) {
+        console.debug('handleClickCell', ev.target, ev.currentTarget);
         if (entry.updates.data.length === 0) {
             add(0);
-        } else if (domItems.length > 0) {
+        } else if (domItems.length > 0 && !domUpdates.contains(ev.target as Node)) {
             domItems[domItems.length - 1].focus();
         }
     }
@@ -45,7 +46,7 @@
 <div class="x-cell-content" role="none" onclick={handleClickCell}>
     <SimpleBar tabindex="-1">
         <div class="x-inlay" onclick={() => add(0)}></div>
-        <div class="x-updates">
+        <div class="x-updates" bind:this={domUpdates}>
             {#each entry.updates.data as update, i (update.id)}
                 <JEntryUpdate bind:value={entry.updates.data[i]} ondelete={del}
                               bind:this={domItems[i]}
