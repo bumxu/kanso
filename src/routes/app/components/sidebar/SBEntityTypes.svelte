@@ -1,5 +1,6 @@
 <script lang="ts">
     import Codemirror from '$lib/components/Codemirror.svelte';
+    import Ic from '$lib/components/Ic.svelte';
     import { entityTypesStore } from '$lib/stores/entitytypes.store.j4.svelte.js';
     import type { EntityTypeSchema, EntityTypesSchema } from '$lib/types/j4_types';
     import Button from '$lib/components/Button.svelte';
@@ -10,10 +11,13 @@
 
     let { entityTypes = $bindable() }: Props = $props();
 
+    let filterValue = $state('');
     let view = $derived.by(() => {
-        return Object.values(entityTypes).sort((a, b) => {
+        const sorted = Object.values(entityTypes).sort((a, b) => {
             return a.name.localeCompare(b.name);
         });
+        const filtered = sorted.filter((entityType) => entityType.name.toLowerCase().includes(filterValue.toLowerCase()));
+        return filtered;
     });
 
     let selected: EntityTypeSchema | undefined = $state();
@@ -66,6 +70,10 @@
 
         selected = entityType;
     }
+
+    function handleClearFilter() {
+        filterValue = '';
+    }
 </script>
 
 <div class="x-sb-section">
@@ -76,6 +84,11 @@
 
     <div class="x-bar">
         <Button icon="fas fa-fw fa-plus" onclick={add}>Nuevo</Button>
+        <div class="flex-1"></div>
+        <input class="txinp x-search" type="text" placeholder="Filtrar..." bind:value={filterValue} />
+        <Ic iconclass="fad fa-sm fa-delete-left ms-4 me-2"
+            label="Limpiar"
+            onclick={handleClearFilter} />
     </div>
 
     <ul class="x-list">

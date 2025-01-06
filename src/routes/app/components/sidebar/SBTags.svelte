@@ -10,8 +10,11 @@
 
     let { tags = $bindable() }: Props = $props();
 
-    let orderedTags: TagSchema[] = $derived.by(() => {
-        return Object.values(tags).sort((a, b) => a.name.localeCompare(b.name));
+    let filterValue = $state('');
+    let view: TagSchema[] = $derived.by(() => {
+        const sorted = Object.values(tags).sort((a, b) => a.name.localeCompare(b.name));
+        const filtered = sorted.filter((tag) => tag.name.toLowerCase().includes(filterValue.toLowerCase()));
+        return filtered;
     });
 
     let selected: TagSchema | undefined = $state();
@@ -21,6 +24,9 @@
         console.debug('Selected tag -> ' + tag.id);
     }
 
+    function handleClearFilter() {
+        filterValue = '';
+    }
 </script>
 
 <div class="x-sb-section">
@@ -29,8 +35,19 @@
         Etiquetas
     </div>
 
+    <div class="x-bar">
+        <!--        <button onclick={tagsStore.add}>-->
+        <!--            <i class="fad fa-fw fa-plus"></i> Nueva-->
+        <!--        </button>-->
+        <div class="flex-1"></div>
+        <input class="txinp x-search" type="text" placeholder="Filtrar..." bind:value={filterValue} />
+        <Ic iconclass="fad fa-sm fa-delete-left ms-4 me-2"
+            label="Limpiar"
+            onclick={handleClearFilter} />
+    </div>
+
     <ul class="x-list">
-        {#each orderedTags as tag, i (tag.id)}
+        {#each view as tag, i (tag.id)}
             <li class="x-list-item">
                 <button onclick={() => handleSelectItem(tag)}>
                     <i class="fad fa-fw fa-2xs fa-tag"></i>{tag.name}
@@ -69,5 +86,9 @@
         border-bottom: 1px solid rgba(#000, 0.2);
         padding: 2px;
         display: flex;
+
+        .x-search {
+            width: 180px;
+        }
     }
 </style>

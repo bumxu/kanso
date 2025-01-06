@@ -12,8 +12,9 @@
 
     let { entities = $bindable() }: Props = $props();
 
+    let filterValue = $state('');
     let view = $derived.by(() => {
-        return Object.values(entities).sort((a, b) => {
+        const sorted = Object.values(entities).sort((a, b) => {
             if (a.type === b.type) {
                 const adp = display(a);
                 const bdp = display(b);
@@ -21,6 +22,8 @@
             }
             return a.type != null ? a.type.localeCompare(b.type) : 1;
         });
+        const filtered = sorted.filter((entity) => display(entity).toLowerCase().includes(filterValue.toLowerCase()));
+        return filtered;
     });
 
     let selected: EntitySchema | null = $state(null);
@@ -67,6 +70,10 @@
         if (ev) ev.stopPropagation();
         entitiesStore.delete(id);
     }
+
+    function handleClearFilter() {
+        filterValue = '';
+    }
 </script>
 
 <div class="x-sb-section">
@@ -77,6 +84,11 @@
 
     <div class="x-bar">
         <Button icon="fas fa-fw fa-plus" onclick={add}>Nuevo</Button>
+        <div class="flex-1"></div>
+        <input class="txinp x-search" type="text" placeholder="Filtrar..." bind:value={filterValue} />
+        <Ic iconclass="fad fa-sm fa-delete-left ms-4 me-2"
+            label="Limpiar"
+            onclick={handleClearFilter} />
     </div>
 
     <ul class="x-list">
@@ -124,6 +136,10 @@
         border-bottom: 1px solid rgba(#000, 0.2);
         padding: 2px;
         display: flex;
+
+        .x-search {
+            width: 180px;
+        }
     }
 
     .x-tx-wrapper {
