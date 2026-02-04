@@ -67,6 +67,9 @@
             <label for="tag_name">Nombre</label>
             <input type="text" id="tag_name" class="txinp" bind:value={selected.name}>
 
+            <label for="priority">Prioridad</label>
+            <input type="number" id="priority" class="txinp" bind:value={selected.priority}>
+
             <label for="tag_bgColor">Color</label>
             <input type="color" id="tag_bgColor" bind:value={selected.bgColor}>
             <button onclick={() => selected.bgColor = ''}>Quitar</button>

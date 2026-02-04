@@ -75,7 +75,7 @@ export type EntitySchema = {
 
 // --- TAGS
 export type TagsSchema = { [id: string]: TagSchema }
-export type TagSchema = { id: string; name: string; bgColor?: string; color?: string }
+export type TagSchema = { id: string; name: string; priority?: number, bgColor?: string; color?: string }
 
 // --- STATUS
 export type StatusesSchema = { [id: string]: StatusSchema }

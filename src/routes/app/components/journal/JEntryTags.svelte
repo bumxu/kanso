@@ -22,7 +22,8 @@
     let tagMatchesVisible = $derived(focused && tagMatches.length > 0 && tagInput.trim().length > 0);
 
     let tags = $derived.by(() => {
-        return tagsIds.map((tagId: string) => tagsStore.getById(tagId) ?? { id: tagId, name: '#' + tagId + '?' });
+        return tagsIds.map((tagId: string) => tagsStore.getById(tagId) ?? { id: tagId, name: '#' + tagId + '?' })
+            .sort((a, b) => (b.priority ?? 1) - (a.priority ?? 1));
     });
 
     function handleFocus() { focused = true; }
