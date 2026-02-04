@@ -54,6 +54,7 @@ export type EntityTypeSchema = {
     icon?: string;
     lookupFn: string;
     displayFn: string
+    linkFn?: string;
     /**
      * A function that returns true if the given string syntax matches the entity type.
      * (str: string) => any | null
@@ -78,7 +79,7 @@ export type TagSchema = { id: string; name: string; bgColor?: string; color?: st
 
 // --- STATUS
 export type StatusesSchema = { [id: string]: StatusSchema }
-export type StatusSchema = { id: string, name: string, final: boolean }
+export type StatusSchema = { id: string, name: string, final: boolean, color?: string }
 
 // --- PRIORITIES
 export type PrioritiesSchema = { [id: string]: PrioritySchema }
@@ -103,3 +104,4 @@ export type SuggestionsSchema<T> = {
 }[];
 
 export type ETypeDisplayFn = (id: string, raw: any) => string;
+export type ETypeLinkFn = (entity: EntitySchema) => string;

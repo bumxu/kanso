@@ -53,6 +53,15 @@
         const displayFn = entityTypesStore.getDisplayFn(entityType);
         return displayFn(entity.id, entity.raw);
     });
+    let entityLink = $derived.by(() => {
+        if (entity == null || entityType == null) {
+            //console.debug('entityLink -> entity or entityType is null');
+            return '';
+        }
+        // console.debug('entityLink ->', entityType.linkFn);
+        const linkFn = entityTypesStore.getLinkFn(entityType);
+        return linkFn(entity);
+    });
 
     let domNoteInput: HTMLSpanElement;
     let focused = $state(false);
@@ -95,6 +104,13 @@
             <!--            <button class="fas fa-fw fa-sm fa-pen"-->
             <!--                    aria-label="Editar" title="Editar"-->
             <!--                    onclick={handleClickEdit}></button>-->
+            {#if entityLink}
+            <a class="fas fa-fw fa-sm fa-link x-btn-delete"
+               aria-label="Ir a" title="Ir a"
+               href={entityLink}
+               target="_blank"
+               rel="noopener noreferrer"></a>
+            {/if}
             <button class="far fa-fw fa-sm fa-trash x-btn-delete"
                     aria-label="Quitar" title="Quitar"
                     onclick={(ev) => {ev.stopPropagation();ev.preventDefault();onunlinkentity();}}></button>
@@ -159,7 +175,8 @@
     }
 
     .x-btn-delete {
-        color: #aaa
+        color: #aaa;
+        text-decoration: none;
     }
     .x-btn-delete:hover {
         color: var(--color-icon-hover);

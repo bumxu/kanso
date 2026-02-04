@@ -1,4 +1,4 @@
-import type { EntityTypeSchema, EntityTypesSchema, EntityTypesStoreSchema, ETypeDisplayFn } from '$lib/types/j4_types';
+import type { EntitySchema, EntityTypeSchema, EntityTypesSchema, EntityTypesStoreSchema, ETypeDisplayFn, ETypeLinkFn } from '$lib/types/j4_types';
 
 class EntityTypesStoreJ4Svelte {
     private _store: EntityTypesStoreSchema = $state({ data: {} });
@@ -26,8 +26,8 @@ class EntityTypesStoreJ4Svelte {
         return this.entityTypes[entity.id];
     }
 
-    public getDisplayFn(id: string): ETypeDisplayFn  ;
-    public getDisplayFn(etype: EntityTypeSchema): ETypeDisplayFn  ;
+    public getDisplayFn(id: string): ETypeDisplayFn;
+    public getDisplayFn(etype: EntityTypeSchema): ETypeDisplayFn;
     public getDisplayFn(arg: EntityTypeSchema | string): ETypeDisplayFn {
         const type = typeof arg === 'string' ? this.entityTypes[arg] : arg;
         const typeId = typeof arg === 'string' ? arg : type?.id;
@@ -51,6 +51,35 @@ class EntityTypesStoreJ4Svelte {
             } catch (e) {
                 console.warn('Error al ejecutar la displayFn del tipo de entidad "' + typeId + '" para la entidad "' + JSON.stringify(id) + '"', e);
                 return typeId + ':' + id + ' (er:EXC)';
+            }
+        };
+    }
+
+    public getLinkFn(id: string): ETypeLinkFn;
+    public getLinkFn(etype: EntityTypeSchema): ETypeLinkFn;
+    public getLinkFn(arg: EntityTypeSchema | string): ETypeLinkFn {
+        const type = typeof arg === 'string' ? this.entityTypes[arg] : arg;
+        const typeId = typeof arg === 'string' ? arg : type?.id;
+        if (typeId == null) {
+            // Id del tipo nulo
+            return (entity: EntitySchema) => '';
+        }
+        if (type == null) {
+            // Tipo desconocido
+            return (entity: EntitySchema) => '';
+        }
+        if (type.linkFn == null || type.linkFn === '') {
+            // No hay link function
+            return (entity: EntitySchema) => '';
+        }
+        const linkfn = new Function('return ' + type.linkFn)();
+        // Wrapper por si hay errores en al ejecutar la función
+        return (entity: EntitySchema) => {
+            try {
+                return linkfn(entity);
+            } catch (e) {
+                console.warn('Error al ejecutar la linkFn del tipo de entidad "' + typeId + '" para la entidad "' + JSON.stringify(entity.id) + '"', e);
+                return '';
             }
         };
     }

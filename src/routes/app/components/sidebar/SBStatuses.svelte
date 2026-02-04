@@ -77,6 +77,9 @@
             <label for="status_final">Final</label>
             <input type="checkbox" id="status_final" bind:checked={selected.final}>
 
+            <label for="tag_color">Color de texto</label>
+            <input type="color" id="tag_color" bind:value={selected.color}>
+            <button onclick={() => selected.color = ''}>Quitar</button>
         {:else}
             <div class="x-no-selection">
                 <i class="fas fa-fw fa-hand-back-point-up"></i> Seleccione un elemento para editar

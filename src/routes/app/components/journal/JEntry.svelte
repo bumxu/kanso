@@ -188,7 +188,7 @@
         <!--        <JPriorityCell bind:value={entry.priority} />-->
     </div>
     <div class="x-cell">
-        <select bind:value={entry.status} onchange={()=>handleStatusChange()}>
+        <select bind:value={entry.status} onchange={()=>handleStatusChange()} style:color={statusesStore.get(entry.status)?.color ?? 'inherit'}>
             <option value={undefined}></option>
             {#each Object.values(statusesStore.statuses) as status, i (status.id)}
                 <option value={status.id}>{status.name}</option>
