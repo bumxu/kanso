@@ -1,29 +1,29 @@
 <script lang="ts">
-    import { appStore } from '../../appstate.store.svelte';
-    import JEntryUpdates from './JEntryUpdates.svelte';
-    import JDateTime from '$lib/components/JDateTime.svelte';
-    import JEntryTags from './JEntryTags.svelte';
-    import { journalStore } from '$lib/stores/journal.store.j4.svelte';
-    import { prioritiesStore } from '$lib/stores/priorities.store.j4.svelte.js';
-    import { statusesStore } from '$lib/stores/statuses.store.j4.svelte.js';
-    import type { EntrySchema } from '$lib/types/j4_types';
-    import { DateTime } from 'luxon';
-    import { type Component, onMount, type SvelteComponent, tick } from 'svelte';
-    import tippy from 'tippy.js';
-    import JEntryDateSince from './JEntryDateSince.svelte';
-    import JEntryEntities from './JEntryEntities.svelte';
-    import JEntryTopic from './JEntryTopic.svelte';
+    import { appStore } from "../../appstate.store.svelte";
+    import JEntryUpdates from "./JEntryUpdates.svelte";
+    import JDateTime from "$lib/components/JDateTime.svelte";
+    import JEntryTags from "./JEntryTags.svelte";
+    import { journalStore } from "$lib/stores/journal.store.j4.svelte";
+    import { prioritiesStore } from "$lib/stores/priorities.store.j4.svelte.js";
+    import { statusesStore } from "$lib/stores/statuses.store.j4.svelte.js";
+    import type { EntrySchema } from "$lib/types/j4_types";
+    import { DateTime } from "luxon";
+    import { type Component, onMount, type SvelteComponent, tick } from "svelte";
+    import tippy from "tippy.js";
+    import JEntryDateSince from "./JEntryDateSince.svelte";
+    import JEntryEntities from "./JEntryEntities.svelte";
+    import JEntryTopic from "./JEntryTopic.svelte";
     //import { slide, crossfade } from 'svelte/transition';
 
     //const [send, receive] = crossfade({ fallback: slide });
 
     type Props = {
-        entry: EntrySchema,
-        partitionId: string,
-        autofocus?: boolean,
-        onpartitionchange: (entry: EntrySchema, currPartId: string) => void,
-        ondelete: () => void,
-        onshowctxmenu: (ev: MouseEvent, entry: EntrySchema) => void
+        entry: EntrySchema;
+        partitionId: string;
+        autofocus?: boolean;
+        onpartitionchange: (entry: EntrySchema, currPartId: string) => void;
+        ondelete: () => void;
+        onshowctxmenu: (ev: MouseEvent, entry: EntrySchema) => void;
     };
     const { entry = $bindable(), partitionId, onpartitionchange, ondelete, autofocus, onshowctxmenu }: Props = $props();
 
@@ -64,11 +64,20 @@
         tippy(domIdIcon);
     });
 
-    let hasFinalStatus = $derived.by(() => {
+    let hasMutedStatus = $derived.by(() => {
         const id = entry.status;
         if (id != null) {
             const status = statusesStore.get(id);
-            return status != null && status.final;
+            return status != null && status.muted;
+        }
+        return false;
+    });
+
+    let hasBlurredStatus = $derived.by(() => {
+        const id = entry.status;
+        if (id != null) {
+            const status = statusesStore.get(id);
+            return status != null && status.blurred;
         }
         return false;
     });
@@ -78,7 +87,7 @@
         if (id != null) {
             const status = statusesStore.get(id);
             if (status != null && !entry.dateClosed && status.final) {
-                entry.dateClosed = DateTime.local().toFormat('yyyyMMddHHmm');
+                entry.dateClosed = DateTime.local().toFormat("yyyyMMddHHmm");
             }
         }
     }
@@ -151,12 +160,11 @@
     // }
 
     function handleChange() {
-        console.log('Entry changed');
+        console.log("Entry changed");
     }
-
 </script>
 
-<div class="x-row" class:faded={hasFinalStatus}>
+<div class="x-row" class:muted={hasMutedStatus} class:blurred={hasBlurredStatus}>
     <div class="x-cell">
         <JEntryDateSince {entry} onchange={handleChange} />
     </div>
@@ -188,7 +196,12 @@
         <!--        <JPriorityCell bind:value={entry.priority} />-->
     </div>
     <div class="x-cell">
-        <select bind:value={entry.status} onchange={()=>handleStatusChange()} style:color={statusesStore.get(entry.status)?.color ?? 'inherit'}>
+        <select
+            class="x-select-status"
+            bind:value={entry.status}
+            onchange={() => handleStatusChange()}
+            style:color={statusesStore.get(entry.status)?.color ?? "inherit"}
+        >
             <option value={undefined}></option>
             {#each Object.values(statusesStore.statuses) as status, i (status.id)}
                 <option value={status.id}>{status.name}</option>
@@ -208,13 +221,17 @@
     </div>
     <div class="x-cell text-center">
         {#if appStore.ctrlKeyPressed}
-            <i class="far fa-trash fa-fw fa-sm x-btn-delete"
-               title="Eliminar"
-               style="cursor: pointer" onclick={ondelete}></i>
+            <i class="far fa-trash fa-fw fa-sm x-btn-delete" title="Eliminar" style="cursor: pointer" onclick={ondelete}
+            ></i>
         {:else}
-            <i class="far fa-ellipsis fa-fw fa-sm"
-               title="Acciones"
-               style="cursor: pointer" onclick={(ev)=>{onshowctxmenu(ev,entry)}}></i>
+            <i
+                class="far fa-ellipsis fa-fw fa-sm"
+                title="Acciones"
+                style="cursor: pointer"
+                onclick={(ev) => {
+                    onshowctxmenu(ev, entry);
+                }}
+            ></i>
         {/if}
     </div>
 </div>
@@ -224,12 +241,15 @@
         //&.faded:not(:hover) {
         //    pointer-events: none;
         //}
-        &.faded:not(:hover) :global(.x-cell > *) {
-            filter: blur(1px);
+        &.muted:not(:hover) :global(.x-cell > *:not(.x-select-status)) {
+            opacity: 0.3;
+        }
+        &.blurred:not(:hover) :global(.x-cell > *) {
+            filter: blur(1.5px);
             opacity: 0.15;
         }
-        &.faded:hover :global(.x-cell > *) {
-            opacity: 0.5;
+        &.muted:hover :global(.x-cell > *) {
+            opacity: 0.6;
         }
     }
 
@@ -287,7 +307,8 @@
         color: #555;
         border-bottom: 1px dotted var(--table-sep-color);
 
-        &:hover, &:focus {
+        &:hover,
+        &:focus {
             background-color: #ddd;
             color: #333;
         }
@@ -297,7 +318,7 @@
     }
 
     .x-btn-delete {
-        color: #aaa
+        color: #aaa;
     }
     .x-btn-delete:hover {
         color: var(--color-icon-hover);

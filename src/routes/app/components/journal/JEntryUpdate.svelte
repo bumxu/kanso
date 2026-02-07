@@ -164,6 +164,10 @@
         border: 0;
         outline: 0;
 
+        &:not(:focus) {
+            color: #555;
+        }
+
         //&:hover, &:focus {
         //    background: rgba(0, 0, 0, 0.05);
         //}

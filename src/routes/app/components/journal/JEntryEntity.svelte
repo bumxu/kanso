@@ -97,7 +97,7 @@
          oninput={handleChangeNote}
          onclick={ev=>{ev.stopPropagation();ev.preventDefault()}}></div>
     {#if appStore.ctrlKeyPressed}
-        <div class="x-side">
+        <div class="x-side ml-0.5">
             <!--            <button class="fas fa-fw fa-sm fa-filter"-->
             <!--                    aria-label="Filtrar" title="Filtrar"-->
             <!--                    onclick={handleClickEdit}></button>-->

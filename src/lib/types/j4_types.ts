@@ -79,7 +79,7 @@ export type TagSchema = { id: string; name: string; priority?: number, bgColor?:
 
 // --- STATUS
 export type StatusesSchema = { [id: string]: StatusSchema }
-export type StatusSchema = { id: string, name: string, final: boolean, color?: string }
+export type StatusSchema = { id: string, name: string, final: boolean, muted: boolean, blurred: boolean, color?: string }
 
 // --- PRIORITIES
 export type PrioritiesSchema = { [id: string]: PrioritySchema }
