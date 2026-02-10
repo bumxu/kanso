@@ -28,6 +28,7 @@
 
     import "../../tailwind.css";
     import "../../scss/main.scss";
+    import { browser } from "$app/environment";
 
     let sbOpen = $state(false);
     let sbTool: string | null = $state(null);
@@ -55,16 +56,40 @@
     let sortedView: EntrySchema[] = $derived(buildSortedView(filteredView, order, orderAsc));
 
     onMount(async () => {
-        console.log("Iniciando Kanso...");
-        // storeManager.loadFromLS();
+        if (browser) {
+            console.log("Iniciando Kanso...");
+            // storeManager.loadFromLS();
+
+            // Al perder el foco
+            window.addEventListener("blur", handleBlurWindow);
+            window.addEventListener("mouseout", handleMouseoutWindow);
+        }
     });
 
     onDestroy(() => {
-        console.log("Deteniendo Kanso...");
-        try {
-            clearInterval(autosaveInterval);
-        } catch (e) {}
+        if (browser) {
+            console.log("Deteniendo Kanso...");
+            window.removeEventListener("blur", handleBlurWindow);
+            window.removeEventListener("mouseout", handleMouseoutWindow);
+            try {
+                clearInterval(autosaveInterval);
+            } catch (e) {}
+        }
     });
+
+    function handleBlurWindow() {
+        appStore.ctrlKeyPressed = false;
+        if (autosaveEnabled) {
+            toggleAutosave();
+            toggleAutosave();
+        }
+    }
+
+    function handleMouseoutWindow(e: MouseEvent) {
+        if (!e.relatedTarget) {
+            appStore.ctrlKeyPressed = false;
+        }
+    }
 
     function applyFilters() {
         filteredView = buildFilteredView(
@@ -79,16 +104,20 @@
     }
 
     function handleGlobalKeyDown(e: KeyboardEvent) {
-        if (e.key === "Control" && !e.repeat) {
+        const isMac = typeof navigator !== "undefined" && /Mac/.test(navigator.platform);
+        const keyName = isMac ? "Alt" : "Control";
+        if (e.key === keyName && !e.repeat) {
             appStore.ctrlKeyPressed = true;
-            console.debug("Tecla Ctrl pulsada");
+            console.debug(`${isMac ? "Tecla Option" : "Tecla Ctrl"} pulsada`);
         }
     }
 
     function handleGlobalKeyUp(e: KeyboardEvent) {
-        if (e.key === "Control") {
+        const isMac = typeof navigator !== "undefined" && /Mac/.test(navigator.platform);
+        const keyName = isMac ? "Alt" : "Control";
+        if (e.key === keyName) {
             appStore.ctrlKeyPressed = false;
-            console.debug("Tecla Ctrl soltada");
+            console.debug(`${isMac ? "Tecla Option" : "Tecla Ctrl"} soltada`);
         }
     }
 
@@ -221,11 +250,14 @@
                 return;
             }
             storeManager.saveToLS();
-            autosaveEnabled = true;
+            storeManager.saveToFileHandler();
+            autosaveLastSaved = DateTime.now();
             autosaveInterval = setInterval(() => {
+                storeManager.saveToLS();
                 storeManager.saveToFileHandler();
                 autosaveLastSaved = DateTime.now();
             }, 60000) as unknown as number;
+            autosaveEnabled = true;
         } else {
             autosaveEnabled = false;
             if (autosaveInterval) {

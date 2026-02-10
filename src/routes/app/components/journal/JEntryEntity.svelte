@@ -78,6 +78,16 @@
         if (onchange) onchange();
     }
 
+    function copy() {
+        const textToCopy = entityDisplay ? entityDisplay : '';
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            // Copiado al portapapeles
+            console.debug('Texto copiado al portapapeles:', textToCopy);
+        }).catch(err => {
+            console.error('Error al copiar al portapapeles:', err);
+        });
+    }
+
 </script>
 
 <div class="x-entity" transition:slide={{duration: 120}}>
@@ -106,11 +116,14 @@
             <!--                    onclick={handleClickEdit}></button>-->
             {#if entityLink}
             <a class="fas fa-fw fa-sm fa-link x-btn-delete"
-               aria-label="Ir a" title="Ir a"
-               href={entityLink}
-               target="_blank"
-               rel="noopener noreferrer"></a>
+            aria-label="Ir a" title="Ir a"
+            href={entityLink}
+            target="_blank"
+            rel="noopener noreferrer"></a>
             {/if}
+            <button class="far fa-fw fa-sm fa-copy x-btn-delete"
+                    aria-label="Copiar" title="Copiar"
+                    onclick={(ev) => {ev.stopPropagation();ev.preventDefault();copy();}}></button>
             <button class="far fa-fw fa-sm fa-trash x-btn-delete"
                     aria-label="Quitar" title="Quitar"
                     onclick={(ev) => {ev.stopPropagation();ev.preventDefault();onunlinkentity();}}></button>
@@ -165,6 +178,9 @@
     }
     .x-side {
         flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 1px;
     }
 
     button {
@@ -177,6 +193,7 @@
     .x-btn-delete {
         color: #aaa;
         text-decoration: none;
+        padding: 0;
     }
     .x-btn-delete:hover {
         color: var(--color-icon-hover);
