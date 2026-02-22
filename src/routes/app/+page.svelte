@@ -55,6 +55,8 @@
     });
     let sortedView: EntrySchema[] = $derived(buildSortedView(filteredView, order, orderAsc));
 
+    const fileHandleIsSupported = browser && "showOpenFilePicker" in window && "showSaveFilePicker" in window;
+
     onMount(async () => {
         if (browser) {
             console.log("Iniciando Kanso...");
@@ -347,22 +349,24 @@
                 {#if storeManager.isFileHandled}&nbsp;<i class="fas fa-check-circle mx-0.5" style="color: #4ca67b"
                     ></i>{/if}
             </Button>
-            <Button icon="fas fa-save" onclick={saveToFileHandler}>Guardar a local</Button>
-            <Button icon="fas fa-robot" onclick={toggleAutosave}>
-                Autoguardado
-                <i
-                    class="fas"
-                    class:fa-toggle-off={!autosaveEnabled}
-                    class:fa-toggle-on={autosaveEnabled}
-                    style:color={autosaveEnabled ? "#4ca67b" : null}
-                ></i>
-            </Button>
-            {#if autosaveEnabled}
-                <span class="ml-1 text-xs text-gray-400">
-                    (Última vez: {autosaveLastSaved
-                        ? autosaveLastSaved.toLocaleString(DateTime.TIME_WITH_SECONDS)
-                        : "nunca"})
-                </span>
+            {#if fileHandleIsSupported}
+                <Button icon="fas fa-save" onclick={saveToFileHandler}>Guardar a local</Button>
+                <Button icon="fas fa-robot" onclick={toggleAutosave}>
+                    Autoguardado
+                    <i
+                        class="fas"
+                        class:fa-toggle-off={!autosaveEnabled}
+                        class:fa-toggle-on={autosaveEnabled}
+                        style:color={autosaveEnabled ? "#4ca67b" : null}
+                    ></i>
+                </Button>
+                {#if autosaveEnabled}
+                    <span class="ml-1 text-xs text-gray-400">
+                        (Última vez: {autosaveLastSaved
+                            ? autosaveLastSaved.toLocaleString(DateTime.TIME_WITH_SECONDS)
+                            : "nunca"})
+                    </span>
+                {/if}
             {/if}
         </div>
     </nav>
