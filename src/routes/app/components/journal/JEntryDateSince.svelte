@@ -75,7 +75,7 @@
     </div>
     <div class="x-date-wrapper x-date-updated flex items-center" class:x-focused={dateUpdatedFocused}>
         <Ic
-            iconclass="far fa-fw fa-xs fa-pen"
+            iconclass={showDateUpdated ? "far fa-fw fa-xs fa-pen" : "fas fa-fw fa-xs fa-timer"}
             iconclasshover="fas fa-fw fa-xs fa-timer"
             inheritcolor={true}
             label="Establecer fecha y hora actuales"
