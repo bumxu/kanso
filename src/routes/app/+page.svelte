@@ -344,28 +344,30 @@
             <div class="mr-1.5"></div>
             <Button icon="fas fa-download" onclick={saveToDownload}>Descargar</Button>
             <div class="mr-1.5"></div>
-            <Button icon="fas fa-folder-open" onclick={loadFromFileHandler}>
-                Usar archivo local
-                {#if storeManager.isFileHandled}&nbsp;<i class="fas fa-check-circle mx-0.5" style="color: #4ca67b"
-                    ></i>{/if}
-            </Button>
             {#if fileHandleIsSupported}
-                <Button icon="fas fa-save" onclick={saveToFileHandler}>Guardar a local</Button>
-                <Button icon="fas fa-robot" onclick={toggleAutosave}>
-                    Autoguardado
-                    <i
-                        class="fas"
-                        class:fa-toggle-off={!autosaveEnabled}
-                        class:fa-toggle-on={autosaveEnabled}
-                        style:color={autosaveEnabled ? "#4ca67b" : null}
-                    ></i>
+                <Button icon="fas fa-folder-open" onclick={loadFromFileHandler}>
+                    Usar archivo local
+                    {#if storeManager.isFileHandled}&nbsp;<i class="fas fa-check-circle mx-0.5" style="color: #4ca67b"
+                        ></i>{/if}
                 </Button>
-                {#if autosaveEnabled}
-                    <span class="ml-1 text-xs text-gray-400">
-                        (Última vez: {autosaveLastSaved
-                            ? autosaveLastSaved.toLocaleString(DateTime.TIME_WITH_SECONDS)
-                            : "nunca"})
-                    </span>
+                {#if storeManager.isFileHandled}
+                    <Button icon="fas fa-save" onclick={saveToFileHandler}>Guardar a local</Button>
+                    <Button icon="fas fa-robot" onclick={toggleAutosave}>
+                        Autoguardado
+                        <i
+                            class="fas"
+                            class:fa-toggle-off={!autosaveEnabled}
+                            class:fa-toggle-on={autosaveEnabled}
+                            style:color={autosaveEnabled ? "#4ca67b" : "#c33"}
+                        ></i>
+                    </Button>
+                    {#if autosaveEnabled}
+                        <span class="ml-1 text-xs text-gray-400">
+                            (Última vez: {autosaveLastSaved
+                                ? autosaveLastSaved.toLocaleString(DateTime.TIME_WITH_SECONDS)
+                                : "nunca"})
+                        </span>
+                    {/if}
                 {/if}
             {/if}
         </div>
