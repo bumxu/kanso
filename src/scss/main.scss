@@ -221,7 +221,8 @@ select {
         background-color: #fdfdfd;
         border-bottom: 1px solid $table-sep-color;
         display: flex;
-        max-height: 70px;
+        max-height: 50px;
+        height: 50px;
         flex-flow: row nowrap;
         transition: background-color 0.2s;
 
@@ -272,6 +273,7 @@ select {
 
     & .x-row.x-header {
         border-bottom: 1px solid rgba(#000, 0.12);
+        height: auto;
 
         & > * {
             color: #333;
