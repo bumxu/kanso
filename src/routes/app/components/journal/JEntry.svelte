@@ -242,14 +242,14 @@
         //    pointer-events: none;
         //}
         &.muted:not(:hover) :global(.x-cell > *:not(.x-select-status)) {
-            opacity: 0.3;
+            opacity: 0.5;
         }
         &.blurred:not(:hover) :global(.x-cell > *) {
             filter: blur(1.5px);
             opacity: 0.15;
         }
         &.muted:hover :global(.x-cell > *) {
-            opacity: 0.5;
+            opacity: 0.6;
         }
     }
 
