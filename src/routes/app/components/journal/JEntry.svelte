@@ -249,7 +249,7 @@
             opacity: 0.15;
         }
         &.muted:hover :global(.x-cell > *) {
-            opacity: 0.6;
+            opacity: 0.5;
         }
     }
 

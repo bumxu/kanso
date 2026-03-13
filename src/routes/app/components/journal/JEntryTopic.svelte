@@ -69,7 +69,7 @@
     .x-text-input {
         display: inline-block;
         font-size: 10.6px;
-        font-weight: 600;
+        font-weight: 550;
         letter-spacing: -0.2px;
         line-height: 1.6;
         white-space: pre-wrap;
