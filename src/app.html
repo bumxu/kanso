@@ -38,36 +38,36 @@
     console.log = function () {
         log(...arguments);
         window.consoleBuffer += '█ L ' + parametrize(arguments) + '\n';
-        if (window.consoleBuffer.length > 10000) {
-            window.consoleBuffer = window.consoleBuffer.slice(-10000);
+        if (window.consoleBuffer.length > 100000) {
+            window.consoleBuffer = window.consoleBuffer.slice(-100000);
         }
     };
     console.error = function () {
         error(...arguments);
         window.consoleBuffer += '█ E ' + parametrize(arguments) + '\n';
-        if (window.consoleBuffer.length > 10000) {
-            window.consoleBuffer = window.consoleBuffer.slice(-10000);
+        if (window.consoleBuffer.length > 100000) {
+            window.consoleBuffer = window.consoleBuffer.slice(-100000);
         }
     };
     console.warn = function () {
         warn(...arguments);
         window.consoleBuffer += '█ W ' + parametrize(arguments) + '\n';
-        if (window.consoleBuffer.length > 10000) {
-            window.consoleBuffer = window.consoleBuffer.slice(-10000);
+        if (window.consoleBuffer.length > 100000) {
+            window.consoleBuffer = window.consoleBuffer.slice(-100000);
         }
     };
     console.info = function () {
         info(...arguments);
         window.consoleBuffer += '█ I ' + parametrize(arguments) + '\n';
-        if (window.consoleBuffer.length > 10000) {
-            window.consoleBuffer = window.consoleBuffer.slice(-10000);
+        if (window.consoleBuffer.length > 100000) {
+            window.consoleBuffer = window.consoleBuffer.slice(-100000);
         }
     };
     console.debug = function () {
         debug(...arguments);
         window.consoleBuffer += '█ D ' + parametrize(arguments) + '\n';
-        if (window.consoleBuffer.length > 10000) {
-            window.consoleBuffer = window.consoleBuffer.slice(-10000);
+        if (window.consoleBuffer.length > 100000) {
+            window.consoleBuffer = window.consoleBuffer.slice(-100000);
         }
     };
 </script>
