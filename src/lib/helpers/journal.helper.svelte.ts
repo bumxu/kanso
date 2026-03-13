@@ -78,8 +78,12 @@ export function buildFilteredView(qFilterTopic: string, qFilterUpdates: string, 
                 if (filter.active) {
                     console.debug(`Aplicando filtro básico "${filter.desc}"...`);
                     const filterFn = new Function('return ' + filter.filterFn)();
-                    if (!filterFn(entry)) {
-                        return false;
+                    try {
+                        if (!filterFn(entry)) {
+                            return false;
+                        }
+                    } catch (e) {
+                        console.error('Error al aplicar filtro personalizado:', e);
                     }
                 }
             }
